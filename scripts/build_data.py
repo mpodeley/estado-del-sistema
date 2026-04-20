@@ -106,6 +106,7 @@ def main():
     errors += run('fetch_enargas.py')
     errors += run('fetch_cammesa.py')
     errors += run('fetch_weather.py')
+    errors += run('fetch_smn_alerts.py')
 
     # Phase 2: Parse all sources
     errors += run('parse_base_excel.py')

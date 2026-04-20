@@ -1,42 +1,197 @@
-const fuentes = [
-  { name: 'ENARGAS - Proyección semanal', url: 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/dod-proyeccion-semanal.php', freq: 'Semanal (viernes)', status: 'pendiente', desc: 'PDF con demanda, inyecciones, linepack, temperatura proyectada' },
-  { name: 'CAMMESA - Programación semanal', url: 'https://cammesaweb.cammesa.com/programacion-semanal/', freq: 'Semanal', status: 'pendiente', desc: 'PDF con forecast de demanda eléctrica y despacho de gas a usinas' },
-  { name: 'CAMMESA - Programación diaria', url: 'https://cammesaweb.cammesa.com/programacion-diaria/', freq: 'Diaria', status: 'pendiente', desc: 'Despacho diario de combustibles para generación eléctrica' },
-  { name: 'CAMMESA - Resultados de operaciones', url: 'https://cammesaweb.cammesa.com/reportes-resultados-de-operaciones/', freq: 'Diaria (cierre)', status: 'pendiente', desc: 'Datos cerrados reales de despacho y generación' },
-  { name: 'Meteored Argentina', url: 'https://www.meteored.com.ar/', freq: 'Continua', status: 'pendiente', desc: 'Pronóstico 14 días - temperatura para estimar demanda prioritaria' },
-  { name: 'Tiempo3 - Clima histórico', url: 'https://www.tiempo3.com/south-america/argentina', freq: 'Diaria', status: 'pendiente', desc: 'Temperatura real histórica para calibración del modelo' },
-  { name: 'CAMMESA - Exportaciones', url: '#', freq: 'Por definir', status: 'pendiente', desc: 'Volumen y destino de exportaciones de gas - fuente exacta por confirmar' },
-  { name: 'Excel Base Reporte', url: '#', freq: 'Manual', status: 'activa', desc: 'Base Reporte Estado de Sistema.xlsx - fuente actual de datos históricos' },
-  { name: 'ENARGAS - Linepack equilibrio', url: '#', freq: 'Manual', status: 'activa', desc: 'Excel de linepack con equilibrio y desbalance TGN' },
-]
+import { badge, card, colors, space } from '../theme'
+import {
+  useDaily,
+  useWeather,
+  useWeatherRegions,
+  useEnargasRDS,
+  useCammesaWeekly,
+  useSMNAlerts,
+} from '../hooks/useData'
 
-const badge = (s: string) => ({
-  background: s === 'activa' ? '#10b98122' : '#f59e0b22',
-  color: s === 'activa' ? '#10b981' : '#f59e0b',
-  padding: '2px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 as const,
-})
+type Kind = 'auto' | 'manual' | 'blocked' | 'discarded'
+
+interface Meta {
+  generated_at: string | null
+}
+
+interface Source {
+  id: string
+  name: string
+  url?: string
+  kind: Kind
+  note: string
+  freq: string
+  meta?: Meta
+}
+
+function ago(iso: string | null): string {
+  if (!iso) return 'sin dato'
+  const ms = Date.now() - new Date(iso).getTime()
+  if (isNaN(ms)) return iso
+  const h = ms / 3_600_000
+  if (h < 1) return `hace ${Math.round(h * 60)} min`
+  if (h < 48) return `hace ${Math.round(h)} h`
+  return `hace ${Math.round(h / 24)} d`
+}
+
+function kindBadge(k: Kind): React.CSSProperties {
+  const colorMap: Record<Kind, string> = {
+    auto: colors.status.ok,
+    manual: colors.status.warn,
+    blocked: colors.status.err,
+    discarded: colors.textDim,
+  }
+  return badge(colorMap[k])
+}
+
+function kindLabel(k: Kind): string {
+  return { auto: 'AUTO', manual: 'MANUAL', blocked: 'BLOQUEADO', discarded: 'DESCARTADO' }[k]
+}
 
 export default function FuentesPage() {
+  const daily = useDaily()
+  const weather = useWeather()
+  const regions = useWeatherRegions()
+  const rds = useEnargasRDS()
+  const cammesaWeekly = useCammesaWeekly()
+  const smn = useSMNAlerts()
+
+  const sources: Source[] = [
+    {
+      id: 'enargas-rds',
+      name: 'ENARGAS — Reporte Diario del Sistema (RDS)',
+      url: 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/dod-reporte-diario-sistema.php',
+      kind: 'auto',
+      freq: 'Diaria',
+      note: 'Line pack, importaciones, exportaciones, consumos por segmento, temperatura BA + forecast 6 días. Backfill 2 años completado.',
+      meta: rds.meta,
+    },
+    {
+      id: 'open-meteo-forecast',
+      name: 'Open-Meteo — forecast 14 días',
+      url: 'https://open-meteo.com/',
+      kind: 'auto',
+      freq: 'Continua',
+      note: 'BA individual (weather.json).',
+      meta: weather.meta,
+    },
+    {
+      id: 'open-meteo-regions',
+      name: 'Open-Meteo — 10 ciudades',
+      url: 'https://open-meteo.com/',
+      kind: 'auto',
+      freq: 'Continua',
+      note: 'BA, Rosario, Córdoba, Santa Fe, Mendoza, Neuquén, Bahía Blanca, Esquel, Salta, Tucumán.',
+      meta: regions.meta,
+    },
+    {
+      id: 'open-meteo-archive',
+      name: 'Open-Meteo — histórico 2 años',
+      url: 'https://open-meteo.com/en/docs/historical-weather-api',
+      kind: 'auto',
+      freq: 'One-shot',
+      note: '7310 filas en weather_history.json. Se refresca manualmente con fetch_weather_history.py.',
+    },
+    {
+      id: 'cammesa-weekly',
+      name: 'CAMMESA — Programación semanal (PS_)',
+      url: 'https://cammesaweb.cammesa.com/programacion-semanal/',
+      kind: 'auto',
+      freq: 'Semanal',
+      note: 'PDF con forecast 7 días: demanda por sector + temperatura + inyecciones + stock.',
+      meta: cammesaWeekly.meta,
+    },
+    {
+      id: 'smn-alertas',
+      name: 'SMN — alertas meteorológicas',
+      url: 'https://ssl.smn.gob.ar/dpd/zipopendata.php?dato=alertas',
+      kind: 'auto',
+      freq: 'Continua',
+      note: 'Endpoint open-data (TXT dentro de ZIP). www.smn.gob.ar/alertas está detrás de Cloudflare; este mirror es directo.',
+      meta: smn.meta,
+    },
+    {
+      id: 'excel-base',
+      name: 'Excel base — daily.json',
+      kind: 'manual',
+      freq: 'Manual',
+      note: 'Base Reporte Estado de Sistema.xlsx. Se procesa via parser header-driven. El RDS ya cubre buena parte de su info → en vías de reemplazo.',
+      meta: daily.meta,
+    },
+    {
+      id: 'linepack-excel',
+      name: 'Linepack equilibrio (Excel)',
+      kind: 'manual',
+      freq: 'Manual',
+      note: 'gasoductoLinepackEq.xlsx. Info complementaria de equilibrio/desbalance TGN.',
+    },
+    {
+      id: 'drop-folder',
+      name: 'raw/incoming/ — drop folder',
+      kind: 'manual',
+      freq: 'Según se droppe',
+      note: 'Usuario dropea PDFs/Excel, el pipeline los detecta por magic bytes y rutea al parser. Archivo ingerido se copia a raw/incoming/_archive con timestamp.',
+    },
+    {
+      id: 'cammesa-resultados',
+      name: 'CAMMESA — Resultados de operaciones',
+      url: 'https://cammesaweb.cammesa.com/reportes-resultados-de-operaciones/',
+      kind: 'blocked',
+      freq: 'Diaria (cierre)',
+      note: 'Requiere login de agente. Alternativa: dropear PDFs manualmente en raw/incoming/.',
+    },
+    {
+      id: 'cammesa-diaria',
+      name: 'CAMMESA — Programación diaria',
+      url: 'https://cammesaweb.cammesa.com/programacion-diaria/',
+      kind: 'discarded',
+      freq: 'Diaria',
+      note: 'Descartado: el PDF público dice "Sin novedades" — no contiene data operativa útil.',
+    },
+    {
+      id: 'megsa',
+      name: 'MEGSA — precios spot',
+      url: 'https://www.megsa.com.ar/',
+      kind: 'blocked',
+      freq: 'Diaria',
+      note: 'Pendiente de investigar. Sería útil para contexto comercial.',
+    },
+  ]
+
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px' }}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>Fuentes de datos</h2>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 20 }}>Origen de los datos que alimentan el dashboard</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {fuentes.map(f => (
-          <div key={f.name} style={{ background: '#1e293b', borderRadius: 10, padding: '16px 20px', border: '1px solid #334155' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <h4 style={{ color: '#e2e8f0', fontSize: 14, fontWeight: 600 }}>{f.name}</h4>
-                <span style={badge(f.status)}>{f.status.toUpperCase()}</span>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: `${space.xl}px ${space.lg}px` }}>
+      <h2 style={{ fontSize: 22, fontWeight: 700, color: colors.textPrimary, marginBottom: 4 }}>
+        Fuentes de datos
+      </h2>
+      <p style={{ color: colors.textDim, fontSize: 14, marginBottom: space.xl }}>
+        Estado actual de cada fuente que alimenta el tablero, con última actualización donde aplica.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: space.md }}>
+        {sources.map((s) => {
+          const freshness = s.meta ? ago(s.meta.generated_at) : '—'
+          return (
+            <div key={s.id} style={{ ...card, padding: `${space.md}px ${space.xl}px` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: space.sm, marginBottom: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <h4 style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 600 }}>{s.name}</h4>
+                  <span style={kindBadge(s.kind)}>{kindLabel(s.kind)}</span>
+                </div>
+                <div style={{ display: 'flex', gap: space.md, alignItems: 'center' }}>
+                  <span style={{ color: colors.textDim, fontSize: 12 }}>{s.freq}</span>
+                  <span style={{ color: colors.textMuted, fontSize: 12 }}>
+                    {s.meta ? `Última actualización: ${freshness}` : ''}
+                  </span>
+                </div>
               </div>
-              <span style={{ color: '#64748b', fontSize: 12 }}>{f.freq}</span>
+              <p style={{ color: colors.textMuted, fontSize: 13, lineHeight: 1.5, marginBottom: 4 }}>{s.note}</p>
+              {s.url && (
+                <a href={s.url} target="_blank" rel="noopener" style={{ color: colors.accent.blue, fontSize: 12, wordBreak: 'break-all' }}>
+                  {s.url}
+                </a>
+              )}
             </div>
-            <p style={{ color: '#94a3b8', fontSize: 13, marginBottom: 4 }}>{f.desc}</p>
-            {f.url !== '#' && (
-              <a href={f.url} target="_blank" rel="noopener" style={{ color: '#3b82f6', fontSize: 12 }}>{f.url}</a>
-            )}
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

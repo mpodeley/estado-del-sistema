@@ -6,6 +6,7 @@ import {
   useDemandForecast,
   useWeatherRegions,
   useEnargasRDS,
+  useSMNAlerts,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -106,6 +107,7 @@ function OutlookPage() {
   const forecastState = useDemandForecast()
   const regionsState = useWeatherRegions()
   const rdsState = useEnargasRDS()
+  const smnState = useSMNAlerts()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -153,6 +155,20 @@ function OutlookPage() {
   return (
     <>
       <Header lastDate={latest?.fecha} freshness={freshness} />
+      {smnState.data && smnState.data.length > 0 && (
+        <div style={{
+          marginTop: space.md,
+          background: colors.status.err + '22',
+          border: `1px solid ${colors.status.err}`,
+          borderRadius: radius.md,
+          padding: `${space.sm}px ${space.lg}px`,
+          color: colors.status.err,
+          fontSize: 13,
+          fontWeight: 600,
+        }}>
+          ⚠ {smnState.data.length} alerta{smnState.data.length === 1 ? '' : 's'} meteorológica{smnState.data.length === 1 ? '' : 's'} activa{smnState.data.length === 1 ? '' : 's'} del SMN — ver pestaña Fuentes para detalle.
+        </div>
+      )}
       <KPICards latest={latest} />
 
       <PulseCard rows={rdsReports as never} />
