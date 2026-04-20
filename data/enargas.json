@@ -1,0 +1,15 @@
+[
+  {
+    "source": "ETGS1776049200000.pdf",
+    "fecha": "2026-04-12",
+    "tgs_cuenca_sur_prog": 21.82,
+    "tgs_cuenca_sur_real": 22.06,
+    "tgs_cuenca_nqn_prog": 45.32,
+    "tgs_cuenca_nqn_real": 45.39,
+    "estado_tgs": "Alerta",
+    "motivo_tgs": "TGSA - Alerta Por alto linepack en el sistema.",
+    "linepack_tgs_anterior": 235.81,
+    "linepack_tgs_actual": 235.46,
+    "linepack_tgs_var": -0.36
+  }
+]
