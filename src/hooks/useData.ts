@@ -176,3 +176,45 @@ export interface EnargasMonthly {
   contratos_firme?: Record<string, number | string>[]
 }
 export const useEnargasMonthly = () => useJson<EnargasMonthly>('./data/enargas_monthly.json')
+
+export interface GasNode {
+  nodeId: string
+  nombre: string
+  latitud: number
+  longitud: number
+  x: number
+  y: number
+  roleProxy: 'source_proxy' | 'sink_proxy' | 'transit' | 'inactive' | 'unknown'
+  hasCompressor?: boolean
+}
+export interface GasRoute {
+  edgeId: string
+  ruta: string
+  origen: string
+  destino: string
+  gasoducto: string
+  sourceNodeId: string
+  targetNodeId: string
+  xOrigen: number
+  yOrigen: number
+  xDestino: number
+  yDestino: number
+  effectiveCapacity?: number | null
+  latest_caudal?: number | null
+  latest_utilization?: number | null
+}
+export interface GasNetwork {
+  projection: string
+  latestSnapshotDate?: string
+  nodes: GasNode[]
+  routes: GasRoute[]
+}
+export const useGasNetwork = () => useJson<GasNetwork>('./data/gas_network.json')
+
+export interface OutlineVertex { lon: number; lat: number; x: number; y: number }
+export interface CountryOutline {
+  projection: string
+  polygons: OutlineVertex[][]
+  bounds: { minX: number; maxX: number; minY: number; maxY: number }
+}
+export const useOutline = () => useJson<CountryOutline>('./data/ar_outline.json')

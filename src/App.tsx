@@ -12,6 +12,8 @@ import {
   useTramos,
   useCammesaPPO,
   useEnargasMonthly,
+  useGasNetwork,
+  useOutline,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -37,7 +39,7 @@ import MEGSAPanel from './components/MEGSAPanel'
 import SystemFlowPanel from './components/SystemFlowPanel'
 import TransportRestrictionsPanel from './components/TransportRestrictionsPanel'
 import { RegionalSection } from './components/GasoductoFlowChart'
-import NetworkSchematic from './components/NetworkSchematic'
+import NetworkMap from './components/NetworkMap'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
@@ -125,6 +127,8 @@ function OutlookPage() {
   const tramosState = useTramos()
   const ppoState = useCammesaPPO()
   const monthlyState = useEnargasMonthly()
+  const networkState = useGasNetwork()
+  const outlineState = useOutline()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -343,23 +347,26 @@ function OutlookPage() {
         )}
       </ChartGroup>
 
-      {monthlyState.data?.gas_recibido && (
-        <ChartGroup title="Regional — esquema y flujos mensuales">
-          {tramosState.data && tramosState.data.length > 0 && (
+      {(networkState.data || monthlyState.data?.gas_recibido) && (
+        <ChartGroup title="Regional — mapa y flujos mensuales">
+          {networkState.data && outlineState.data && tramosState.data && (
             <div style={{ ...card, gridColumn: '1 / -1' }}>
-              <NetworkSchematic
+              <NetworkMap
+                network={networkState.data}
+                outline={outlineState.data}
                 tramos={tramosState.data}
-                gasoductoMonthly={monthlyState.data.gas_recibido.gasoducto}
               />
             </div>
           )}
-          <div style={{ ...card, gridColumn: '1 / -1' }}>
-            <RegionalSection monthly={monthlyState.data} />
-            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
-              Fuente: ENARGAS datos-estadísticos. Cada banda apilada es el volumen mensual recibido
-              por ese gasoducto o cuenca. TGS en verdes, TGN en azules, distribuidoras propias en gris.
-            </p>
-          </div>
+          {monthlyState.data?.gas_recibido && (
+            <div style={{ ...card, gridColumn: '1 / -1' }}>
+              <RegionalSection monthly={monthlyState.data} />
+              <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+                Fuente: ENARGAS datos-estadísticos. Cada banda apilada es el volumen mensual recibido
+                por ese gasoducto o cuenca. TGS en verdes, TGN en azules, distribuidoras propias en gris.
+              </p>
+            </div>
+          )}
         </ChartGroup>
       )}
 
