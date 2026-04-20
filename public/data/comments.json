@@ -2,8 +2,6 @@
   "daily": [
     "Temperatura promedio en Buenos Aires: 19 C (min 16.0, max 22.0).",
     "Demanda total del sistema: 112.7 MMm3/dia (baja de 3.6 MMm3/d vs dia anterior).",
-    "Linepack TGS: 0.0 MMm3 - Estado: BAJO LIMITE (limites: 215.0-235.0).",
-    "Linepack TGN: 0.0 MMm3 - Estado: BAJO LIMITE (limites: 110.0-142.0).",
     "Despacho electrico: gas natural 34.0 GWh (100% del total)."
   ],
   "weekly": [
@@ -11,6 +9,6 @@
     "Demanda total estimada para la semana: 114-120 MMm3/dia (basado en regresion temperatura-demanda con 19 datos historicos).",
     "Demanda prioritaria estimada: 22-29 MMm3/dia."
   ],
-  "generated": "2026-04-20T09:11:39.262982",
+  "generated": "2026-04-20T09:28:16.273414",
   "note": "Comentarios generados automaticamente. Ultima actualizacion: 2026-04-19"
 }

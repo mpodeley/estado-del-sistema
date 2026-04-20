@@ -82,9 +82,39 @@ def parse_conv_valores(wb):
             if key == 'fecha':
                 continue
             row[key] = safe_float(ws.cell(r, col).value)
+
+        # Treat 0.0 linepack as missing (not yet published)
+        for lp_key in ['linepack_tgs', 'linepack_tgn', 'linepack_total']:
+            if row.get(lp_key) == 0.0:
+                row[lp_key] = None
+        for var_key in ['var_linepack_tgs', 'var_linepack_tgn', 'var_linepack_total']:
+            if row.get(var_key) == 0.0:
+                row[var_key] = None
+
+        # Treat 0.0 demand as missing (not yet published)
+        if row.get('demanda_total') == 0.0:
+            row['demanda_total'] = None
+        if row.get('prioritaria') == 0.0:
+            row['prioritaria'] = None
+
+        # Skip rows where everything important is None (future dates)
+        has_data = any(row.get(k) is not None for k in [
+            'demanda_total', 'linepack_tgs', 'linepack_tgn', 'cammesa_gas'
+        ])
+        if not has_data:
+            continue
+
         rows.append(row)
 
-    return rows
+    # Remove duplicate dates (keep first occurrence which has more data)
+    seen = set()
+    deduped = []
+    for row in rows:
+        if row['fecha'] not in seen:
+            seen.add(row['fecha'])
+            deduped.append(row)
+
+    return deduped
 
 
 def parse_comments(wb):
