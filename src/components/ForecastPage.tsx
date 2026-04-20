@@ -1,6 +1,9 @@
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { card, colors, sectionTitle, space } from '../theme'
-import { useDemandForecast } from '../hooks/useData'
+import { useDemandForecast, useForecastBacktest } from '../hooks/useData'
+import type { BacktestSegment } from '../hooks/useData'
 import type { RegressionLine } from '../types'
+import { formatTooltipDate } from '../utils/charts'
 
 const DOW_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 const DOW_FULL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -77,8 +80,42 @@ function Kv({ label, value }: { label: string; value: string }) {
   )
 }
 
+function BacktestCard({ label, segment }: { label: string; segment: BacktestSegment }) {
+  const { metrics, series } = segment
+  const fmt = (d: string) => d.slice(5)
+  return (
+    <div style={{ ...card, padding: `${space.lg}px ${space.xl}px` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: space.sm }}>
+        <h4 style={{ color: colors.textPrimary, fontSize: 15, fontWeight: 700 }}>{label}</h4>
+        <span style={{ color: colors.textDim, fontSize: 11 }}>
+          n = {metrics.n} días
+        </span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: space.sm, marginBottom: space.sm }}>
+        <Kv label="MAE" value={metrics.mae != null ? `${metrics.mae.toFixed(1)} MMm³/d` : '—'} />
+        <Kv label="MAPE" value={metrics.mape != null ? `${metrics.mape.toFixed(1)} %` : '—'} />
+      </div>
+      <ResponsiveContainer width="100%" height={160}>
+        <LineChart data={series}>
+          <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 10 }} interval="preserveStartEnd" minTickGap={25} />
+          <YAxis tick={{ fill: '#64748b', fontSize: 10 }} />
+          <Tooltip
+            contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }}
+            labelStyle={{ color: '#94a3b8' }}
+            labelFormatter={formatTooltipDate}
+          />
+          <Legend wrapperStyle={{ fontSize: 11 }} />
+          <Line type="monotone" dataKey="actual" stroke={colors.accent.blue} strokeWidth={2} dot={false} name="Real" isAnimationActive={false} />
+          <Line type="monotone" dataKey="predicted" stroke={colors.accent.orange} strokeWidth={1.5} strokeDasharray="4 3" dot={false} name="Predicho" isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
 export default function ForecastPage() {
   const { data, loading } = useDemandForecast()
+  const backtest = useForecastBacktest()
 
   if (loading) {
     return (
@@ -157,6 +194,31 @@ export default function ForecastPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: space.lg }}>
         {segments.map((m, i) => <SegmentBlock key={i} m={m} />)}
       </div>
+
+      {backtest.data && (
+        <section style={{ marginTop: space.xl }}>
+          <h3 style={{ ...sectionTitle, marginBottom: space.md }}>
+            Backtest — cómo predijo vs realidad ({backtest.data.test_days} últimos días, entrenando con {backtest.data.train_days} días previos cada vez)
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: space.lg }}>
+            {backtest.data.segments.prioritaria && (
+              <BacktestCard label="Prioritaria" segment={backtest.data.segments.prioritaria} />
+            )}
+            {backtest.data.segments.usinas && (
+              <BacktestCard label="Usinas" segment={backtest.data.segments.usinas} />
+            )}
+            {backtest.data.segments.demanda_total && (
+              <BacktestCard label="Demanda total" segment={backtest.data.segments.demanda_total} />
+            )}
+          </div>
+          <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm }}>
+            <strong>MAE</strong> = error medio absoluto en MMm³/d. <strong>MAPE</strong> = error
+            porcentual promedio (tiende a inflarse en meses con demanda baja — mes de prioritaria baja
+            = denominadores chicos). Test: rolling window, uso temperatura real como proxy (aísla skill
+            del modelo del error del pronóstico de temperatura).
+          </p>
+        </section>
+      )}
 
       <div style={{ ...card, marginTop: space.xl }}>
         <h3 style={sectionTitle}>Cómo leer R²</h3>

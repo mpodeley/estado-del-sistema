@@ -76,3 +76,22 @@ export const useEnargasRDS = () => useJson<unknown[]>('./data/enargas.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
 export const useCammesaWeekly = () => useJson<unknown[]>('./data/cammesa_weekly.json')
 export const useCammesaPPO = () => useJson<unknown[]>('./data/cammesa_ppo.json')
+
+export interface BacktestPoint {
+  fecha: string
+  actual: number | null
+  predicted: number | null
+}
+
+export interface BacktestSegment {
+  metrics: { mae: number | null; mape: number | null; n: number }
+  series: BacktestPoint[]
+}
+
+export interface ForecastBacktest {
+  test_days: number
+  train_days: number
+  segments: Record<string, BacktestSegment>
+}
+
+export const useForecastBacktest = () => useJson<ForecastBacktest>('./data/forecast_backtest.json')
