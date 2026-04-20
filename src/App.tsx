@@ -7,6 +7,7 @@ import {
   useWeatherRegions,
   useEnargasRDS,
   useSMNAlerts,
+  useCammesaWeekly,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -108,6 +109,7 @@ function OutlookPage() {
   const regionsState = useWeatherRegions()
   const rdsState = useEnargasRDS()
   const smnState = useSMNAlerts()
+  const cammesaWeeklyState = useCammesaWeekly()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -144,6 +146,13 @@ function OutlookPage() {
   const comments = commentsState.data ?? { daily: [], weekly: [] }
   const regions = regionsState.data ?? []
   const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
+
+  // Flatten CAMMESA weekly days from all published reports so the demand
+  // chart can use their own usinas forecast where available.
+  const cammesaDays: { fecha?: string; usinas?: number | null }[] = []
+  for (const rep of (cammesaWeeklyState.data ?? []) as { days?: { fecha?: string; usinas?: number | null }[] }[]) {
+    for (const d of rep.days ?? []) cammesaDays.push(d)
+  }
 
   const freshness = [
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
@@ -267,7 +276,13 @@ function OutlookPage() {
         )}
         <div style={card}>
           <h3 style={sectionTitle}>Demanda por sector (MMm³/día)</h3>
-          <DemandChart data={valid} allDates={visibleDates} yDomain={demandY} />
+          <DemandChart
+            data={valid}
+            forecast={demandFc?.forecast ?? []}
+            cammesaDays={cammesaDays}
+            allDates={visibleDates}
+            yDomain={demandY}
+          />
         </div>
       </ChartGroup>
 

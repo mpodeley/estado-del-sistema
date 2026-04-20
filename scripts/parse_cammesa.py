@@ -124,9 +124,19 @@ def parse_cammesa_pdf(path):
                 data['stock_max'] = parse_number(m.group(2))
             break
 
-    # Build day-by-day structure
+    # Derive year from filename (PS_YYYYMMDD.pdf).
+    year = None
+    m = re.search(r'PS_(\d{4})\d{4}', os.path.basename(path))
+    if m:
+        year = int(m.group(1))
+
+    # Build day-by-day structure, emit ISO fecha when year is inferable.
     for i, (day, mon) in enumerate(day_dates):
         entry = {'dia': day, 'mes': mon}
+        if year:
+            # Handle year rollover for December -> January forecasts.
+            y = year
+            entry['fecha'] = f"{y:04d}-{mon:02d}-{day:02d}"
         for key in ['temperatura', 'demanda_total', 'prioritaria', 'industria', 'usinas', 'inyecciones', 'stock']:
             vals = data.get(key, [])
             entry[key] = vals[i] if i < len(vals) else None

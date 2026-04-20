@@ -69,6 +69,10 @@ export interface DemandForecastDay {
   prioritaria_est: number | null
   demanda_total_est: number | null
   usinas_est: number | null
+  industria_est?: number | null
+  gnc_est?: number | null
+  combustible_est?: number | null
+  exportaciones_est?: number | null
 }
 
 export interface RegressionLine {
