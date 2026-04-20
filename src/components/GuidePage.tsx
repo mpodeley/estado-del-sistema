@@ -76,6 +76,13 @@ export default function GuidePage() {
             10 ciudades clave: BA, Rosario, Córdoba, Santa Fe, Mendoza, Neuquén, Bahía Blanca, Esquel,
             Salta, Tucumán). Sirve como alerta temprana de picos de demanda prioritaria.
           </dd>
+
+          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Histórico año-sobre-año</dt>
+          <dd style={{ margin: 0 }}>
+            Con 2 años de RDS diarios backfilleados, mostramos cada año en una línea separada sobre
+            el mismo eje calendario (enero→diciembre). Línea gruesa = año actual; tenues = años
+            previos. Para ver si estamos por encima/debajo del patrón estacional típico.
+          </dd>
         </dl>
       </div>
 
@@ -159,11 +166,11 @@ export default function GuidePage() {
       <div style={{ ...card }}>
         <h3 style={sectionTitle}>Limitaciones actuales</h3>
         <ul style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 1.7, paddingLeft: space.xl }}>
-          <li>Temperatura solo para Buenos Aires (próximo: multi-ciudad para captar efecto regional).</li>
-          <li>Regresión lineal simple; no incluye día de semana, feriados ni estacionalidad.</li>
-          <li>Exportaciones CAMMESA: fuente por confirmar.</li>
+          <li>Temperatura multi-ciudad ya disponible, pero el chart diario sigue siendo Buenos Aires (drop-down para cambiar).</li>
+          <li>Regresión lineal simple; no incluye día de semana, feriados ni estacionalidad. Necesita más histórico de demanda para mejorar.</li>
+          <li>El RDS reporta <em>programa</em> (planificado), no <em>real</em>. Para el dato cerrado de CAMMESA seguimos bloqueados por credenciales.</li>
           <li>Restricciones de transporte (Gas Andes, CCO, TGS NQN) están en el Excel pero aún no visualizadas.</li>
-          <li>Stock GNL (Escobar, Bahía Blanca) pendiente de integrar.</li>
+          <li>Stock GNL (Escobar, Bahía Blanca) se publica en el RDS pero todavía no lo graficamos aparte.</li>
         </ul>
       </div>
     </div>

@@ -33,12 +33,15 @@ const items: { task: string; status: 'done' | 'pending'; wave: Wave; notes: stri
 
   // Wave 2 — más fuentes públicas
   { task: 'ENARGAS RDS diario (automático)', status: 'done', wave: 2, notes: 'Line pack, importaciones, exportaciones, consumos, temp BA — todo del PDF oficial' },
+  { task: 'Backfill ENARGAS RDS (2 años)', status: 'done', wave: 2, notes: 'Descarga RDS_YYYYMMDD.pdf hasta 730 días atrás, parse-and-discard' },
   { task: 'Panel ENARGAS RDS en outlook', status: 'done', wave: 2, notes: 'Stats + breakdown por consumo/importación/exportación' },
-  { task: 'CAMMESA diaria (programación)', status: 'pending', wave: 2, notes: 'Scraper pendiente' },
+  { task: 'Chart año-sobre-año (histórico)', status: 'done', wave: 2, notes: 'Linepack + consumo total en eje calendario con años superpuestos' },
+  { task: 'Open-Meteo histórico (2 años × 10 ciudades)', status: 'done', wave: 2, notes: '7310 filas en weather_history.json, listas para modelo' },
+  { task: 'Selector de escala temporal + cursor sincronizado', status: 'done', wave: 2, notes: '7d/30d/90d/todo, hover en un chart marca los otros' },
+  { task: 'CAMMESA diaria (programación)', status: 'pending', wave: 2, notes: 'Descartado: PDF público dice "Sin novedades", sin contenido útil' },
   { task: 'CAMMESA resultados (dato cerrado)', status: 'pending', wave: 2, notes: 'BLOQUEADO: requiere credenciales o drop manual' },
-  { task: 'ENARGAS stock GNL mensual', status: 'pending', wave: 2, notes: 'Escobar + Bahía Blanca' },
+  { task: 'ENARGAS stock GNL mensual', status: 'pending', wave: 2, notes: 'Escobar + Bahía Blanca — el RDS ya da el snapshot diario' },
   { task: 'SMN alertas meteorológicas', status: 'pending', wave: 2, notes: 'Trigger de picos extremos' },
-  { task: 'Open-Meteo histórico (backfill 2 años)', status: 'pending', wave: 2, notes: 'Mejora el modelo de demanda' },
 
   // Wave 3 — forecast creíble
   { task: 'Features adicionales en modelo de demanda', status: 'pending', wave: 3, notes: 'Día de semana, feriado, estacionalidad' },

@@ -1,6 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts'
 import type { DailyRow, DemandForecastDay } from '../types'
-import { padToDates } from '../utils/charts'
+import { padToDates, formatTooltipDate } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -43,12 +43,13 @@ export default function DemandForecastChart({ data, forecast, allDates, yDomain 
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={rows}>
+      <LineChart data={rows} syncId="outlook">
         <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" />
         <YAxis tick={{ fill: '#64748b', fontSize: 11 }} domain={yDomain ?? ['auto', 'auto']} />
         <Tooltip
           contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
           labelStyle={{ color: '#94a3b8' }}
+          labelFormatter={formatTooltipDate}
           formatter={(v: number, name: string) => (v != null ? [`${v.toFixed(1)} MMm3/d`, name] : ['-', name])}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />

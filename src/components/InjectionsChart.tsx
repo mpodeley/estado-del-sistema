@@ -1,6 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import type { DailyRow } from '../types'
-import { padToDates } from '../utils/charts'
+import { padToDates, formatTooltipDate } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -13,12 +13,13 @@ export default function InjectionsChart({ data, allDates }: Props) {
   const rows = allDates ? padToDates(data, allDates) : data
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={rows}>
+      <AreaChart data={rows} syncId="outlook">
         <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" />
         <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
         <Tooltip
           contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
           labelStyle={{ color: '#94a3b8' }}
+          labelFormatter={formatTooltipDate}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         <Area type="monotone" dataKey="iny_tgs" stackId="1" fill="#10b981" stroke="#10b981" name="TGS" />

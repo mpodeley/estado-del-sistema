@@ -37,6 +37,33 @@ function roundUp(n: number, step: number): number {
   return Math.ceil(n / step) * step
 }
 
+const DOW = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
+
+/** "2026-04-20" -> "lun 20/4". Used as Recharts tooltip label formatter. */
+export function formatTooltipDate(fecha: string): string {
+  if (!fecha || fecha.length < 10) return fecha
+  const dt = new Date(fecha + 'T12:00:00')
+  if (isNaN(dt.getTime())) return fecha
+  return `${DOW[dt.getDay()]} ${dt.getDate()}/${dt.getMonth() + 1}`
+}
+
+export type TimeScale = '7d' | '30d' | '90d' | 'all'
+
+/**
+ * Filter the full date range to the window implied by `scale`. History is
+ * counted back from today; forecast (future) dates are always kept so the
+ * "+ forecast" tail stays visible.
+ */
+export function filterDatesByScale(allDates: string[], scale: TimeScale): string[] {
+  if (scale === 'all' || allDates.length === 0) return allDates
+  const today = new Date().toISOString().slice(0, 10)
+  const daysBack = scale === '7d' ? 7 : scale === '30d' ? 30 : 90
+  const cutoff = new Date(today + 'T00:00:00')
+  cutoff.setDate(cutoff.getDate() - daysBack)
+  const cutoffIso = cutoff.toISOString().slice(0, 10)
+  return allDates.filter((d) => d >= cutoffIso)
+}
+
 interface DemandInputs {
   demanda_total?: number | null
   prioritaria?: number | null

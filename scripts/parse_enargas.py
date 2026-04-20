@@ -14,6 +14,7 @@ Parser is tolerant: if a field is missing from a given PDF it's just omitted
 from the output (not fatal). A global `issues` list is written alongside.
 """
 
+import json
 import os
 import re
 import sys
@@ -26,6 +27,7 @@ from _meta import write_json  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
+ENARGAS_JSON = os.path.join(OUT_DIR, 'enargas.json')
 
 MONTHS = {
     'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6,
@@ -199,14 +201,25 @@ def parse_rds_pdf(path):
     return d
 
 
+def load_existing():
+    """Keep backfilled rows (historical dates) that have no PDF in raw/."""
+    if not os.path.exists(ENARGAS_JSON):
+        return {}
+    with open(ENARGAS_JSON, encoding='utf-8') as f:
+        raw = json.load(f)
+    data = raw.get('data', raw) if isinstance(raw, dict) else raw
+    return {r['fecha']: r for r in (data or []) if r.get('fecha')}
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     rds_pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'RDS_*.pdf')))
-    # Keep old ETGS*.pdf support so we don't lose already-archived files, but
-    # RDS is the authoritative format going forward.
     legacy = sorted(glob.glob(os.path.join(RAW_DIR, 'ETGS*.pdf')))
 
-    rows = []
+    # Start from whatever is already in enargas.json (preserves backfilled rows).
+    by_date = load_existing()
+    print(f"Loaded {len(by_date)} existing rows; processing {len(rds_pdfs)} RDS PDFs from raw/")
+
     issues = []
 
     for p in rds_pdfs:
@@ -219,7 +232,9 @@ def main():
             missing = REQUIRED_FIELDS - row.keys()
             if missing:
                 issues.append(f"{os.path.basename(p)}: missing {sorted(missing)}")
-            rows.append(row)
+            # Upsert by fecha; PDF from raw/ always wins over stored row for that date
+            if row.get('fecha'):
+                by_date[row['fecha']] = row
             print(
                 f"Parsed {os.path.basename(p)}: "
                 f"fecha={row.get('fecha')} LP={row.get('linepack_total')} "
@@ -229,11 +244,6 @@ def main():
             issues.append(f"{os.path.basename(p)}: exception {e}")
             print(f"Error parsing {p}: {e}", file=sys.stderr)
 
-    # Deduplicate by fecha, keep most recent entry
-    by_date = {}
-    for row in rows:
-        key = row.get('fecha') or row['source']
-        by_date[key] = row
     rows = sorted(by_date.values(), key=lambda r: r.get('fecha') or '')
 
     if legacy and not rows:
@@ -246,7 +256,7 @@ def main():
 
     latest = max((r.get('fecha') for r in rows if r.get('fecha')), default=None)
     write_json(
-        os.path.join(OUT_DIR, 'enargas.json'),
+        ENARGAS_JSON,
         rows,
         source='ENARGAS Reporte Diario del Sistema (RDS)',
         source_date=latest,
