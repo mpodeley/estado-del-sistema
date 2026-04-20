@@ -8,6 +8,7 @@ import {
   useEnargasRDS,
   useSMNAlerts,
   useCammesaWeekly,
+  useMEGSA,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -29,6 +30,7 @@ import GuidePage from './components/GuidePage'
 import ForecastPage from './components/ForecastPage'
 import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
+import MEGSAPanel from './components/MEGSAPanel'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
@@ -112,6 +114,7 @@ function OutlookPage() {
   const rdsState = useEnargasRDS()
   const smnState = useSMNAlerts()
   const cammesaWeeklyState = useCammesaWeekly()
+  const megsaState = useMEGSA()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -160,6 +163,7 @@ function OutlookPage() {
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
     { label: 'Clima', generatedAt: weatherState.meta.generated_at },
     { label: 'ENARGAS', generatedAt: rdsState.meta.generated_at },
+    { label: 'MEGSA', generatedAt: megsaState.meta.generated_at },
     { label: 'Forecast', generatedAt: forecastState.meta.generated_at },
   ]
 
@@ -191,6 +195,12 @@ function OutlookPage() {
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>
           <EnargasRDSPanel reports={rdsReports} />
+        </div>
+      )}
+
+      {megsaState.data && megsaState.data.benchmarks?.length > 0 && (
+        <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.green}` }}>
+          <MEGSAPanel data={megsaState.data} />
         </div>
       )}
 

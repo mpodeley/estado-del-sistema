@@ -7,6 +7,7 @@ import {
   useCammesaWeekly,
   useCammesaPPO,
   useSMNAlerts,
+  useMEGSA,
 } from '../hooks/useData'
 
 type Kind = 'auto' | 'manual' | 'blocked' | 'discarded'
@@ -57,6 +58,7 @@ export default function FuentesPage() {
   const cammesaWeekly = useCammesaWeekly()
   const cammesaPPO = useCammesaPPO()
   const smn = useSMNAlerts()
+  const megsa = useMEGSA()
 
   const sources: Source[] = [
     {
@@ -113,6 +115,15 @@ export default function FuentesPage() {
       meta: cammesaPPO.meta,
     },
     {
+      id: 'megsa',
+      name: 'MEGSA — benchmarks, USD y rondas de negociación',
+      url: 'https://www.megsa.ar/',
+      kind: 'auto',
+      freq: 'Continua',
+      note: 'API pública (megsa.ar/api): Natural Gas spot (Henry Hub), TTF, Brent, WTI; USD/ARS; calendario de rondas publicadas. El precio spot doméstico queda detrás de login de agente — agent portal en negociacion.megsa.ar.',
+      meta: megsa.meta,
+    },
+    {
       id: 'smn-alertas',
       name: 'SMN — alertas meteorológicas',
       url: 'https://ssl.smn.gob.ar/dpd/zipopendata.php?dato=alertas',
@@ -150,14 +161,6 @@ export default function FuentesPage() {
       kind: 'discarded',
       freq: 'Diaria',
       note: 'Descartado: el PDF público dice "Sin novedades" — no contiene data operativa útil.',
-    },
-    {
-      id: 'megsa',
-      name: 'MEGSA — precios spot',
-      url: 'https://www.megsa.com.ar/',
-      kind: 'blocked',
-      freq: 'Diaria',
-      note: 'Pendiente de investigar. Sería útil para contexto comercial.',
     },
   ]
 

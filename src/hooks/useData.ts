@@ -95,3 +95,32 @@ export interface ForecastBacktest {
 }
 
 export const useForecastBacktest = () => useJson<ForecastBacktest>('./data/forecast_backtest.json')
+
+export interface MEGSABenchmark {
+  product: string
+  productName: string
+  units: string
+  currentPrice: number
+  previousPrice: number | null
+  nominalDifference: number | null
+  percentageDifference: number | null
+  currentPeriod: string
+  displayName: string
+  marketType?: string
+}
+
+export interface MEGSARonda {
+  id: number
+  descripcion: string
+  publicaDesde: string
+  fechaUltimaModificacion: string
+}
+
+export interface MEGSAPayload {
+  benchmarks: MEGSABenchmark[]
+  dolar: { currentPrice?: number; previousPrice?: number | null; percentageDifference?: number | null; lastUpdated?: string } | null
+  rondas: MEGSARonda[]
+  fetched_at: string
+}
+
+export const useMEGSA = () => useJson<MEGSAPayload>('./data/megsa.json')
