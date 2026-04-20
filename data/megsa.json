@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-04-20T18:23:25+00:00",
+  "source": "MEGSA public API (megsa.ar/api)",
+  "source_date": null,
+  "data": {
+    "benchmarks": [
+      {
+        "product": "NAT_GAS",
+        "productName": "Natural Gas",
+        "series": "NATURAL_GAS_USD",
+        "seriesDescription": "spot_price",
+        "units": "USD/MMbtu",
+        "currentPrice": 2.7,
+        "currentPeriod": "2026-04-20T00:00:00",
+        "previousPrice": 2.67,
+        "previousPeriod": null,
+        "nominalDifference": 0.03,
+        "percentageDifference": 1.12,
+        "lastUpdated": "2026-04-20T15:20:06.8654167",
+        "marketType": "Gas",
+        "displayName": "NAT GAS"
+      },
+      {
+        "product": "DUTCH_TTF_EUR",
+        "productName": "TTF GAS Fut",
+        "series": "DUTCH_TTF_EUR",
+        "seriesDescription": "spot_price",
+        "units": "€/MWh",
+        "currentPrice": 39.65,
+        "currentPeriod": "2026-04-20T00:00:00",
+        "previousPrice": 38.76,
+        "previousPeriod": null,
+        "nominalDifference": 0.89,
+        "percentageDifference": 2.3,
+        "lastUpdated": "2026-04-20T15:20:07.1991218",
+        "marketType": "Gas",
+        "displayName": "TTF GAS Fut"
+      },
+      {
+        "product": "BRENT",
+        "productName": "UK Brent Crude Oil",
+        "series": "BRENT_CRUDE_USD",
+        "seriesDescription": "spot_price",
+        "units": "USD/bbl",
+        "currentPrice": 95.33,
+        "currentPeriod": "2026-04-20T00:00:00",
+        "previousPrice": 90.38,
+        "previousPeriod": null,
+        "nominalDifference": 4.95,
+        "percentageDifference": 5.48,
+        "lastUpdated": "2026-04-20T15:20:06.3427925",
+        "marketType": "Oil",
+        "displayName": "BRENT"
+      },
+      {
+        "product": "WTI",
+        "productName": "WTI Crude Oil",
+        "series": "WTI_USD",
+        "seriesDescription": "spot_price",
+        "units": "USD/bbl",
+        "currentPrice": 89.4,
+        "currentPeriod": "2026-04-20T00:00:00",
+        "previousPrice": 85.76,
+        "previousPeriod": null,
+        "nominalDifference": 3.64,
+        "percentageDifference": 4.24,
+        "lastUpdated": "2026-04-20T15:20:05.9329965",
+        "marketType": "Oil",
+        "displayName": "WTI"
+      }
+    ],
+    "dolar": {
+      "currency": "USD",
+      "currencyName": "Dolar U.S.A",
+      "currentPrice": 1395.0,
+      "currentPeriod": "2026-04-20T11:54:00",
+      "previousPrice": 1390.0,
+      "previousPeriod": "2026-04-20T09:55:00",
+      "nominalDifference": 5.0,
+      "percentageDifference": 0.3597122302158273,
+      "lastUpdated": "2026-04-20T12:00:02.5733116",
+      "marketType": "Dollar",
+      "displayName": "DOLAR"
+    },
+    "rondas": [
+      {
+        "id": 378.0,
+        "descripcion": "SUBASTA - PRODUCTORES EN GENERAL Y COMERCIALIZADORAS\r\nPERIODO DE ABASTECIMIENTO: 01/05/2026 al 17/05/2026\r\nFecha de Negociación: 23/04 de 10:00 a 10:30",
+        "publicaDesde": "2026-04-17T00:00:00",
+        "fechaUltimaModificacion": "2026-04-17T09:39:00"
+      }
+    ],
+    "fetched_at": "2026-04-20T18:23:25+00:00"
+  },
+  "errors": null
+}
