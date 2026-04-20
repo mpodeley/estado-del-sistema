@@ -10,6 +10,7 @@ import {
   useCammesaWeekly,
   useMEGSA,
   useTramos,
+  useCammesaPPO,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -119,6 +120,7 @@ function OutlookPage() {
   const cammesaWeeklyState = useCammesaWeekly()
   const megsaState = useMEGSA()
   const tramosState = useTramos()
+  const ppoState = useCammesaPPO()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -275,7 +277,7 @@ function OutlookPage() {
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Despacho eléctrico — Combustibles</h3>
-          <FuelMixChart data={data} cammesaDays={cammesaDays} allDates={visibleDates} />
+          <FuelMixChart data={data} cammesaDays={cammesaDays} ppoRows={ppoState.data ?? []} allDates={visibleDates} />
         </div>
       </ChartGroup>
 

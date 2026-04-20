@@ -1,6 +1,6 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceArea } from 'recharts'
 import type { DailyRow } from '../types'
-import { padToDates, formatTooltipDate } from '../utils/charts'
+import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -11,6 +11,7 @@ interface Props {
 
 export default function InjectionsChart({ data, allDates }: Props) {
   const rows = allDates ? padToDates(data, allDates) : data
+  const weekends = weekendSpans(rows.map((r) => r.fecha))
   return (
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart data={rows} syncId="outlook">
@@ -22,6 +23,9 @@ export default function InjectionsChart({ data, allDates }: Props) {
           labelFormatter={formatTooltipDate}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
+        {weekends.map(([s, e], i) => (
+          <ReferenceArea key={`wk-${i}`} x1={s} x2={e} fill="#64748b" fillOpacity={0.08} strokeOpacity={0} ifOverflow="extendDomain" />
+        ))}
         <Area type="monotone" dataKey="iny_tgs" stackId="1" fill="#10b981" stroke="#10b981" name="TGS" />
         <Area type="monotone" dataKey="iny_tgn" stackId="1" fill="#3b82f6" stroke="#3b82f6" name="TGN" />
         <Area type="monotone" dataKey="iny_enarsa" stackId="1" fill="#f59e0b" stroke="#f59e0b" name="ENARSA" />

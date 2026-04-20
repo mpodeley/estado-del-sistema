@@ -1,6 +1,6 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea, Legend } from 'recharts'
 import type { DailyRow } from '../types'
-import { padToDates, formatTooltipDate } from '../utils/charts'
+import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -34,6 +34,7 @@ export default function LinepackChart({ data, allDates }: Props) {
     tgn: d.linepack_tgn,
   }))
   const rows = allDates ? padToDates(base, allDates) : base
+  const weekends = weekendSpans(rows.map((r) => r.fecha))
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -46,6 +47,9 @@ export default function LinepackChart({ data, allDates }: Props) {
           labelFormatter={formatTooltipDate}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
+        {weekends.map(([s, e], i) => (
+          <ReferenceArea key={`wk-${i}`} x1={s} x2={e} fill="#64748b" fillOpacity={0.08} strokeOpacity={0} ifOverflow="extendDomain" />
+        ))}
 
         {limInfTgs != null && (
           <ReferenceLine y={limInfTgs} stroke={TGS} strokeDasharray="4 4" strokeOpacity={0.5}
