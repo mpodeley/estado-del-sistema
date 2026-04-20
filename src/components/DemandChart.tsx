@@ -1,6 +1,6 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine, ReferenceArea } from 'recharts'
 import type { DailyRow, DemandForecastDay } from '../types'
-import { padToDates, formatTooltipDate } from '../utils/charts'
+import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -98,6 +98,7 @@ export default function DemandChart({
 
   const base = [...historical, ...forecastRows]
   const rows = allDates ? padToDates(base, allDates) : base
+  const weekends = weekendSpans(rows.map((r) => r.fecha))
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -110,6 +111,9 @@ export default function DemandChart({
           labelFormatter={formatTooltipDate}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
+        {weekends.map(([s, e], i) => (
+          <ReferenceArea key={`wk-${i}`} x1={s} x2={e} fill="#64748b" fillOpacity={0.08} strokeOpacity={0} ifOverflow="extendDomain" />
+        ))}
         {forecastRows.length > 0 && lastHistorical && (
           <ReferenceLine x={lastHistorical} stroke="#64748b" strokeDasharray="3 3" label={{ value: 'Hoy', fill: '#64748b', fontSize: 10 }} />
         )}

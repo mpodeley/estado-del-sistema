@@ -67,7 +67,8 @@ def dow_offsets(series, slope, intercept):
     return {i: (sums[i] / counts[i]) if counts[i] else 0.0 for i in range(7)}
 
 
-def segment_series(rows, key_path):
+def segment_series(rows, key_path, transform=None):
+    transform = transform or (lambda t: t)
     series = []
     for r in rows:
         temp = (r.get('temperatura_ba') or {}).get('tm')
@@ -79,14 +80,14 @@ def segment_series(rows, key_path):
         if temp is None or val is None or not r.get('fecha'):
             continue
         try:
-            series.append((float(temp), float(val), r['fecha']))
+            series.append((transform(float(temp)), float(val), r['fecha']))
         except (TypeError, ValueError):
             continue
     return series
 
 
-def fit_and_predict(train_rows, target_temp, target_fecha, key_path):
-    series = segment_series(train_rows, key_path)
+def fit_and_predict(train_rows, target_temp, target_fecha, key_path, transform=None):
+    series = segment_series(train_rows, key_path, transform)
     pairs = [(t, y) for t, y, _ in series]
     slope, intercept = linear_regression(pairs)
     if slope is None:
@@ -96,13 +97,23 @@ def fit_and_predict(train_rows, target_temp, target_fecha, key_path):
         dow = datetime.strptime(target_fecha, '%Y-%m-%d').weekday()
     except ValueError:
         dow = 0
-    return slope * target_temp + intercept + offsets.get(dow, 0.0)
+    x = (transform or (lambda t: t))(target_temp)
+    return slope * x + intercept + offsets.get(dow, 0.0)
 
 
+HDD_BASE = 18.0
+CDD_BASE = 22.0
+
+
+def _hdd(t): return max(0.0, HDD_BASE - t)
+def _cdd(t): return max(0.0, t - CDD_BASE)
+
+
+# (key_path, transform) — must match generate_forecast.py.
 SEGMENTS = {
-    'prioritaria': ['consumos', 'prioritaria', 'programa'],
-    'usinas': ['consumos', 'cammesa', 'programa'],
-    'demanda_total': ['consumo_total_estimado'],
+    'prioritaria': (['consumos', 'prioritaria', 'programa'], _hdd),
+    'usinas': (['consumos', 'cammesa', 'programa'], None),
+    'demanda_total': (['consumo_total_estimado'], None),
 }
 
 
@@ -142,7 +153,7 @@ def main():
             continue
         test_pos = len(rows) - len(test_rows) + idx
         train = rows[max(0, test_pos - args.train_days):test_pos]
-        for seg_key, path in SEGMENTS.items():
+        for seg_key, (path, transform) in SEGMENTS.items():
             actual = row
             for p in path:
                 actual = actual.get(p) if isinstance(actual, dict) else None
@@ -152,7 +163,7 @@ def main():
                 actual_f = float(actual) if actual is not None else None
             except (TypeError, ValueError):
                 actual_f = None
-            predicted = fit_and_predict(train, float(temp), fecha, path)
+            predicted = fit_and_predict(train, float(temp), fecha, path, transform)
             series_by_seg[seg_key].append({
                 'fecha': fecha,
                 'actual': round(actual_f, 2) if actual_f is not None else None,

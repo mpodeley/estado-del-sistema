@@ -47,6 +47,33 @@ export function formatTooltipDate(fecha: string): string {
   return `${DOW[dt.getDay()]} ${dt.getDate()}/${dt.getMonth() + 1}`
 }
 
+/**
+ * Given an ordered list of fechas (YYYY-MM-DD), return [saturday, sunday]
+ * pairs — used as x1/x2 bounds for weekend ReferenceArea bands.
+ * Each pair covers a single weekend; if a fecha happens to be Saturday with
+ * no Sunday visible (end of range), we still emit [sat, sat] so it shows.
+ */
+export function weekendSpans(dates: string[]): [string, string][] {
+  const spans: [string, string][] = []
+  for (let i = 0; i < dates.length; i++) {
+    const iso = dates[i]
+    if (!iso || iso.length < 10) continue
+    const dt = new Date(iso + 'T12:00:00')
+    if (isNaN(dt.getTime())) continue
+    const dow = dt.getDay()
+    // Saturday = 6. Span ends at the following Sunday if visible.
+    if (dow === 6) {
+      const next = dates[i + 1]
+      if (next) spans.push([iso, next])
+      else spans.push([iso, iso])
+    } else if (dow === 0 && (i === 0 || new Date(dates[i - 1] + 'T12:00:00').getDay() !== 6)) {
+      // Isolated Sunday at start of range — weekend still needs marking.
+      spans.push([iso, iso])
+    }
+  }
+  return spans
+}
+
 export type TimeScale = '7d' | '30d' | '90d' | 'all'
 
 /**

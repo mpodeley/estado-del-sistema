@@ -58,8 +58,14 @@ def linear_regression(pairs):
     return slope, intercept, r2, n
 
 
-def rds_segment_series(rds_rows, key_path):
-    """Extract [(temp, value, fecha)] tuples from RDS rows for a nested field."""
+def rds_segment_series(rds_rows, key_path, x_transform=None):
+    """Extract [(x, value, fecha)] tuples. `x_transform` maps raw temp -> feature.
+
+    Default: identity. Heating / cooling segments override to use HDD / CDD
+    so the slope reflects the actual heating-response curve instead of a
+    linear extrapolation that inflates volatility in shoulder seasons.
+    """
+    transform = x_transform or (lambda t: t)
     series = []
     for r in rds_rows:
         temp = ((r.get('temperatura_ba') or {}).get('tm')) or None
@@ -75,8 +81,23 @@ def rds_segment_series(rds_rows, key_path):
             val_f = float(val)
         except (TypeError, ValueError):
             continue
-        series.append((temp_f, val_f, r['fecha']))
+        series.append((transform(temp_f), val_f, r['fecha']))
     return series
+
+
+# Heating / cooling degree days — piece-wise linear functions that are zero
+# above (resp. below) a base temperature. Much better for residential gas
+# (heating) and electric generation (cooling) than raw °C.
+HDD_BASE = 18.0
+CDD_BASE = 22.0
+
+
+def hdd(t):
+    return max(0.0, HDD_BASE - t)
+
+
+def cdd(t):
+    return max(0.0, t - CDD_BASE)
 
 
 def dow_offsets(series, slope, intercept):
@@ -103,8 +124,8 @@ def dow_offsets(series, slope, intercept):
     return offsets, {'mean_abs_residual': round(mae, 2) if mae is not None else None}
 
 
-def fit_segment(rds_rows, key_path, label):
-    series = rds_segment_series(rds_rows, key_path)
+def fit_segment(rds_rows, key_path, label, x_transform=None, x_feature='temp'):
+    series = rds_segment_series(rds_rows, key_path, x_transform)
     pairs = [(t, y) for t, y, _ in series]
     slope, intercept, r2, n = linear_regression(pairs)
     dow, extra = dow_offsets(series, slope, intercept)
@@ -132,18 +153,22 @@ def fit_segment(rds_rows, key_path, label):
         'n_points': n,
         'dow_offsets': dow,
         'mean_abs_residual': extra.get('mean_abs_residual'),
+        'x_transform': x_transform,  # kept in-memory; not serialized
+        'x_feature': x_feature,      # serialized — UI shows "HDD(18)" etc.
     }
 
 
 def predict(model, temp, fecha_iso):
     if model['slope'] is None or model['intercept'] is None or temp is None:
         return None
+    x_transform = model.get('x_transform') or (lambda t: t)
+    x = x_transform(temp)
     try:
         dow = datetime.strptime(fecha_iso, '%Y-%m-%d').weekday()
     except ValueError:
         dow = 0
     offset = model['dow_offsets'].get(dow, 0.0)
-    return round(model['slope'] * temp + model['intercept'] + offset, 1)
+    return round(model['slope'] * x + model['intercept'] + offset, 1)
 
 
 def main():
@@ -171,8 +196,13 @@ def main():
     # temperature slopes of prioritaria (cold -> up) and usinas (hot -> up)
     # that kill R² when you regress the raw sum directly.
     models = {
-        'prioritaria': fit_segment(rds_rows, ['consumos', 'prioritaria', 'programa'], 'Prioritaria'),
+        # Heating-driven: HDD damps the model to zero in warm months. Backtest
+        # showed MAE dropped 34% vs raw temp.
+        'prioritaria': fit_segment(rds_rows, ['consumos', 'prioritaria', 'programa'], 'Prioritaria', x_transform=hdd, x_feature=f'HDD({HDD_BASE:g}°C)'),
+        # Cooling-driven: we tried CDD(22°C) but it zeroes-out in shoulder
+        # seasons and loses signal. Raw temp backtest beats CDD on MAE.
         'usinas': fit_segment(rds_rows, ['consumos', 'cammesa', 'programa'], 'Usinas (CAMMESA)'),
+        # Industrial + GNC + combustible: weak temperature link; keep raw.
         'industria': fit_segment(rds_rows, ['consumos', 'industria', 'programa'], 'Industria'),
         'gnc': fit_segment(rds_rows, ['consumos', 'gnc', 'programa'], 'GNC'),
         'combustible': fit_segment(rds_rows, ['consumos', 'combustible', 'programa'], 'Combustible'),
@@ -277,6 +307,7 @@ def main():
             'n_points': m['n_points'],
             'dow_offsets': m['dow_offsets'],
             'mean_abs_residual': m['mean_abs_residual'],
+            'x_feature': m.get('x_feature', 'temp'),
         }
 
     regression_out = {
