@@ -124,3 +124,13 @@ export interface MEGSAPayload {
 }
 
 export const useMEGSA = () => useJson<MEGSAPayload>('./data/megsa.json')
+
+export interface TramoRow {
+  fecha: string
+  gas_andes_autorizacion: number | null
+  cco_capacidad: number | null
+  cco_corte: number | null
+  tgs_nqn_capacidad: number | null
+  tgs_nqn_corte: number | null
+}
+export const useTramos = () => useJson<TramoRow[]>('./data/tramos.json')

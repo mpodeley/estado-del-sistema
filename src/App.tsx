@@ -9,6 +9,7 @@ import {
   useSMNAlerts,
   useCammesaWeekly,
   useMEGSA,
+  useTramos,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -32,6 +33,7 @@ import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import MEGSAPanel from './components/MEGSAPanel'
 import SystemFlowPanel from './components/SystemFlowPanel'
+import TransportRestrictionsPanel from './components/TransportRestrictionsPanel'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
@@ -116,6 +118,7 @@ function OutlookPage() {
   const smnState = useSMNAlerts()
   const cammesaWeeklyState = useCammesaWeekly()
   const megsaState = useMEGSA()
+  const tramosState = useTramos()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -196,6 +199,12 @@ function OutlookPage() {
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl }}>
           <SystemFlowPanel latest={rdsReports[rdsReports.length - 1] as never} />
+        </div>
+      )}
+
+      {tramosState.data && tramosState.data.length > 0 && (
+        <div style={{ ...card, marginTop: space.xl }}>
+          <TransportRestrictionsPanel rows={tramosState.data} />
         </div>
       )}
 

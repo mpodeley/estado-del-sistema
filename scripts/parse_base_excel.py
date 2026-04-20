@@ -192,6 +192,43 @@ def parse_conv_valores(wb):
     return deduped, len(col_map), len(SCHEMA)
 
 
+def parse_tramos(wb):
+    """Parse transport restrictions from sheet "Datos" cols 82-86.
+
+    Column layout inferred from headers in rows 4-5:
+      82: Gas Andes — Autorización (export capacity granted, MMm³/d)
+      83: CCO        — Capacidad (pipeline capacity, MMm³/d)
+      84: CCO        — Corte (reduction vs capacity; negative = cut)
+      85: TGS NQN    — Capacidad
+      86: TGS NQN    — Corte
+    """
+    if 'Datos' not in wb.sheetnames:
+        return []
+    ws = wb['Datos']
+    rows = []
+    for r in range(6, ws.max_row + 1):
+        fecha = ws.cell(r, 1).value
+        if fecha is None:
+            continue
+        fecha_str = fecha.strftime('%Y-%m-%d') if isinstance(fecha, datetime) else str(fecha)
+        gas_andes = safe_float(ws.cell(r, 82).value)
+        cco_cap = safe_float(ws.cell(r, 83).value)
+        cco_corte = safe_float(ws.cell(r, 84).value)
+        tgs_nqn_cap = safe_float(ws.cell(r, 85).value)
+        tgs_nqn_corte = safe_float(ws.cell(r, 86).value)
+        if all(v is None for v in (gas_andes, cco_cap, cco_corte, tgs_nqn_cap, tgs_nqn_corte)):
+            continue
+        rows.append({
+            'fecha': fecha_str,
+            'gas_andes_autorizacion': gas_andes,
+            'cco_capacidad': cco_cap,
+            'cco_corte': cco_corte,
+            'tgs_nqn_capacidad': tgs_nqn_cap,
+            'tgs_nqn_corte': tgs_nqn_corte,
+        })
+    return rows
+
+
 def parse_comments(wb):
     comments = {}
 
@@ -244,6 +281,15 @@ def main():
         manual, source=source, source_date=latest_date,
     )
     print(f"comments_manual.json: {len(manual.get('daily', []))} daily, {len(manual.get('weekly', []))} weekly")
+
+    # Transport restrictions: Gas Andes / CCO / TGS NQN from sheet "Datos".
+    tramos = parse_tramos(wb)
+    tramos_latest = tramos[-1]['fecha'] if tramos else None
+    write_json(
+        os.path.join(OUT_DIR, 'tramos.json'),
+        tramos, source=source, source_date=tramos_latest,
+    )
+    print(f"tramos.json: {len(tramos)} rows")
 
     wb.close()
 

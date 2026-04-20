@@ -24,6 +24,23 @@ from _meta import write_json  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 ENARGAS_JSON = os.path.join(OUT_DIR, 'enargas.json')
+HISTORY_JSON = os.path.join(OUT_DIR, 'weather_history.json')
+
+
+def load_multi_city_temp():
+    """Mean temp across 10 cities per fecha; matches generate_forecast.py."""
+    if not os.path.exists(HISTORY_JSON):
+        return {}
+    wh = load_envelope(HISTORY_JSON)
+    by_fecha: dict = {}
+    for city in wh or []:
+        for h in city.get('history', []):
+            if not h.get('fecha'):
+                continue
+            t = h.get('temp_prom')
+            if t is not None:
+                by_fecha.setdefault(h['fecha'], []).append(float(t))
+    return {k: sum(v) / len(v) for k, v in by_fecha.items() if v}
 
 
 def load_envelope(path):
@@ -67,27 +84,32 @@ def dow_offsets(series, slope, intercept):
     return {i: (sums[i] / counts[i]) if counts[i] else 0.0 for i in range(7)}
 
 
-def segment_series(rows, key_path, transform=None):
+def segment_series(rows, key_path, transform=None, temp_override=None):
     transform = transform or (lambda t: t)
     series = []
     for r in rows:
-        temp = (r.get('temperatura_ba') or {}).get('tm')
+        fecha = r.get('fecha')
+        # temp_override maps fecha -> multi-city mean; else use BA tm.
+        if temp_override is not None and fecha in temp_override:
+            temp = temp_override[fecha]
+        else:
+            temp = (r.get('temperatura_ba') or {}).get('tm')
         val = r
         for p in key_path:
             if val is None:
                 break
             val = val.get(p) if isinstance(val, dict) else None
-        if temp is None or val is None or not r.get('fecha'):
+        if temp is None or val is None or not fecha:
             continue
         try:
-            series.append((transform(float(temp)), float(val), r['fecha']))
+            series.append((transform(float(temp)), float(val), fecha))
         except (TypeError, ValueError):
             continue
     return series
 
 
-def fit_and_predict(train_rows, target_temp, target_fecha, key_path, transform=None):
-    series = segment_series(train_rows, key_path, transform)
+def fit_and_predict(train_rows, target_temp, target_fecha, key_path, transform=None, temp_override=None):
+    series = segment_series(train_rows, key_path, transform, temp_override)
     pairs = [(t, y) for t, y, _ in series]
     slope, intercept = linear_regression(pairs)
     if slope is None:
@@ -97,7 +119,9 @@ def fit_and_predict(train_rows, target_temp, target_fecha, key_path, transform=N
         dow = datetime.strptime(target_fecha, '%Y-%m-%d').weekday()
     except ValueError:
         dow = 0
-    x = (transform or (lambda t: t))(target_temp)
+    # Use the multi-city mean for the target too, when available.
+    target = temp_override.get(target_fecha) if temp_override and target_fecha in temp_override else target_temp
+    x = (transform or (lambda t: t))(target)
     return slope * x + intercept + offsets.get(dow, 0.0)
 
 
@@ -109,11 +133,11 @@ def _hdd(t): return max(0.0, HDD_BASE - t)
 def _cdd(t): return max(0.0, t - CDD_BASE)
 
 
-# (key_path, transform) — must match generate_forecast.py.
+# (key_path, transform, use_multi_city) — must match generate_forecast.py.
 SEGMENTS = {
-    'prioritaria': (['consumos', 'prioritaria', 'programa'], _hdd),
-    'usinas': (['consumos', 'cammesa', 'programa'], None),
-    'demanda_total': (['consumo_total_estimado'], None),
+    'prioritaria': (['consumos', 'prioritaria', 'programa'], _hdd, True),
+    'usinas': (['consumos', 'cammesa', 'programa'], None, False),
+    'demanda_total': (['consumo_total_estimado'], None, False),
 }
 
 
@@ -143,7 +167,9 @@ def main():
         return 1
 
     test_rows = rows[-args.test_days:]
-    print(f"Backtesting {len(test_rows)} days with train window {args.train_days}")
+    multi_city = load_multi_city_temp()
+    print(f"Backtesting {len(test_rows)} days with train window {args.train_days}"
+          + (f" · multi-city mean loaded for {len(multi_city)} fechas" if multi_city else ""))
 
     series_by_seg = {k: [] for k in SEGMENTS}
     for idx, row in enumerate(test_rows):
@@ -153,7 +179,7 @@ def main():
             continue
         test_pos = len(rows) - len(test_rows) + idx
         train = rows[max(0, test_pos - args.train_days):test_pos]
-        for seg_key, (path, transform) in SEGMENTS.items():
+        for seg_key, (path, transform, use_multi) in SEGMENTS.items():
             actual = row
             for p in path:
                 actual = actual.get(p) if isinstance(actual, dict) else None
@@ -163,7 +189,8 @@ def main():
                 actual_f = float(actual) if actual is not None else None
             except (TypeError, ValueError):
                 actual_f = None
-            predicted = fit_and_predict(train, float(temp), fecha, path, transform)
+            override = multi_city if use_multi else None
+            predicted = fit_and_predict(train, float(temp), fecha, path, transform, override)
             series_by_seg[seg_key].append({
                 'fecha': fecha,
                 'actual': round(actual_f, 2) if actual_f is not None else None,

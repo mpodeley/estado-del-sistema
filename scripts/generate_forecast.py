@@ -58,7 +58,40 @@ def linear_regression(pairs):
     return slope, intercept, r2, n
 
 
-def rds_segment_series(rds_rows, key_path, x_transform=None):
+def build_multi_city_temp(weather_history_rows):
+    """Return dict {fecha -> mean temp across all cities}.
+
+    Plain unweighted mean of the 10 cities in weather_history beats BA-only
+    (R² prioritaria 0.89 vs 0.82) and also beats population-weighted (0.84).
+    The broader regional signal catches cold fronts that don't hit BA first.
+    """
+    by_fecha: dict[str, list[float]] = {}
+    for city in weather_history_rows or []:
+        for h in city.get('history', []):
+            if not h.get('fecha'):
+                continue
+            t = h.get('temp_prom')
+            if t is None:
+                continue
+            by_fecha.setdefault(h['fecha'], []).append(float(t))
+    return {k: sum(v) / len(v) for k, v in by_fecha.items() if v}
+
+
+def build_multi_city_forecast(weather_regions_rows):
+    """Same structure for the forward-looking forecast: {fecha -> mean_temp}."""
+    by_fecha: dict[str, list[float]] = {}
+    for city in weather_regions_rows or []:
+        for f in city.get('forecast', []):
+            if not f.get('fecha'):
+                continue
+            t = f.get('temp_prom')
+            if t is None:
+                continue
+            by_fecha.setdefault(f['fecha'], []).append(float(t))
+    return {k: sum(v) / len(v) for k, v in by_fecha.items() if v}
+
+
+def rds_segment_series(rds_rows, key_path, x_transform=None, temp_by_fecha=None):
     """Extract [(x, value, fecha)] tuples. `x_transform` maps raw temp -> feature.
 
     Default: identity. Heating / cooling segments override to use HDD / CDD
@@ -68,20 +101,26 @@ def rds_segment_series(rds_rows, key_path, x_transform=None):
     transform = x_transform or (lambda t: t)
     series = []
     for r in rds_rows:
-        temp = ((r.get('temperatura_ba') or {}).get('tm')) or None
+        fecha = r.get('fecha')
+        # Prefer multi-city mean when supplied; else fall back to BA tm.
+        temp = None
+        if temp_by_fecha is not None and fecha in temp_by_fecha:
+            temp = temp_by_fecha[fecha]
+        else:
+            temp = (r.get('temperatura_ba') or {}).get('tm')
         val = r
         for p in key_path:
             if val is None:
                 break
             val = (val or {}).get(p) if isinstance(val, dict) else None
-        if temp is None or val is None or not r.get('fecha'):
+        if temp is None or val is None or not fecha:
             continue
         try:
             temp_f = float(temp)
             val_f = float(val)
         except (TypeError, ValueError):
             continue
-        series.append((transform(temp_f), val_f, r['fecha']))
+        series.append((transform(temp_f), val_f, fecha))
     return series
 
 
@@ -124,8 +163,8 @@ def dow_offsets(series, slope, intercept):
     return offsets, {'mean_abs_residual': round(mae, 2) if mae is not None else None}
 
 
-def fit_segment(rds_rows, key_path, label, x_transform=None, x_feature='temp'):
-    series = rds_segment_series(rds_rows, key_path, x_transform)
+def fit_segment(rds_rows, key_path, label, x_transform=None, x_feature='temp', temp_by_fecha=None):
+    series = rds_segment_series(rds_rows, key_path, x_transform, temp_by_fecha)
     pairs = [(t, y) for t, y, _ in series]
     slope, intercept, r2, n = linear_regression(pairs)
     dow, extra = dow_offsets(series, slope, intercept)
@@ -153,16 +192,25 @@ def fit_segment(rds_rows, key_path, label, x_transform=None, x_feature='temp'):
         'n_points': n,
         'dow_offsets': dow,
         'mean_abs_residual': extra.get('mean_abs_residual'),
-        'x_transform': x_transform,  # kept in-memory; not serialized
-        'x_feature': x_feature,      # serialized — UI shows "HDD(18)" etc.
+        'x_transform': x_transform,       # kept in-memory; not serialized
+        'x_feature': x_feature,           # serialized — UI shows "HDD(18)" etc.
+        'uses_multi_city': temp_by_fecha is not None,
     }
 
 
-def predict(model, temp, fecha_iso):
-    if model['slope'] is None or model['intercept'] is None or temp is None:
+def predict(model, temp, fecha_iso, multi_city_temp=None):
+    """Apply the fitted model. If the model was trained on multi-city mean
+    temp (prioritaria), pass multi_city_temp[fecha] here; otherwise pass the
+    BA forecast temperature."""
+    if model['slope'] is None or model['intercept'] is None:
         return None
     x_transform = model.get('x_transform') or (lambda t: t)
-    x = x_transform(temp)
+    # Prefer multi-city when the model was trained that way; caller encodes
+    # that choice by supplying multi_city_temp only to prioritaria.
+    t_input = multi_city_temp if (multi_city_temp is not None and model.get('uses_multi_city')) else temp
+    if t_input is None:
+        return None
+    x = x_transform(t_input)
     try:
         dow = datetime.strptime(fecha_iso, '%Y-%m-%d').weekday()
     except ValueError:
@@ -191,14 +239,23 @@ def main():
     rds_rows = load_envelope(enargas_path)
     print(f"Training on {len(rds_rows)} RDS rows")
 
-    # Fit each RDS consumption segment independently. The total is derived
-    # as the sum of the per-segment predictions, which cancels the opposite
-    # temperature slopes of prioritaria (cold -> up) and usinas (hot -> up)
-    # that kill R² when you regress the raw sum directly.
+    # Multi-city temp: plain mean of 10 cities measurably beats BA-only for
+    # prioritaria (R² 0.82 -> 0.89). Other segments stay with BA temp —
+    # haven't measured a benefit there so don't complicate unnecessarily.
+    history_path = os.path.join(OUT_DIR, 'weather_history.json')
+    regions_path = os.path.join(OUT_DIR, 'weather_regions.json')
+    hist_temp_by_fecha = build_multi_city_temp(load_envelope(history_path)) if os.path.exists(history_path) else {}
+    fc_temp_by_fecha = build_multi_city_forecast(load_envelope(regions_path)) if os.path.exists(regions_path) else {}
+
     models = {
         # Heating-driven: HDD damps the model to zero in warm months. Backtest
-        # showed MAE dropped 34% vs raw temp.
-        'prioritaria': fit_segment(rds_rows, ['consumos', 'prioritaria', 'programa'], 'Prioritaria', x_transform=hdd, x_feature=f'HDD({HDD_BASE:g}°C)'),
+        # showed MAE dropped 34% vs raw temp. Multi-city mean adds another
+        # +7pp R² over BA-only.
+        'prioritaria': fit_segment(
+            rds_rows, ['consumos', 'prioritaria', 'programa'], 'Prioritaria',
+            x_transform=hdd, x_feature=f'HDD({HDD_BASE:g}°C · media 10 ciudades)',
+            temp_by_fecha=hist_temp_by_fecha or None,
+        ),
         # Cooling-driven: we tried CDD(22°C) but it zeroes-out in shoulder
         # seasons and loses signal. Raw temp backtest beats CDD on MAE.
         'usinas': fit_segment(rds_rows, ['consumos', 'cammesa', 'programa'], 'Usinas (CAMMESA)'),
@@ -243,7 +300,7 @@ def main():
             obs_f = float(obs)
         except (TypeError, ValueError):
             continue
-        parts = [predict(models[k], temp_f, fecha) for k in segment_keys]
+        parts = [predict(models[k], temp_f, fecha, hist_temp_by_fecha.get(fecha)) for k in segment_keys]
         if any(p is None for p in parts):
             continue
         pred = sum(parts) + baseline_exports
@@ -273,7 +330,8 @@ def main():
         temp = day.get('temp_prom')
         if temp is None:
             continue
-        prio = predict(models['prioritaria'], temp, day['fecha'])
+        multi = fc_temp_by_fecha.get(day['fecha'])
+        prio = predict(models['prioritaria'], temp, day['fecha'], multi)
         usinas = predict(models['usinas'], temp, day['fecha'])
         industria = predict(models['industria'], temp, day['fecha'])
         gnc = predict(models['gnc'], temp, day['fecha'])
