@@ -23,3 +23,21 @@ export function useComments() {
   }, [])
   return data
 }
+
+export interface ForecastDay {
+  fecha: string
+  temp_max: number | null
+  temp_min: number | null
+  temp_prom: number | null
+}
+
+export function useWeather() {
+  const [data, setData] = useState<ForecastDay[]>([])
+  useEffect(() => {
+    fetch('./data/weather.json')
+      .then(r => r.json())
+      .then(d => setData(d.forecast || []))
+      .catch(() => {})
+  }, [])
+  return data
+}

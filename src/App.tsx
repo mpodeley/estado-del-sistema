@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDaily, useComments } from './hooks/useData'
+import { useDaily, useComments, useWeather } from './hooks/useData'
 import Header from './components/Header'
 import KPICards from './components/KPICards'
 import SystemPanel from './components/SystemPanel'
@@ -43,6 +43,7 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
 function OutlookPage() {
   const { data, loading } = useDaily()
   const comments = useComments()
+  const forecast = useWeather()
 
   if (loading) return <div style={{ textAlign: 'center', padding: 80, color: '#94a3b8' }}>Cargando datos...</div>
 
@@ -83,8 +84,8 @@ function OutlookPage() {
           <LinepackChart data={valid} />
         </div>
         <div style={card}>
-          <h3 style={sectionTitle}>Temperatura Buenos Aires</h3>
-          <TemperatureChart data={valid} />
+          <h3 style={sectionTitle}>Temperatura Buenos Aires (real + forecast)</h3>
+          <TemperatureChart data={valid} forecast={forecast} />
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Despacho electrico - Combustibles</h3>
