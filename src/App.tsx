@@ -278,10 +278,10 @@ function OutlookPage() {
 
       {/* Balance oferta-demanda: vista mesa-de-trading. */}
       {rdsReports.length >= 30 && (
-        <ChartGroup title="Balance oferta–demanda (últimos 90 días)">
+        <ChartGroup title="Balance oferta–demanda">
           <div style={{ ...card, gridColumn: '1 / -1' }}>
             <h3 style={sectionTitle}>Supply (positivo) vs Demanda (negativo) + Δ linepack</h3>
-            <SupplyDemandBalance rows={rdsReports as never} days={90} />
+            <SupplyDemandBalance rows={rdsReports as never} allDates={visibleDates} />
             <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
               Barras positivas = aportes al sistema (producción local + importaciones). Negativo =
               demanda total. Línea blanca = Δ linepack observado. La producción local se deriva

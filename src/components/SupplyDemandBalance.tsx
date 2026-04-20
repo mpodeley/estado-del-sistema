@@ -11,7 +11,7 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { colors } from '../theme'
-import { formatTooltipDate } from '../utils/charts'
+import { formatTooltipDate, padToDates } from '../utils/charts'
 
 interface Importacion {
   programa?: number | null
@@ -37,8 +37,9 @@ interface RDSRow {
 
 interface Props {
   rows: RDSRow[]
-  /** Optional slice of the last N days; default 90 for readability. */
-  days?: number
+  /** Calendar of fechas to render; other charts get this from the global scale
+   *  selector so everything stays in sync. */
+  allDates?: string[]
 }
 
 /**
@@ -52,39 +53,39 @@ interface Props {
  * When the RDS numbers are consistent, this matches domestic production;
  * when it's off, you see the residual as noise.
  */
-export default function SupplyDemandBalance({ rows, days = 90 }: Props) {
+export default function SupplyDemandBalance({ rows, allDates }: Props) {
   const data = useMemo(() => {
-    const keep = rows
+    const computed = rows
       .filter((r): r is RDSRow & { fecha: string } => typeof r.fecha === 'string')
-      .slice(-days)
+      .map((r) => {
+        const imps = r.importaciones ?? {}
+        const bolivia = imps.bolivia?.programa ?? 0
+        const escobar = imps.escobar?.programa ?? 0
+        const bahia = imps.bahia_blanca?.programa ?? 0
+        const importsTotal = bolivia + escobar + bahia
 
-    return keep.map((r) => {
-      const imps = r.importaciones ?? {}
-      const bolivia = imps.bolivia?.programa ?? 0
-      const escobar = imps.escobar?.programa ?? 0
-      const bahia = imps.bahia_blanca?.programa ?? 0
-      const importsTotal = bolivia + escobar + bahia
+        const exps = r.exportaciones ?? {}
+        const exportsTotal = (exps.tgn?.vol_exportar ?? 0) + (exps.tgs?.vol_exportar ?? 0)
 
-      const exps = r.exportaciones ?? {}
-      const exportsTotal = (exps.tgn?.vol_exportar ?? 0) + (exps.tgs?.vol_exportar ?? 0)
+        const demand = r.consumo_total_estimado ?? 0
+        const deltaLP = r.linepack_delta ?? 0
 
-      const demand = r.consumo_total_estimado ?? 0
-      const deltaLP = r.linepack_delta ?? 0
+        // Derived local production from the flow-balance identity.
+        const localDerived = Math.max(0, demand + exportsTotal + deltaLP - importsTotal)
 
-      // Derived local production from the flow-balance identity.
-      const localDerived = Math.max(0, demand + exportsTotal + deltaLP - importsTotal)
+        return {
+          fecha: r.fecha,
+          bolivia,
+          escobar,
+          bahia,
+          local: localDerived,
+          demand: -demand, // negative so supply and demand face off
+          deltaLP,
+        }
+      })
 
-      return {
-        fecha: r.fecha,
-        bolivia,
-        escobar,
-        bahia,
-        local: localDerived,
-        demand: -demand, // plot demand as negative so supply and demand face off
-        deltaLP,
-      }
-    })
-  }, [rows, days])
+    return allDates ? padToDates(computed, allDates) : computed
+  }, [rows, allDates])
 
   if (data.length === 0) {
     return <p style={{ color: colors.textDim, fontSize: 13 }}>Sin datos en el período.</p>
@@ -94,7 +95,7 @@ export default function SupplyDemandBalance({ rows, days = 90 }: Props) {
 
   return (
     <ResponsiveContainer width="100%" height={320}>
-      <ComposedChart data={data}>
+      <ComposedChart data={data} syncId="outlook">
         <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" minTickGap={30} />
         <YAxis tick={{ fill: '#64748b', fontSize: 11 }} unit=" MMm³/d" />
         <Tooltip
