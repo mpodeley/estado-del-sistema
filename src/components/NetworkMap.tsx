@@ -170,10 +170,10 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
   const PAD = width * 0.02
   const viewBox = `${minX - PAD} ${-maxY - PAD} ${width + 2 * PAD} ${height + 2 * PAD}`
 
-  // Stroke/font scale tuned for the SVG being rendered around 800px wide —
+  // Stroke/font scale tuned for the SVG being rendered around 560 px wide —
   // viewBox units are Mercator metres, so multipliers look weirdly large.
-  const strokeBase = Math.min(width, height) * 0.007
-  const fontScale = Math.min(width, height) * 0.032
+  const strokeBase = Math.min(width, height) * 0.01
+  const fontScale = Math.min(width, height) * 0.048
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
@@ -257,7 +257,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           </a>
         </span>
       </h3>
-      <div style={{ position: 'relative', maxWidth: 800, margin: '0 auto' }}>
+      <div style={{ position: 'relative', maxWidth: 560, margin: '0 auto' }}>
         <svg
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
@@ -387,7 +387,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               <text
                 x={c.x}
                 y={-c.y - c.r - fontScale * 0.35}
-                fontSize={fontScale * 1.2}
+                fontSize={fontScale * 1.4}
                 fill={colors.textPrimary}
                 textAnchor="middle"
                 stroke="#0b1220"
