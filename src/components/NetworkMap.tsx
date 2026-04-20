@@ -180,8 +180,10 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
   const PAD = width * 0.02
   const viewBox = `${minX - PAD} ${-maxY - PAD} ${width + 2 * PAD} ${height + 2 * PAD}`
 
-  const strokeBase = Math.min(width, height) * 0.003
-  const fontScale = Math.min(width, height) * 0.014
+  // Stroke/font scale tuned for the SVG being rendered around 800px wide —
+  // viewBox units are Mercator metres, so multipliers look weirdly large.
+  const strokeBase = Math.min(width, height) * 0.005
+  const fontScale = Math.min(width, height) * 0.022
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
@@ -262,7 +264,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           </a>
         </span>
       </h3>
-      <div style={{ position: 'relative', maxWidth: 620, margin: '0 auto' }}>
+      <div style={{ position: 'relative', maxWidth: 800, margin: '0 auto' }}>
         <svg
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
@@ -343,27 +345,28 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             )
           })}
 
-          {/* Network nodes — smaller since we now have bubble overlays */}
+          {/* Network nodes — bigger dots and readable labels */}
           {network.nodes.map((n) => {
             const role = n.roleProxy
             const fill = role === 'source_proxy' ? '#34d399'
               : role === 'sink_proxy' ? '#60a5fa'
               : role === 'inactive' ? '#475569'
               : '#94a3b8'
-            const r = role === 'source_proxy' ? strokeBase * 1.6 : role === 'sink_proxy' ? strokeBase * 1.3 : strokeBase * 0.8
+            const r = role === 'source_proxy' ? strokeBase * 1.6 : role === 'sink_proxy' ? strokeBase * 1.3 : strokeBase * 0.9
             const labeled = ALWAYS_LABELED.has(n.nombre)
             return (
               <g key={n.nodeId}>
-                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.85} stroke="#0b1220" strokeWidth={strokeBase * 0.3} />
+                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={strokeBase * 0.3} />
                 {labeled && (
                   <text
                     x={n.x + strokeBase * 2.2}
-                    y={-n.y + fontScale * 0.25}
-                    fontSize={fontScale * 0.65}
+                    y={-n.y + fontScale * 0.3}
+                    fontSize={fontScale * 0.85}
                     fill={colors.textSecondary}
                     stroke="#0b1220"
-                    strokeWidth={fontScale * 0.1}
+                    strokeWidth={fontScale * 0.15}
                     paintOrder="stroke"
+                    fontWeight={500}
                   >
                     {n.nombre}
                   </text>
@@ -390,26 +393,27 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               />
               <text
                 x={c.x}
-                y={-c.y - c.r - fontScale * 0.3}
-                fontSize={fontScale * 0.9}
+                y={-c.y - c.r - fontScale * 0.35}
+                fontSize={fontScale * 1.05}
                 fill={colors.textPrimary}
                 textAnchor="middle"
                 stroke="#0b1220"
-                strokeWidth={fontScale * 0.15}
+                strokeWidth={fontScale * 0.18}
                 paintOrder="stroke"
-                fontWeight={600}
+                fontWeight={700}
               >
                 {c.label.replace('Cuenca ', '')}
               </text>
               <text
                 x={c.x}
                 y={-c.y + fontScale * 0.45}
-                fontSize={fontScale * 0.7}
+                fontSize={fontScale * 0.85}
                 fill={colors.textSecondary}
                 textAnchor="middle"
                 stroke="#0b1220"
-                strokeWidth={fontScale * 0.12}
+                strokeWidth={fontScale * 0.15}
                 paintOrder="stroke"
+                fontWeight={600}
               >
                 {c.volMMm3Day.toFixed(0)} MMm³/d
               </text>
@@ -434,17 +438,17 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   stroke={color}
                   strokeWidth={strokeBase * 0.4}
                 />
-                {(hoverDist === b.id || b.contract > 5000) && (
+                {(hoverDist === b.id || b.contract > 3000) && (
                   <text
                     x={b.x}
-                    y={-b.y + fontScale * 0.25}
-                    fontSize={fontScale * 0.65}
+                    y={-b.y + fontScale * 0.3}
+                    fontSize={fontScale * 0.85}
                     fill={colors.textPrimary}
                     textAnchor="middle"
                     stroke="#0b1220"
-                    strokeWidth={fontScale * 0.12}
+                    strokeWidth={fontScale * 0.15}
                     paintOrder="stroke"
-                    fontWeight={600}
+                    fontWeight={700}
                   >
                     {b.name.split(' ')[0]}
                   </text>
