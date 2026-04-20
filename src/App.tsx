@@ -11,6 +11,7 @@ import {
   useMEGSA,
   useTramos,
   useCammesaPPO,
+  useEnargasMonthly,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -35,6 +36,7 @@ import EnargasRDSPanel from './components/EnargasRDSPanel'
 import MEGSAPanel from './components/MEGSAPanel'
 import SystemFlowPanel from './components/SystemFlowPanel'
 import TransportRestrictionsPanel from './components/TransportRestrictionsPanel'
+import { RegionalSection } from './components/GasoductoFlowChart'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
@@ -121,6 +123,7 @@ function OutlookPage() {
   const megsaState = useMEGSA()
   const tramosState = useTramos()
   const ppoState = useCammesaPPO()
+  const monthlyState = useEnargasMonthly()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -338,6 +341,19 @@ function OutlookPage() {
           </div>
         )}
       </ChartGroup>
+
+      {monthlyState.data?.gas_recibido && (
+        <ChartGroup title="Regional — gas recibido (mensual, últimos 3 años)">
+          <div style={{ ...card, gridColumn: '1 / -1' }}>
+            <RegionalSection monthly={monthlyState.data} />
+            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+              Fuente: ENARGAS datos-estadísticos. Cada barra apilada es el volumen mensual recibido
+              por ese gasoducto o cuenca. TGS en verdes, TGN en azules, distribuidoras propias en gris.
+              Es la base para ver qué corredor carga más del sistema.
+            </p>
+          </div>
+        </ChartGroup>
+      )}
 
       {/* Grupo 4: Histórico — comparación vs años previos (rango + YoY). */}
       {rdsReports.length >= 60 && (

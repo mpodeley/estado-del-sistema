@@ -144,3 +144,35 @@ export interface TramoRow {
   tgs_nqn_corte: number | null
 }
 export const useTramos = () => useJson<TramoRow[]>('./data/tramos.json')
+
+export interface GasoductoRow {
+  fecha: string
+  tgn_centro_oeste: number | null
+  tgn_norte: number | null
+  tgn_otros: number | null
+  tgs_neuba: number | null
+  tgs_san_martin: number | null
+  tgs_otros: number | null
+  distr_malargue: number | null
+  distr_sur: number | null
+  distr_otros: number | null
+  total: number | null
+}
+export interface CuencaRow {
+  fecha: string
+  tgn_neuquina: number | null
+  tgn_noroeste: number | null
+  tgn_otros: number | null
+  tgs_neuquina: number | null
+  tgs_san_jorge: number | null
+  tgs_austral: number | null
+  tgs_otros: number | null
+  distribuidoras_propios: number | null
+  otros_origenes: number | null
+  total: number | null
+}
+export interface EnargasMonthly {
+  gas_recibido?: { cuenca: CuencaRow[]; gasoducto: GasoductoRow[] }
+  contratos_firme?: Record<string, number | string>[]
+}
+export const useEnargasMonthly = () => useJson<EnargasMonthly>('./data/enargas_monthly.json')

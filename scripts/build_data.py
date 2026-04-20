@@ -108,6 +108,7 @@ def main():
     errors += run('fetch_weather.py')
     errors += run('fetch_smn_alerts.py')
     errors += run('fetch_megsa.py')
+    errors += run('fetch_enargas_estadisticas.py')
     # Keep the PPO fetcher to a short window on daily runs; backfills are
     # done manually via `fetch_cammesa_ppo.py --days N --force`.
     errors += run('fetch_cammesa_ppo.py')
