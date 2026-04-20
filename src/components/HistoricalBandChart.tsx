@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   ComposedChart,
   Area,
@@ -18,25 +19,21 @@ interface Props {
 }
 
 export default function HistoricalBandChart({ rows, field, unit = '' }: Props) {
-  const data = historicalBand(rows as never, field as never)
-  const hasBand = data.some((d) => d.min != null && d.max != null)
+  const { band, hasBand } = useMemo(() => {
+    const data = historicalBand(rows as never, field as never)
+    const has = data.some((d) => d.min != null && d.max != null)
+    const b = data.map((d) => ({
+      mmdd: d.mmdd,
+      range: d.min != null && d.max != null ? [d.min, d.max] : [null, null],
+      avg: d.avg,
+      current: d.current,
+    }))
+    return { band: b, hasBand: has }
+  }, [rows, field])
+
   if (!hasBand) {
     return <p style={{ color: colors.textDim, fontSize: 13 }}>Sin histórico suficiente todavía.</p>
   }
-
-  // Recharts renders "Area" as the range between a single value and the baseline.
-  // To get a band we use a two-component trick: plot `max` as an Area filled to
-  // `min`, using an `areaDataKey` pair. Simpler: derive a "range" tuple and
-  // use Recharts' stack trick — but the cleanest is to plot two series with a
-  // gradient and use `fillOpacity`. Here we fake the band by plotting an
-  // invisible area at min, then a filled area from min up to max, via offsets.
-  const band = data.map((d) => ({
-    mmdd: d.mmdd,
-    // The range array [min, max] makes Recharts draw a filled band between them.
-    range: d.min != null && d.max != null ? [d.min, d.max] : [null, null],
-    avg: d.avg,
-    current: d.current,
-  }))
 
   const monthLabel = (mmdd: string) => (mmdd.endsWith('-01') ? mmdd.slice(0, 2) : '')
 
@@ -65,6 +62,7 @@ export default function HistoricalBandChart({ rows, field, unit = '' }: Props) {
           fillOpacity={0.2}
           stroke="none"
           connectNulls
+          isAnimationActive={false}
         />
         <Line
           type="monotone"
@@ -75,6 +73,7 @@ export default function HistoricalBandChart({ rows, field, unit = '' }: Props) {
           strokeDasharray="4 4"
           dot={false}
           connectNulls
+          isAnimationActive={false}
         />
         <Line
           type="monotone"
@@ -84,6 +83,7 @@ export default function HistoricalBandChart({ rows, field, unit = '' }: Props) {
           strokeWidth={2.5}
           dot={false}
           connectNulls
+          isAnimationActive={false}
         />
       </ComposedChart>
     </ResponsiveContainer>

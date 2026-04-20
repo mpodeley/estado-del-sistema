@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   useDaily,
   useComments,
@@ -30,6 +30,7 @@ import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
 import LNGArrivalsChart from './components/LNGArrivalsChart'
+import SupplyDemandBalance from './components/SupplyDemandBalance'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
@@ -121,7 +122,7 @@ function OutlookPage() {
   }
 
   const data = dailyState.data ?? []
-  const valid = data.filter((d) => d.demanda_total != null)
+  const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
   const latest = valid[valid.length - 1]
 
   const comments = commentsState.data ?? { daily: [], weekly: [] }
@@ -130,11 +131,17 @@ function OutlookPage() {
   const regions = regionsState.data ?? []
   const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
 
-  // Shared X range across every chart so the user can scan them in parallel;
-  // the time-scale selector then narrows this down to the desired window.
-  const allDates = collectDates(data, demandFc?.forecast ?? [], weatherForecast)
-  const visibleDates = filterDatesByScale(allDates, scale)
-  const demandY = demandYDomain(valid, demandFc?.forecast ?? [])
+  // Recomputing these on every render was a big chunk of the slowness with
+  // 720 rows of history — memoize against the raw data references.
+  const allDates = useMemo(
+    () => collectDates(data, demandFc?.forecast ?? [], weatherForecast),
+    [data, demandFc, weatherForecast],
+  )
+  const visibleDates = useMemo(() => filterDatesByScale(allDates, scale), [allDates, scale])
+  const demandY = useMemo(
+    () => demandYDomain(valid, demandFc?.forecast ?? []),
+    [valid, demandFc],
+  )
 
   const freshness = [
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
@@ -267,6 +274,21 @@ function OutlookPage() {
           </div>
         )}
       </ChartGroup>
+
+      {/* Balance oferta-demanda: vista mesa-de-trading. */}
+      {rdsReports.length >= 30 && (
+        <ChartGroup title="Balance oferta–demanda (últimos 90 días)">
+          <div style={{ ...card, gridColumn: '1 / -1' }}>
+            <h3 style={sectionTitle}>Supply (positivo) vs Demanda (negativo) + Δ linepack</h3>
+            <SupplyDemandBalance rows={rdsReports as never} days={90} />
+            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+              Barras positivas = aportes al sistema (producción local + importaciones). Negativo =
+              demanda total. Línea blanca = Δ linepack observado. La producción local se deriva
+              como residuo del balance — si aparece ruido, refleja desajustes entre fuentes.
+            </p>
+          </div>
+        </ChartGroup>
+      )}
 
       {/* Grupo 4: Histórico — comparación vs años previos (rango + YoY). */}
       {rdsReports.length >= 60 && (

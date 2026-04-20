@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { colors } from '../theme'
 import { byYear } from '../utils/historical'
@@ -25,7 +26,10 @@ function monthLabel(mmdd: string): string {
 }
 
 export default function YearOverYearChart({ rows, field, unit = '', yearColors }: Props) {
-  const { rows: yoy, years } = byYear(rows as never, field as never)
+  const { rows: yoy, years } = useMemo(
+    () => byYear(rows as never, field as never),
+    [rows, field],
+  )
   if (years.length === 0) {
     return <p style={{ color: colors.textDim, fontSize: 13 }}>Sin datos históricos todavía.</p>
   }
@@ -34,7 +38,9 @@ export default function YearOverYearChart({ rows, field, unit = '', yearColors }
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={yoy}>
+      <LineChart data={yoy}
+        /* animation off — redrawing 365 points × N years stutters otherwise. */
+      >
         <XAxis dataKey="mmdd" tickFormatter={monthLabel} tick={{ fill: '#64748b', fontSize: 11 }} interval={0} minTickGap={20} />
         <YAxis tick={{ fill: '#64748b', fontSize: 11 }} unit={unit ? ` ${unit}` : ''} />
         <Tooltip
@@ -57,6 +63,7 @@ export default function YearOverYearChart({ rows, field, unit = '', yearColors }
               dot={false}
               name={year}
               connectNulls
+              isAnimationActive={false}
             />
           )
         })}

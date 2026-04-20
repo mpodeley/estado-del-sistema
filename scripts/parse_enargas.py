@@ -218,6 +218,53 @@ def load_existing():
     return {r['fecha']: r for r in (data or []) if r.get('fecha')}
 
 
+def slim_row(row):
+    """Drop fields the dashboard doesn't need on historical rows.
+
+    Current day keeps the full row (EnargasRDSPanel uses the prev-year comparisons
+    and forecast_temp_ba); every prior day is slimmed to the fields used by the
+    historical / YoY / pulse charts. Cuts ~75% off the per-row size.
+    """
+    slim = {
+        'fecha': row.get('fecha'),
+        'source': row.get('source'),
+        'linepack_total': row.get('linepack_total'),
+        'linepack_delta': row.get('linepack_delta'),
+        'consumo_total_estimado': row.get('consumo_total_estimado'),
+    }
+    t = row.get('temperatura_ba') or {}
+    if any(v is not None for v in t.values()):
+        slim['temperatura_ba'] = {'min': t.get('min'), 'max': t.get('max'), 'tm': t.get('tm')}
+    imps = row.get('importaciones') or {}
+    imps_slim = {}
+    for k, v in imps.items():
+        if not v:
+            continue
+        prog = v.get('programa')
+        prox = v.get('proximo_barco')
+        if prog is None and not prox:
+            continue
+        trim = {'programa': prog}
+        if prox:
+            trim['proximo_barco'] = prox
+        imps_slim[k] = trim
+    if imps_slim:
+        slim['importaciones'] = imps_slim
+    cons = row.get('consumos') or {}
+    cons_slim = {k: {'programa': v.get('programa')} for k, v in cons.items() if v and v.get('programa') is not None}
+    if cons_slim:
+        slim['consumos'] = cons_slim
+    exps = row.get('exportaciones') or {}
+    exps_slim = {
+        k: {'vol_exportar': v.get('vol_exportar')}
+        for k, v in exps.items()
+        if v and v.get('vol_exportar') is not None
+    }
+    if exps_slim:
+        slim['exportaciones'] = exps_slim
+    return slim
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     rds_pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'RDS_*.pdf')))
@@ -252,6 +299,11 @@ def main():
             print(f"Error parsing {p}: {e}", file=sys.stderr)
 
     rows = sorted(by_date.values(), key=lambda r: r.get('fecha') or '')
+
+    # Slim all but the latest row — historical rows only need what the
+    # dashboard charts actually plot.
+    if rows:
+        rows = [slim_row(r) for r in rows[:-1]] + [rows[-1]]
 
     if legacy and not rows:
         issues.append(f"Found {len(legacy)} legacy ETGS PDFs but no RDS — format likely changed")
