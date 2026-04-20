@@ -83,6 +83,10 @@ export interface DemandForecast {
     n_points: number
     prioritaria: RegressionLine
     demanda_total: RegressionLine
+    usinas?: RegressionLine
+    industria?: RegressionLine
+    gnc?: RegressionLine
+    combustible?: RegressionLine
   }
 }
 

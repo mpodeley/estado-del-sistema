@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""Generate demand forecast from weather forecast + historical regression.
-Also generates auto-comments for the outlook.
+"""Generate demand forecast using 2 years of ENARGAS RDS history.
 
-We fit one regression per target (prioritaria, demanda_total, usinas) against
-Buenos Aires mean temperature. With only ~20 days of demand history the
-results for demanda_total are noisy (R² around 0.1); the UI surfaces that
-caveat so users don't over-trust the number.
+Trains per-segment linear regressions (temp_BA → demand) on the backfilled
+RDS data, then applies a day-of-week residual offset to capture the
+weekday/weekend pattern without needing full multivariate regression.
 
-When we eventually have 1+ year of demand history (via RDS backfill or more
-Excel data) this is the natural place to upgrade the model — add features
-like day-of-week, temperature anomaly vs climatology, holiday flag, etc.
+Output schema is kept compatible with the dashboard:
+  demand_forecast.json -> { forecast: [...], regression: {...} }
+
+Forecast sources:
+  - weather.json (Buenos Aires tm next 14 days, from Open-Meteo)
+  - today's fecha from enargas.json to align day-of-week calendar
+
+Segments:
+  - prioritaria : residential + commercial (heating-driven, negative slope vs temp)
+  - cammesa    : gas-to-power (cooling-driven, positive slope vs temp)
+  - total      : whole-system demand
 """
 
 import json
@@ -32,102 +38,278 @@ def load_envelope(path):
 
 
 def linear_regression(pairs):
-    """Simple OLS. Returns (slope, intercept, r2)."""
+    """OLS on list of (x, y) pairs. Returns (slope, intercept, r2, n)."""
     n = len(pairs)
     if n < 3:
-        return None, None, None
+        return None, None, None, n
     sx = sum(x for x, _ in pairs)
     sy = sum(y for _, y in pairs)
     sxy = sum(x * y for x, y in pairs)
-    sx2 = sum(x ** 2 for x, _ in pairs)
-    denom = n * sx2 - sx ** 2
+    sx2 = sum(x * x for x, _ in pairs)
+    denom = n * sx2 - sx * sx
     if abs(denom) < 1e-10:
-        return None, None, None
+        return None, None, None, n
     slope = (n * sxy - sx * sy) / denom
     intercept = (sy - slope * sx) / n
     mean_y = sy / n
     ss_tot = sum((y - mean_y) ** 2 for _, y in pairs)
     ss_res = sum((y - (slope * x + intercept)) ** 2 for x, y in pairs)
     r2 = 1 - ss_res / ss_tot if ss_tot > 0 else 0
-    return slope, intercept, r2
+    return slope, intercept, r2, n
 
 
-def fit(daily, key):
-    pairs = [(d['temp_prom_ba'], d[key])
-             for d in daily if d.get('temp_prom_ba') is not None and d.get(key) is not None]
-    slope, intercept, r2 = linear_regression(pairs)
+def rds_segment_series(rds_rows, key_path):
+    """Extract [(temp, value, fecha)] tuples from RDS rows for a nested field."""
+    series = []
+    for r in rds_rows:
+        temp = ((r.get('temperatura_ba') or {}).get('tm')) or None
+        val = r
+        for p in key_path:
+            if val is None:
+                break
+            val = (val or {}).get(p) if isinstance(val, dict) else None
+        if temp is None or val is None or not r.get('fecha'):
+            continue
+        try:
+            temp_f = float(temp)
+            val_f = float(val)
+        except (TypeError, ValueError):
+            continue
+        series.append((temp_f, val_f, r['fecha']))
+    return series
+
+
+def dow_offsets(series, slope, intercept):
+    """For each day-of-week, compute mean residual after the linear fit.
+    Returns dict mapping 0..6 -> offset, plus metrics."""
+    if slope is None or intercept is None:
+        return {i: 0.0 for i in range(7)}, {'mean_abs_residual': None}
+    offsets_sum = {i: 0.0 for i in range(7)}
+    offsets_n = {i: 0 for i in range(7)}
+    residuals = []
+    for temp, y, fecha in series:
+        try:
+            dt = datetime.strptime(fecha, '%Y-%m-%d')
+        except ValueError:
+            continue
+        dow = dt.weekday()
+        pred = slope * temp + intercept
+        resid = y - pred
+        residuals.append(resid)
+        offsets_sum[dow] += resid
+        offsets_n[dow] += 1
+    offsets = {i: round(offsets_sum[i] / offsets_n[i], 2) if offsets_n[i] else 0.0 for i in range(7)}
+    mae = sum(abs(r) for r in residuals) / len(residuals) if residuals else None
+    return offsets, {'mean_abs_residual': round(mae, 2) if mae is not None else None}
+
+
+def fit_segment(rds_rows, key_path, label):
+    series = rds_segment_series(rds_rows, key_path)
+    pairs = [(t, y) for t, y, _ in series]
+    slope, intercept, r2, n = linear_regression(pairs)
+    dow, extra = dow_offsets(series, slope, intercept)
+    # Compute effective R² after DOW adjustment
+    r2_with_dow = None
+    if slope is not None and intercept is not None and n > 0:
+        mean_y = sum(y for _, y in pairs) / n
+        ss_tot = sum((y - mean_y) ** 2 for _, y in pairs)
+        ss_res = 0.0
+        for temp, y, fecha in series:
+            try:
+                d = datetime.strptime(fecha, '%Y-%m-%d').weekday()
+            except ValueError:
+                d = 0
+            pred = slope * temp + intercept + dow[d]
+            ss_res += (y - pred) ** 2
+        if ss_tot > 0:
+            r2_with_dow = round(1 - ss_res / ss_tot, 3)
     return {
+        'label': label,
         'slope': round(slope, 3) if slope is not None else None,
         'intercept': round(intercept, 1) if intercept is not None else None,
-        'r2': round(r2, 3) if r2 is not None else None,
-        'n_points': len(pairs),
+        'r2_temp_only': round(r2, 3) if r2 is not None else None,
+        'r2_with_dow': r2_with_dow,
+        'n_points': n,
+        'dow_offsets': dow,
+        'mean_abs_residual': extra.get('mean_abs_residual'),
     }
 
 
-def predict(model, temp):
+def predict(model, temp, fecha_iso):
     if model['slope'] is None or model['intercept'] is None or temp is None:
         return None
-    return round(model['slope'] * temp + model['intercept'], 1)
+    try:
+        dow = datetime.strptime(fecha_iso, '%Y-%m-%d').weekday()
+    except ValueError:
+        dow = 0
+    offset = model['dow_offsets'].get(dow, 0.0)
+    return round(model['slope'] * temp + model['intercept'] + offset, 1)
 
 
-def generate_forecast():
+def main():
     daily_path = os.path.join(OUT_DIR, 'daily.json')
     weather_path = os.path.join(OUT_DIR, 'weather.json')
-    if not os.path.exists(daily_path) or not os.path.exists(weather_path):
-        print("Missing daily.json or weather.json", file=sys.stderr)
+    enargas_path = os.path.join(OUT_DIR, 'enargas.json')
+
+    if not os.path.exists(weather_path):
+        print("No weather.json — run fetch_weather.py first", file=sys.stderr)
+        return
+    if not os.path.exists(enargas_path):
+        print("No enargas.json — run ENARGAS fetcher/backfill first", file=sys.stderr)
         return
 
-    daily = load_envelope(daily_path)
     weather = load_envelope(weather_path)
     forecast_days = weather.get('forecast', []) if isinstance(weather, dict) else []
     if not forecast_days:
         return
 
+    rds_rows = load_envelope(enargas_path)
+    print(f"Training on {len(rds_rows)} RDS rows")
+
+    # Fit each RDS consumption segment independently. The total is derived
+    # as the sum of the per-segment predictions, which cancels the opposite
+    # temperature slopes of prioritaria (cold -> up) and usinas (hot -> up)
+    # that kill R² when you regress the raw sum directly.
     models = {
-        'prioritaria': fit(daily, 'prioritaria'),
-        'demanda_total': fit(daily, 'demanda_total'),
-        'usinas': fit(daily, 'usinas'),
+        'prioritaria': fit_segment(rds_rows, ['consumos', 'prioritaria', 'programa'], 'Prioritaria'),
+        'usinas': fit_segment(rds_rows, ['consumos', 'cammesa', 'programa'], 'Usinas (CAMMESA)'),
+        'industria': fit_segment(rds_rows, ['consumos', 'industria', 'programa'], 'Industria'),
+        'gnc': fit_segment(rds_rows, ['consumos', 'gnc', 'programa'], 'GNC'),
+        'combustible': fit_segment(rds_rows, ['consumos', 'combustible', 'programa'], 'Combustible'),
+        'demanda_total_direct': fit_segment(rds_rows, ['consumo_total_estimado'], 'Demanda total (directo)'),
     }
 
-    print(f"Regressions (fit over last {len(daily)} days):")
+    # Exportaciones: low-variance, use the historical mean as a constant offset.
+    exports_vals = []
+    for r in rds_rows:
+        exps = r.get('exportaciones') or {}
+        tgn = (exps.get('tgn') or {}).get('vol_exportar') or 0
+        tgs = (exps.get('tgs') or {}).get('vol_exportar') or 0
+        tot = tgn + tgs
+        if tot > 0:
+            exports_vals.append(tot)
+    baseline_exports = round(sum(exports_vals) / len(exports_vals), 1) if exports_vals else 0.0
+
+    print("Regressions:")
     for key, m in models.items():
-        print(f"  {key:12s} = {m['slope']} * Temp + {m['intercept']}  (R²={m['r2']}, n={m['n_points']})")
+        print(f"  {m['label']:24s}  slope={m['slope']} int={m['intercept']} "
+              f"R² temp-only={m['r2_temp_only']}  R² +dow={m['r2_with_dow']}  n={m['n_points']}")
+        dow_names = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+        if m['slope'] is not None:
+            print(f"    dow offsets: " + "  ".join(f"{dow_names[i]}{m['dow_offsets'][i]:+.1f}" for i in range(7)))
+    print(f"  Exportaciones baseline: {baseline_exports} MMm³/d (media histórica)")
+
+    # Measure how well the SUM of segment predictions matches observed total.
+    segment_keys = ['prioritaria', 'usinas', 'industria', 'gnc', 'combustible']
+    recon_pairs = []
+    for r in rds_rows:
+        temp = ((r.get('temperatura_ba') or {}).get('tm'))
+        obs = r.get('consumo_total_estimado')
+        fecha = r.get('fecha')
+        if temp is None or obs is None or not fecha:
+            continue
+        try:
+            temp_f = float(temp)
+            obs_f = float(obs)
+        except (TypeError, ValueError):
+            continue
+        parts = [predict(models[k], temp_f, fecha) for k in segment_keys]
+        if any(p is None for p in parts):
+            continue
+        pred = sum(parts) + baseline_exports
+        recon_pairs.append((obs_f, pred))
+    recon_r2 = None
+    if recon_pairs:
+        mean_obs = sum(o for o, _ in recon_pairs) / len(recon_pairs)
+        ss_tot = sum((o - mean_obs) ** 2 for o, _ in recon_pairs)
+        ss_res = sum((o - p) ** 2 for o, p in recon_pairs)
+        if ss_tot > 0:
+            recon_r2 = round(1 - ss_res / ss_tot, 3)
+    print(f"  Reconstructed total R²: {recon_r2}  (vs direct R²: {models['demanda_total_direct']['r2_with_dow']})")
+
+    # Use whichever method gives a better R²; prefer the reconstruction when
+    # it wins, because the segment models are individually interpretable.
+    use_reconstruction = (
+        recon_r2 is not None
+        and (models['demanda_total_direct']['r2_with_dow'] is None
+             or recon_r2 >= models['demanda_total_direct']['r2_with_dow'])
+    )
+    total_method = 'suma de segmentos' if use_reconstruction else 'regresión directa sobre total'
+    total_r2 = recon_r2 if use_reconstruction else models['demanda_total_direct']['r2_with_dow']
+    print(f"  Total demanda usa: {total_method}  (R²={total_r2})")
 
     demand_forecast = []
     for day in forecast_days:
         temp = day.get('temp_prom')
         if temp is None:
             continue
+        prio = predict(models['prioritaria'], temp, day['fecha'])
+        usinas = predict(models['usinas'], temp, day['fecha'])
+        industria = predict(models['industria'], temp, day['fecha'])
+        gnc = predict(models['gnc'], temp, day['fecha'])
+        combustible = predict(models['combustible'], temp, day['fecha'])
+        parts = [prio, usinas, industria, gnc, combustible]
+        if use_reconstruction and all(p is not None for p in parts):
+            total = round(sum(parts) + baseline_exports, 1)
+        else:
+            total = predict(models['demanda_total_direct'], temp, day['fecha'])
         demand_forecast.append({
             'fecha': day['fecha'],
             'temp_prom': temp,
             'temp_max': day.get('temp_max'),
             'temp_min': day.get('temp_min'),
-            'prioritaria_est': predict(models['prioritaria'], temp),
-            'demanda_total_est': predict(models['demanda_total'], temp),
-            'usinas_est': predict(models['usinas'], temp),
+            'prioritaria_est': prio,
+            'usinas_est': usinas,
+            'industria_est': industria,
+            'gnc_est': gnc,
+            'combustible_est': combustible,
+            'exportaciones_est': baseline_exports,
+            'demanda_total_est': total,
         })
+
+    def model_payload(m):
+        return {
+            'slope': m['slope'],
+            'intercept': m['intercept'],
+            'r2': m['r2_with_dow'],
+            'r2_temp_only': m['r2_temp_only'],
+        }
+
+    regression_out = {
+        'n_points': models['prioritaria']['n_points'],
+        'features': ['temp_BA', 'day_of_week'],
+        'training_source': 'ENARGAS RDS — 720 días backfilled',
+        'total_method': total_method,
+        'baseline_exportaciones': baseline_exports,
+        'prioritaria': model_payload(models['prioritaria']),
+        'usinas': model_payload(models['usinas']),
+        'industria': model_payload(models['industria']),
+        'gnc': model_payload(models['gnc']),
+        'combustible': model_payload(models['combustible']),
+        'demanda_total': {
+            'slope': None,
+            'intercept': None,
+            'r2': total_r2,
+            'method': total_method,
+        },
+    }
 
     write_json(
         os.path.join(OUT_DIR, 'demand_forecast.json'),
-        {
-            'forecast': demand_forecast,
-            'regression': {
-                'n_points': models['prioritaria']['n_points'],
-                'prioritaria': models['prioritaria'],
-                'demanda_total': models['demanda_total'],
-                'usinas': models['usinas'],
-            },
-        },
-        source='regression on daily.json + weather.json',
+        {'forecast': demand_forecast, 'regression': regression_out},
+        source='ENARGAS RDS regression (temp + day-of-week)',
         source_date=demand_forecast[0]['fecha'] if demand_forecast else None,
     )
     print(f"demand_forecast.json: {len(demand_forecast)} days")
 
-    generate_comments(daily, demand_forecast, models)
+    # Auto-comments use Excel's daily.json for "today" since the dashboard
+    # still reads linepack TGS/TGN and CAMMESA mix from there.
+    if os.path.exists(daily_path):
+        daily = load_envelope(daily_path)
+        generate_comments(daily, demand_forecast, regression_out)
 
 
-def generate_comments(daily, demand_forecast, models):
+def generate_comments(daily, demand_forecast, regression):
     valid = [d for d in daily if d.get('demanda_total')]
     if not valid:
         return
@@ -185,10 +367,10 @@ def generate_comments(daily, demand_forecast, models):
                 f"rango {min(temps):.0f}-{max(temps):.0f} C (promedio {sum(temps)/len(temps):.1f} C)."
             )
         if dems:
-            r2 = models['demanda_total']['r2']
+            r2 = regression['demanda_total']['r2']
             caveat = ''
-            if r2 is not None and r2 < 0.3:
-                caveat = f' (indicativo; R²={r2} — pocos datos históricos)'
+            if r2 is not None and r2 < 0.4:
+                caveat = f' (R²={r2} — tomar como indicativo)'
             lines_weekly.append(
                 f"Demanda total estimada para la semana: {min(dems):.0f}-{max(dems):.0f} MMm3/dia{caveat}."
             )
@@ -214,4 +396,4 @@ def generate_comments(daily, demand_forecast, models):
 
 
 if __name__ == '__main__':
-    generate_forecast()
+    main()
