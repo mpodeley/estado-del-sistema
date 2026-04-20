@@ -31,6 +31,7 @@ import ForecastPage from './components/ForecastPage'
 import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import MEGSAPanel from './components/MEGSAPanel'
+import SystemFlowPanel from './components/SystemFlowPanel'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
@@ -191,6 +192,12 @@ function OutlookPage() {
       <div style={{ ...card, marginTop: space.xl }}>
         <CommentsSection comments={comments} />
       </div>
+
+      {rdsReports.length > 0 && (
+        <div style={{ ...card, marginTop: space.xl }}>
+          <SystemFlowPanel latest={rdsReports[rdsReports.length - 1] as never} />
+        </div>
+      )}
 
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>

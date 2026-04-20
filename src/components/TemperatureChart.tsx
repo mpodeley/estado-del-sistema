@@ -9,10 +9,11 @@ import {
   ResponsiveContainer,
   Legend,
   ReferenceLine,
+  ReferenceArea,
 } from 'recharts'
 import type { DailyRow, ForecastDay, RegionCity } from '../types'
 import { colors } from '../theme'
-import { padToDates, formatTooltipDate } from '../utils/charts'
+import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
@@ -40,7 +41,7 @@ export default function TemperatureChart({
     esquel: { min: 'temp_min_esquel', max: 'temp_max_esquel', prom: 'temp_prom_esquel' },
   }[selectedCityId as 'ba' | 'esquel']
 
-  const { rows, lastHistorical, hasForecast } = useMemo(() => {
+  const { rows, lastHistorical, hasForecast, weekends } = useMemo(() => {
     const lastDate = data[data.length - 1]?.fecha ?? ''
 
     const byDate = new Map<string, {
@@ -78,7 +79,8 @@ export default function TemperatureChart({
 
     const merged = [...byDate.values()].sort((a, b) => a.fecha.localeCompare(b.fecha))
     const padded = allDates ? padToDates(merged, allDates) : merged
-    return { rows: padded, lastHistorical: lastDate, hasForecast }
+    const weekends = weekendSpans(padded.map((r) => r.fecha))
+    return { rows: padded, lastHistorical: lastDate, hasForecast, weekends }
   }, [data, forecast, city, histKey, allDates])
 
   return (
@@ -127,6 +129,9 @@ export default function TemperatureChart({
             }}
           />
           <Legend wrapperStyle={{ fontSize: 12 }} />
+          {weekends.map(([s, e], i) => (
+            <ReferenceArea key={`wk-${i}`} x1={s} x2={e} fill="#64748b" fillOpacity={0.08} strokeOpacity={0} ifOverflow="extendDomain" />
+          ))}
           {hasForecast && lastHistorical && (
             <ReferenceLine x={lastHistorical} stroke="#64748b" strokeDasharray="3 3" label={{ value: 'Hoy', fill: '#64748b', fontSize: 10 }} />
           )}
