@@ -218,3 +218,29 @@ export interface CountryOutline {
   bounds: { minX: number; maxX: number; minY: number; maxY: number }
 }
 export const useOutline = () => useJson<CountryOutline>('./data/ar_outline.json')
+
+export interface DistribuidoraFeature {
+  type: 'Feature'
+  properties: { id: string; name: string }
+  geometry: { type: 'MultiPolygon'; coordinates: number[][][][] }
+}
+export interface DistribuidorasCollection {
+  type: 'FeatureCollection'
+  features: DistribuidoraFeature[]
+  crs?: unknown
+}
+/** Distribuidoras GeoJSON: uses the GeoJSON envelope directly, no pipeline
+ *  metadata wrapper — so we can't use useJson's envelope-unwrap. Fetch
+ *  manually. */
+export function useDistribuidoras() {
+  const [state, setState] = useState<{ data: DistribuidorasCollection | null; loading: boolean; error: Error | null }>({
+    data: null, loading: true, error: null,
+  })
+  useEffect(() => {
+    fetch('./data/distribuidoras.geojson', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d: DistribuidorasCollection) => setState({ data: d, loading: false, error: null }))
+      .catch((e: Error) => setState({ data: null, loading: false, error: e }))
+  }, [])
+  return state
+}

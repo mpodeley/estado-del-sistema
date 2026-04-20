@@ -14,6 +14,7 @@ import {
   useEnargasMonthly,
   useGasNetwork,
   useOutline,
+  useDistribuidoras,
 } from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -129,6 +130,7 @@ function OutlookPage() {
   const monthlyState = useEnargasMonthly()
   const networkState = useGasNetwork()
   const outlineState = useOutline()
+  const distribuidorasState = useDistribuidoras()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
@@ -355,6 +357,7 @@ function OutlookPage() {
                 network={networkState.data}
                 outline={outlineState.data}
                 tramos={tramosState.data}
+                distribuidoras={distribuidorasState.data}
               />
             </div>
           )}

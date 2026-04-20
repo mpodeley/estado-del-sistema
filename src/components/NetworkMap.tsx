@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { colors, sectionTitle, space } from '../theme'
-import type { GasNetwork, GasRoute, CountryOutline, TramoRow } from '../hooks/useData'
+import type { GasNetwork, GasRoute, CountryOutline, TramoRow, DistribuidorasCollection } from '../hooks/useData'
 
 const utilizationColor = (u: number | null | undefined): string => {
   if (u == null) return '#4b648b'
@@ -68,11 +68,26 @@ interface Props {
   network: GasNetwork
   outline: CountryOutline
   tramos: TramoRow[]
+  distribuidoras?: DistribuidorasCollection | null
 }
 
-export default function NetworkMap({ network, outline, tramos }: Props) {
+// Distinct fill colors per distribuidora (low opacity for layering).
+const DIST_COLORS: Record<string, string> = {
+  metrogas: '#3b82f6',
+  naturgy_ban: '#8b5cf6',
+  pampeana: '#06b6d4',
+  sur: '#0891b2',
+  litoral: '#22d3ee',
+  centro: '#eab308',
+  cuyana: '#f59e0b',
+  gasnor: '#ef4444',
+  gasnea: '#ec4899',
+}
+
+export default function NetworkMap({ network, outline, tramos, distribuidoras }: Props) {
   const [hover, setHover] = useState<GasRoute | null>(null)
   const [hoverNode, setHoverNode] = useState<string | null>(null)
+  const [hoverDist, setHoverDist] = useState<string | null>(null)
 
   const latestTramo = tramos[tramos.length - 1]
 
@@ -105,8 +120,8 @@ export default function NetworkMap({ network, outline, tramos }: Props) {
 
   // Scale for strokes and labels: since viewBox dims are ~2.2e6 x ~4.9e6,
   // we need big numbers for stroke width.
-  const strokeBase = Math.min(width, height) * 0.0015 // ~3500
-  const fontScale = Math.min(width, height) * 0.008 // ~18000
+  const strokeBase = Math.min(width, height) * 0.003 // ~6600
+  const fontScale = Math.min(width, height) * 0.014 // ~31000
 
   return (
     <div>
@@ -143,6 +158,39 @@ export default function NetworkMap({ network, outline, tramos }: Props) {
                 stroke="#334155"
                 strokeWidth={strokeBase * 0.7}
               />
+            )
+          })}
+
+          {/* Distribuidora regions — overlay on the outline so they color the
+              country interior. Each feature is a MultiPolygon in EPSG:3857. */}
+          {distribuidoras?.features.map((f) => {
+            const id = f.properties.id
+            const color = DIST_COLORS[id] ?? '#475569'
+            const isHover = hoverDist === id
+            return (
+              <g
+                key={id}
+                onMouseEnter={() => setHoverDist(id)}
+                onMouseLeave={() => setHoverDist(null)}
+              >
+                {f.geometry.coordinates.map((polygon, pi) => {
+                  // Each polygon is [[outer ring], [inner hole], ...]; take the
+                  // outer ring only (small holes are negligible at this scale).
+                  const outer = polygon[0] ?? []
+                  const pts = outer.map(([x, y]) => `${x},${-y}`).join(' ')
+                  return (
+                    <polygon
+                      key={pi}
+                      points={pts}
+                      fill={color}
+                      fillOpacity={isHover ? 0.45 : 0.22}
+                      stroke={color}
+                      strokeOpacity={isHover ? 0.9 : 0.5}
+                      strokeWidth={strokeBase * (isHover ? 0.6 : 0.3)}
+                    />
+                  )
+                })}
+              </g>
             )
           })}
 
@@ -301,6 +349,35 @@ export default function NetworkMap({ network, outline, tramos }: Props) {
         <Pill color="#ff5f87" label="saturado" />
         <Pill color={NEUTRAL} label="sin dato" />
       </div>
+      {distribuidoras && distribuidoras.features.length > 0 && (
+        <div style={{ marginTop: space.sm }}>
+          <div style={{ color: colors.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+            Distribuidoras
+          </div>
+          <div style={{ display: 'flex', gap: space.md, flexWrap: 'wrap', fontSize: 11, color: colors.textMuted }}>
+            {distribuidoras.features.map((f) => (
+              <span
+                key={f.properties.id}
+                onMouseEnter={() => setHoverDist(f.properties.id)}
+                onMouseLeave={() => setHoverDist(null)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5, cursor: 'default',
+                  opacity: hoverDist && hoverDist !== f.properties.id ? 0.4 : 1,
+                }}
+              >
+                <span
+                  style={{
+                    width: 10, height: 10, borderRadius: 2,
+                    background: DIST_COLORS[f.properties.id] ?? '#475569',
+                    opacity: 0.8,
+                  }}
+                />
+                {f.properties.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm }}>
         Stress pintado con: (a) datos de tramos del Excel para CCO, Neuba I/II y Gas Andes;
         (b) utilización reportada en el snapshot de gasoductos (Sep 2025) para el resto. Grosor
