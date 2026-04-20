@@ -12,15 +12,16 @@ demand + firm contracts). Units in the raw sheets are thousand m³
 """
 
 import io
+import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 import openpyxl
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import wrap  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 BASE = 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/datos-estadisticos'
@@ -94,6 +95,61 @@ def parse_grt(wb):
     return {'cuenca': cuenca, 'gasoducto': gasoducto}
 
 
+def parse_ged(wb, months_back=60):
+    """GED "STS2" sheet = gas delivered, aggregated by distribuidora.
+
+    Columns (r11/r12 header rows):
+      1: Ban (Buenos Aires Norte)
+      2: Centro
+      3-4: Cuyana (Cuyo + Malargue)
+      5-7: GasNea (Chaco + Corrientes + Entre Ríos)
+      8: Litoral
+      9: Metrogas (Metropolitana — includes southern GBA)
+      10-11: Noroeste = Gasnor (Salta + Tucumán)
+      12-15: Pampeana (Bahía Blanca + Buenos Aires + La Pampa Norte + La Pampa Sur)
+      16-20: Sur (Buenos Aires Sur + Chubut Sur + Neuquén + Santa Cruz Sur + Tierra del Fuego)
+      21: Total general
+    Data starts at r13. Units: miles de m³ de 9300 kcal (dam³/month).
+    We keep only the last `months_back` rows to keep the JSON small.
+    """
+    if 'STS2' not in wb.sheetnames:
+        return []
+    s = wb['STS2']
+    # sum groups: distribuidora_id -> [col indices to sum]
+    groups = {
+        'naturgy_ban': [1],
+        'centro': [2],
+        'cuyana': [3, 4],
+        'gasnea': [5, 6, 7],
+        'litoral': [8],
+        'metrogas': [9],
+        'gasnor': [10, 11],
+        'pampeana': [12, 13, 14, 15],
+        'sur': [16, 17, 18, 19, 20],
+    }
+    rows = []
+    for i, row in enumerate(s.iter_rows(values_only=True)):
+        if i < 13:
+            continue
+        fecha = to_iso(row[0])
+        if fecha is None:
+            continue
+        rec = {'fecha': fecha}
+        for dist_id, cols in groups.items():
+            total = 0
+            got_any = False
+            for c in cols:
+                if c < len(row):
+                    v = safe_int(row[c])
+                    if v is not None:
+                        total += v
+                        got_any = True
+            rec[dist_id] = total if got_any else None
+        rows.append(rec)
+    # Keep tail to limit file size. 60 months × 9 ints ≈ 10 KB after compression.
+    return rows[-months_back:] if months_back else rows
+
+
 def parse_contratos(wb):
     """Contratos de transporte firme por licenciataria."""
     # Sheet names vary; take the first non-Indice sheet.
@@ -152,6 +208,15 @@ def main():
         errors.append(f'Contratos: {e}')
         print(f'ERROR Contratos: {e}', file=sys.stderr)
 
+    try:
+        # GED is 5 MB raw; we only keep the last 60 months × 9 distribuidoras.
+        ged = fetch_xlsx('GED', 'GED.xlsx')
+        payload['gas_entregado'] = parse_ged(ged, months_back=60)
+        print(f"GED: {len(payload['gas_entregado'])} monthly rows (last 60)")
+    except Exception as e:
+        errors.append(f'GED: {e}')
+        print(f'ERROR GED: {e}', file=sys.stderr)
+
     # Latest fecha across any series for envelope metadata.
     latest = None
     for section in payload.values():
@@ -163,14 +228,24 @@ def main():
             if d and (latest is None or d > latest):
                 latest = d
 
-    write_json(
-        os.path.join(OUT_DIR, 'enargas_monthly.json'),
-        payload,
-        source='ENARGAS datos-estadisticos (GRT + Contratos)',
-        source_date=latest,
-        errors=errors or None,
-    )
-    print(f"enargas_monthly.json: latest={latest}")
+    # Trim history to last 15 years for each monthly series — 180 months is
+    # more than enough for YoY and cycle views, and keeps the wire size small.
+    MONTHS = 180
+    if 'gas_recibido' in payload:
+        for k in ('cuenca', 'gasoducto'):
+            if k in payload['gas_recibido']:
+                payload['gas_recibido'][k] = payload['gas_recibido'][k][-MONTHS:]
+    if 'contratos_firme' in payload:
+        payload['contratos_firme'] = payload['contratos_firme'][-MONTHS:]
+    # gas_entregado already trimmed to 60 in parse_ged.
+
+    # Compact JSON (no indent) cuts the file ~3-4x.
+    envelope = wrap(payload, source='ENARGAS datos-estadisticos (GRT + Contratos + GED)',
+                    source_date=latest, errors=errors or None)
+    out_path = os.path.join(OUT_DIR, 'enargas_monthly.json')
+    with open(out_path, 'w', encoding='utf-8') as f:
+        json.dump(envelope, f, ensure_ascii=False, separators=(',', ':'))
+    print(f"enargas_monthly.json: latest={latest}, size={os.path.getsize(out_path) // 1024} KB")
 
 
 if __name__ == '__main__':

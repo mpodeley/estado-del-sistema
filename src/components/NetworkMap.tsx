@@ -7,6 +7,7 @@ import type {
   TramoRow,
   DistribuidorasCollection,
   EnargasMonthly,
+  GedRow,
 } from '../hooks/useData'
 
 const NEUTRAL = '#64748b'
@@ -126,17 +127,6 @@ const DIST_COLORS: Record<string, string> = {
   gasnor: '#ef4444',
   gasnea: '#ec4899',
 }
-const CONTRATO_KEY: Record<string, string> = {
-  metrogas: 'METROGAS SA',
-  naturgy_ban: 'NATURGY BAN SA',
-  pampeana: 'CAMUZZI GAS PAMPEANA SA',
-  sur: 'CAMUZZI GAS DEL SUR SA',
-  litoral: 'LITORAL GAS SA',
-  centro: 'DISTRIBUIDORA DE GAS DEL CENTRO SA',
-  cuyana: 'DISTRIBUIDORA DE GAS CUYANA SA',
-  gasnor: 'GASNOR SA',
-  gasnea: 'GAS NEA SA',
-}
 
 /** Centroid of the largest ring in a GeoJSON MultiPolygon (already projected
  *  to EPSG:3857). Returns (x, y). Used for bubble placement. */
@@ -182,8 +172,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
 
   // Stroke/font scale tuned for the SVG being rendered around 800px wide —
   // viewBox units are Mercator metres, so multipliers look weirdly large.
-  const strokeBase = Math.min(width, height) * 0.005
-  const fontScale = Math.min(width, height) * 0.022
+  const strokeBase = Math.min(width, height) * 0.007
+  const fontScale = Math.min(width, height) * 0.032
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
@@ -220,29 +210,32 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
     })
   }, [monthly, strokeBase])
 
-  // ----- distribuidora bubbles (using contratos firme as proxy for size) -----
+  // ----- distribuidora bubbles from GED (authoritative monthly consumption) -----
   const distBubbles = useMemo(() => {
     if (!distribuidoras?.features) return []
-    const latestContrato = monthly?.contratos_firme?.[monthly.contratos_firme.length - 1] ?? {}
+    const ged = monthly?.gas_entregado
+    const latest = ged && ged.length > 0 ? ged[ged.length - 1] : null
     const values: Record<string, number> = {}
     let max = 1
     for (const f of distribuidoras.features) {
-      const id = f.properties.id
-      const key = CONTRATO_KEY[id]
-      const v = typeof latestContrato[key] === 'number' ? (latestContrato[key] as number) : 0
-      values[id] = v
+      const id = f.properties.id as keyof GedRow
+      const v = latest && typeof latest[id] === 'number' ? (latest[id] as number) : 0
+      values[f.properties.id] = v
       if (v > max) max = v
     }
     return distribuidoras.features.map((f) => {
       const id = f.properties.id
       const v = values[id] ?? 0
       const { x, y } = polyCentroid(f.geometry.coordinates)
+      // Value comes in dam³/month; divide by 1000 * 28 for MMm³/d (approx).
+      const perDay = v / 1000 / 28
       return {
         id,
         name: f.properties.name,
         x,
         y,
-        contract: v,
+        gedDam3Month: v,
+        gedMMm3Day: perDay,
         r: strokeBase * (3 + 15 * Math.sqrt(v / max)),
       }
     })
@@ -361,7 +354,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   <text
                     x={n.x + strokeBase * 2.2}
                     y={-n.y + fontScale * 0.3}
-                    fontSize={fontScale * 0.85}
+                    fontSize={fontScale * 0.95}
                     fill={colors.textSecondary}
                     stroke="#0b1220"
                     strokeWidth={fontScale * 0.15}
@@ -394,7 +387,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               <text
                 x={c.x}
                 y={-c.y - c.r - fontScale * 0.35}
-                fontSize={fontScale * 1.05}
+                fontSize={fontScale * 1.2}
                 fill={colors.textPrimary}
                 textAnchor="middle"
                 stroke="#0b1220"
@@ -407,7 +400,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               <text
                 x={c.x}
                 y={-c.y + fontScale * 0.45}
-                fontSize={fontScale * 0.85}
+                fontSize={fontScale * 0.95}
                 fill={colors.textSecondary}
                 textAnchor="middle"
                 stroke="#0b1220"
@@ -438,20 +431,35 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   stroke={color}
                   strokeWidth={strokeBase * 0.4}
                 />
-                {(hoverDist === b.id || b.contract > 3000) && (
-                  <text
-                    x={b.x}
-                    y={-b.y + fontScale * 0.3}
-                    fontSize={fontScale * 0.85}
-                    fill={colors.textPrimary}
-                    textAnchor="middle"
-                    stroke="#0b1220"
-                    strokeWidth={fontScale * 0.15}
-                    paintOrder="stroke"
-                    fontWeight={700}
-                  >
-                    {b.name.split(' ')[0]}
-                  </text>
+                {(hoverDist === b.id || b.gedDam3Month > 100000) && (
+                  <>
+                    <text
+                      x={b.x}
+                      y={-b.y - fontScale * 0.2}
+                      fontSize={fontScale * 0.95}
+                      fill={colors.textPrimary}
+                      textAnchor="middle"
+                      stroke="#0b1220"
+                      strokeWidth={fontScale * 0.15}
+                      paintOrder="stroke"
+                      fontWeight={700}
+                    >
+                      {b.name.split(' ')[0]}
+                    </text>
+                    <text
+                      x={b.x}
+                      y={-b.y + fontScale * 0.7}
+                      fontSize={fontScale * 0.75}
+                      fill={colors.textSecondary}
+                      textAnchor="middle"
+                      stroke="#0b1220"
+                      strokeWidth={fontScale * 0.12}
+                      paintOrder="stroke"
+                      fontWeight={600}
+                    >
+                      {b.gedMMm3Day.toFixed(1)} MMm³/d
+                    </text>
+                  </>
                 )}
               </g>
             )
@@ -528,8 +536,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         Líneas coloreadas por operador; donde el Excel trae capacidad + corte (CCO, Neuba I/II, Gas
         Andes) el color pasa a reflejar el stress (verde→rojo). Grosor = caudal relativo del snapshot
         GCIE. Burbujas verdes sobre cuencas = volumen mensual inyectado ({formatVolDate(monthly)}).
-        Burbujas coloreadas sobre zonas de distribuidoras = capacidad firme contratada
-        (proxy del tamaño de la demanda, último dato {formatContratosDate(monthly)}).
+        Burbujas coloreadas sobre zonas de distribuidoras = <strong>gas efectivamente entregado
+        </strong> (ENARGAS GED, {formatGedDate(monthly)}).
       </p>
     </div>
   )
@@ -540,9 +548,9 @@ function formatVolDate(monthly: EnargasMonthly | null | undefined): string {
   return s ? s.slice(0, 7) : 'último mes'
 }
 
-function formatContratosDate(monthly: EnargasMonthly | null | undefined): string {
-  const arr = monthly?.contratos_firme
-  const s = arr && arr.length > 0 ? (arr[arr.length - 1].fecha as string) : undefined
+function formatGedDate(monthly: EnargasMonthly | null | undefined): string {
+  const arr = monthly?.gas_entregado
+  const s = arr && arr.length > 0 ? arr[arr.length - 1].fecha : undefined
   return s ? s.slice(0, 7) : 'último mes'
 }
 

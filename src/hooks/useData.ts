@@ -171,9 +171,22 @@ export interface CuencaRow {
   otros_origenes: number | null
   total: number | null
 }
+export interface GedRow {
+  fecha: string
+  metrogas?: number | null
+  naturgy_ban?: number | null
+  pampeana?: number | null
+  sur?: number | null
+  litoral?: number | null
+  centro?: number | null
+  cuyana?: number | null
+  gasnor?: number | null
+  gasnea?: number | null
+}
 export interface EnargasMonthly {
   gas_recibido?: { cuenca: CuencaRow[]; gasoducto: GasoductoRow[] }
   contratos_firme?: Record<string, number | string>[]
+  gas_entregado?: GedRow[]
 }
 export const useEnargasMonthly = () => useJson<EnargasMonthly>('./data/enargas_monthly.json')
 
