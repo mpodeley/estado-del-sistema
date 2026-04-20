@@ -31,6 +31,7 @@ def main():
 
     # Phase 1: Fetch new data
     errors += run('fetch_enargas.py')
+    errors += run('fetch_cammesa.py')
     errors += run('fetch_weather.py')
 
     # Phase 2: Parse all sources
@@ -38,6 +39,9 @@ def main():
     errors += run('parse_linepack.py')
     errors += run('parse_enargas.py')
     errors += run('parse_cammesa.py')
+
+    # Phase 3: Generate forecast + auto-comments
+    errors += run('generate_forecast.py')
 
     print(f"\n{'='*60}")
     if errors:

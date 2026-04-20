@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useDaily, useComments, useWeather } from './hooks/useData'
+import { useDaily, useComments, useWeather, useDemandForecast } from './hooks/useData'
 import Header from './components/Header'
 import KPICards from './components/KPICards'
 import SystemPanel from './components/SystemPanel'
 import DemandChart from './components/DemandChart'
+import DemandForecastChart from './components/DemandForecastChart'
 import LinepackChart from './components/LinepackChart'
 import TemperatureChart from './components/TemperatureChart'
 import FuelMixChart from './components/FuelMixChart'
@@ -44,6 +45,7 @@ function OutlookPage() {
   const { data, loading } = useDaily()
   const comments = useComments()
   const forecast = useWeather()
+  const demandFc = useDemandForecast()
 
   if (loading) return <div style={{ textAlign: 'center', padding: 80, color: '#94a3b8' }}>Cargando datos...</div>
 
@@ -72,6 +74,18 @@ function OutlookPage() {
           <WeeklyComparison data={valid} />
         </div>
       </div>
+
+      {/* Forecast de demanda */}
+      {demandFc && demandFc.forecast.length > 0 && (
+        <div style={{ ...card, marginTop: 20 }}>
+          <h3 style={sectionTitle}>Forecast de demanda (real + estimada por temperatura)</h3>
+          <DemandForecastChart data={valid} forecast={demandFc.forecast} />
+          <p style={{ color: '#64748b', fontSize: 11, marginTop: 8 }}>
+            Estimado via regresion lineal temp-demanda ({demandFc.regression.n_points} datos historicos,
+            R2 prioritaria: {demandFc.regression.prioritaria.r2?.toFixed(2) ?? '?'})
+          </p>
+        </div>
+      )}
 
       {/* Charts de soporte */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: 16, marginTop: 20 }}>

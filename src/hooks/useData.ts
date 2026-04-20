@@ -41,3 +41,31 @@ export function useWeather() {
   }, [])
   return data
 }
+
+export interface DemandForecastDay {
+  fecha: string
+  temp_prom: number | null
+  prioritaria_est: number | null
+  demanda_total_est: number | null
+  usinas_est: number | null
+}
+
+export interface DemandForecast {
+  forecast: DemandForecastDay[]
+  regression: {
+    n_points: number
+    prioritaria: { slope: number | null; intercept: number | null; r2: number | null }
+    demanda_total: { slope: number | null; intercept: number | null; r2: number | null }
+  }
+}
+
+export function useDemandForecast() {
+  const [data, setData] = useState<DemandForecast | null>(null)
+  useEffect(() => {
+    fetch('./data/demand_forecast.json')
+      .then(r => r.json())
+      .then(setData)
+      .catch(() => {})
+  }, [])
+  return data
+}
