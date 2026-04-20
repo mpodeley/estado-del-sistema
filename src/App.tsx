@@ -30,7 +30,6 @@ import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
 import LNGArrivalsChart from './components/LNGArrivalsChart'
-import SupplyDemandBalance from './components/SupplyDemandBalance'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
@@ -275,21 +274,6 @@ function OutlookPage() {
           </div>
         )}
       </ChartGroup>
-
-      {/* Balance oferta-demanda: vista mesa-de-trading. */}
-      {rdsReports.length >= 30 && (
-        <ChartGroup title="Balance oferta–demanda">
-          <div style={{ ...card, gridColumn: '1 / -1' }}>
-            <h3 style={sectionTitle}>Supply (positivo) vs Demanda (negativo) + Δ linepack</h3>
-            <SupplyDemandBalance rows={rdsReports as never} allDates={visibleDates} />
-            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
-              Barras positivas = aportes al sistema (producción local + importaciones). Negativo =
-              demanda total. Línea blanca = Δ linepack observado. La producción local se deriva
-              como residuo del balance — si aparece ruido, refleja desajustes entre fuentes.
-            </p>
-          </div>
-        </ChartGroup>
-      )}
 
       {/* Grupo 4: Histórico — comparación vs años previos (rango + YoY). */}
       {rdsReports.length >= 60 && (
