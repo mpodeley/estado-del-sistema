@@ -7,10 +7,25 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
+      .skeleton-shimmer {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(148,163,184,0.08) 50%, transparent 100%);
+        animation: shimmer 1.4s infinite;
+      }
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      @media (max-width: 640px) {
+        .recharts-wrapper { font-size: 10px; }
+      }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #0f172a; padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DxnbQCY4.js"></script>
+    <script type="module" crossorigin src="./assets/index-DjYOcWPh.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DNVN2dqC.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
