@@ -1,5 +1,15 @@
 import { useMemo } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts'
+import {
+  ComposedChart,
+  Line,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  ReferenceLine,
+} from 'recharts'
 import type { DailyRow, ForecastDay, RegionCity } from '../types'
 import { colors } from '../theme'
 import { padToDates, formatTooltipDate } from '../utils/charts'
@@ -35,21 +45,20 @@ export default function TemperatureChart({
 
     const byDate = new Map<string, {
       fecha: string
-      temp_max_real?: number | null
       temp_prom_real?: number | null
-      temp_min_real?: number | null
-      temp_max_fc?: number | null
+      temp_range_real?: [number | null, number | null] | null
       temp_prom_fc?: number | null
-      temp_min_fc?: number | null
+      temp_range_fc?: [number | null, number | null] | null
     }>()
 
     if (histKey) {
       for (const d of data) {
+        const min = (d as never)[histKey.min] as number | null
+        const max = (d as never)[histKey.max] as number | null
         byDate.set(d.fecha, {
           fecha: d.fecha,
-          temp_max_real: (d as never)[histKey.max] as number | null,
           temp_prom_real: (d as never)[histKey.prom] as number | null,
-          temp_min_real: (d as never)[histKey.min] as number | null,
+          temp_range_real: min != null && max != null ? [min, max] : null,
         })
       }
     }
@@ -62,9 +71,8 @@ export default function TemperatureChart({
       const existing = byDate.get(f.fecha) ?? { fecha: f.fecha }
       byDate.set(f.fecha, {
         ...existing,
-        temp_max_fc: f.temp_max,
         temp_prom_fc: f.temp_prom,
-        temp_min_fc: f.temp_min,
+        temp_range_fc: f.temp_min != null && f.temp_max != null ? [f.temp_min, f.temp_max] : null,
       })
     }
 
@@ -104,26 +112,70 @@ export default function TemperatureChart({
         </div>
       )}
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={rows} syncId="outlook">
+        <ComposedChart data={rows} syncId="outlook">
           <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" />
           <YAxis tick={{ fill: '#64748b', fontSize: 11 }} unit="°" />
           <Tooltip
             contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
             labelStyle={{ color: '#94a3b8' }}
             labelFormatter={formatTooltipDate}
-            formatter={(v: number) => (v != null ? `${v}°C` : '-')}
+            formatter={(v: number | number[], name: string) => {
+              if (Array.isArray(v)) {
+                return [`${v[0]?.toFixed(0)}° – ${v[1]?.toFixed(0)}°`, name]
+              }
+              return v != null ? [`${v}°C`, name] : ['-', name]
+            }}
           />
           <Legend wrapperStyle={{ fontSize: 12 }} />
           {hasForecast && lastHistorical && (
             <ReferenceLine x={lastHistorical} stroke="#64748b" strokeDasharray="3 3" label={{ value: 'Hoy', fill: '#64748b', fontSize: 10 }} />
           )}
-          <Line type="monotone" dataKey="temp_max_real" stroke="#ef4444" strokeWidth={1.5} dot={false} name="Max real" connectNulls />
-          <Line type="monotone" dataKey="temp_prom_real" stroke="#f59e0b" strokeWidth={2} dot={false} name="Prom real" connectNulls />
-          <Line type="monotone" dataKey="temp_min_real" stroke="#3b82f6" strokeWidth={1.5} dot={false} name="Min real" connectNulls />
-          <Line type="monotone" dataKey="temp_max_fc" stroke="#ef4444" strokeWidth={1.5} strokeDasharray="5 5" dot={false} name="Max forecast" connectNulls={false} />
-          <Line type="monotone" dataKey="temp_prom_fc" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Prom forecast" connectNulls={false} />
-          <Line type="monotone" dataKey="temp_min_fc" stroke="#3b82f6" strokeWidth={1.5} strokeDasharray="5 5" dot={false} name="Min forecast" connectNulls={false} />
-        </LineChart>
+
+          {/* Historical: shaded min–max envelope + line for the average. */}
+          <Area
+            type="monotone"
+            dataKey="temp_range_real"
+            name="Real min-max"
+            fill="#f59e0b"
+            fillOpacity={0.3}
+            stroke="none"
+            connectNulls
+            isAnimationActive={false}
+          />
+          <Line
+            type="monotone"
+            dataKey="temp_prom_real"
+            stroke="#f59e0b"
+            strokeWidth={2}
+            dot={false}
+            name="Prom real"
+            connectNulls
+            isAnimationActive={false}
+          />
+
+          {/* Forecast: same pattern, lighter fill + dashed line. */}
+          <Area
+            type="monotone"
+            dataKey="temp_range_fc"
+            name="Forecast min-max"
+            fill="#f59e0b"
+            fillOpacity={0.15}
+            stroke="none"
+            connectNulls
+            isAnimationActive={false}
+          />
+          <Line
+            type="monotone"
+            dataKey="temp_prom_fc"
+            stroke="#f59e0b"
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            dot={false}
+            name="Prom forecast"
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   )

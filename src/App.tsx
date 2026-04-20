@@ -26,6 +26,7 @@ import CommentsSection from './components/CommentsSection'
 import FuentesPage from './components/FuentesPage'
 import StatusPage from './components/StatusPage'
 import GuidePage from './components/GuidePage'
+import ForecastPage from './components/ForecastPage'
 import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import YearOverYearChart from './components/YearOverYearChart'
@@ -35,11 +36,12 @@ import LNGArrivalsChart from './components/LNGArrivalsChart'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
-type Page = 'outlook' | 'guia' | 'fuentes' | 'status'
+type Page = 'outlook' | 'forecast' | 'guia' | 'fuentes' | 'status'
 
 function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
   const tabs: { id: Page; label: string }[] = [
     { id: 'outlook', label: 'Outlook' },
+    { id: 'forecast', label: 'Forecast' },
     { id: 'guia', label: 'Guía' },
     { id: 'fuentes', label: 'Fuentes' },
     { id: 'status', label: 'Estado' },
@@ -247,7 +249,7 @@ function OutlookPage() {
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Despacho eléctrico — Combustibles</h3>
-          <FuelMixChart data={data} allDates={visibleDates} />
+          <FuelMixChart data={data} cammesaDays={cammesaDays} allDates={visibleDates} />
         </div>
       </ChartGroup>
 
@@ -280,6 +282,7 @@ function OutlookPage() {
             data={valid}
             forecast={demandFc?.forecast ?? []}
             cammesaDays={cammesaDays}
+            exportacionesBaseline={demandFc?.regression.baseline_exportaciones ?? undefined}
             allDates={visibleDates}
             yDomain={demandY}
           />
@@ -427,6 +430,7 @@ export default function App() {
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: `${space.xl}px ${space.lg}px` }}>
         <Nav page={page} setPage={setPage} />
         {page === 'outlook' && <OutlookPage />}
+        {page === 'forecast' && <ForecastPage />}
         {page === 'guia' && <GuidePage />}
         {page === 'fuentes' && <FuentesPage />}
         {page === 'status' && <StatusPage />}

@@ -7,50 +7,93 @@ const fmt = (d: string) => d.slice(5)
 interface CammesaWeeklyDay {
   fecha?: string
   usinas?: number | null
-  prioritaria?: number | null
-  industria?: number | null
 }
 
 interface Props {
   data: DailyRow[]
   forecast?: DemandForecastDay[]
-  /** CAMMESA's own forecast by date (from PS_ weekly). When present, its
-   *  usinas value overrides our regression — CAMMESA knows dispatch plans
-   *  better than temperature-based modeling. */
   cammesaDays?: CammesaWeeklyDay[]
+  exportacionesBaseline?: number
   allDates?: string[]
   yDomain?: [number, number]
 }
 
-export default function DemandChart({ data, forecast = [], cammesaDays = [], allDates, yDomain }: Props) {
-  // Map CAMMESA-provided usinas forecast by fecha for fast lookup.
+// Shared palette across historical (solid) and forecast (stroke-only) layers.
+const COLORS = {
+  prioritaria: '#3b82f6',
+  industria: '#10b981',
+  usinas: '#f59e0b',
+  exportaciones: '#8b5cf6',
+  otros: '#94a3b8', // GNC + combustible — smaller, gray for "everything else"
+}
+
+function sumNotNull(...vals: (number | null | undefined)[]): number | null {
+  let total = 0
+  let hasAny = false
+  for (const v of vals) {
+    if (typeof v === 'number') {
+      total += v
+      hasAny = true
+    }
+  }
+  return hasAny ? total : null
+}
+
+export default function DemandChart({
+  data,
+  forecast = [],
+  cammesaDays = [],
+  exportacionesBaseline,
+  allDates,
+  yDomain,
+}: Props) {
   const cammesaUsinasByDate = new Map<string, number>()
   for (const d of cammesaDays) {
     if (d.fecha && typeof d.usinas === 'number') cammesaUsinasByDate.set(d.fecha, d.usinas)
   }
 
-  // Historical stacked area: values from the Excel-backed DailyRow.
-  const historical = data.map((d) => ({
-    fecha: d.fecha,
-    prioritaria: d.prioritaria,
-    industria: d.industria,
-    usinas: d.usinas,
-    exportaciones: d.exportaciones,
-  }))
+  // HISTORICAL: "otros" = Excel demanda_total minus the 4 known sectors.
+  // Bridges the gap (GNC + combustible) so the stack height equals the
+  // reported total, matching the forecast stack which shows them explicitly.
+  const historical = data.map((d) => {
+    const explicit = (d.prioritaria ?? 0) + (d.industria ?? 0) + (d.usinas ?? 0) + (d.exportaciones ?? 0)
+    const haveAll =
+      d.prioritaria != null &&
+      d.industria != null &&
+      d.usinas != null &&
+      d.exportaciones != null &&
+      d.demanda_total != null
+    const otros = haveAll ? Math.max(0, (d.demanda_total as number) - explicit) : null
+    return {
+      fecha: d.fecha,
+      prioritaria: d.prioritaria,
+      industria: d.industria,
+      usinas: d.usinas,
+      exportaciones: d.exportaciones,
+      otros,
+      prioritaria_est: null as number | null,
+      industria_est: null as number | null,
+      usinas_est: null as number | null,
+      exportaciones_est: null as number | null,
+      otros_est: null as number | null,
+    }
+  })
   const lastHistorical = historical[historical.length - 1]?.fecha ?? ''
 
-  // Forecast continuation: same stack, dashed/lighter. We output the forecast
-  // under the same data keys so the stack continues seamlessly; a "Hoy"
-  // reference line communicates where history ends.
   const forecastRows = forecast
     .filter((f) => f.fecha > lastHistorical)
     .map((f) => ({
       fecha: f.fecha,
-      prioritaria: f.prioritaria_est,
-      industria: (f as DemandForecastDay & { industria_est?: number | null }).industria_est ?? null,
-      // Prefer CAMMESA's own usinas forecast when available for this fecha.
-      usinas: cammesaUsinasByDate.get(f.fecha) ?? f.usinas_est,
-      exportaciones: null,
+      prioritaria: null as number | null,
+      industria: null as number | null,
+      usinas: null as number | null,
+      exportaciones: null as number | null,
+      otros: null as number | null,
+      prioritaria_est: f.prioritaria_est,
+      industria_est: f.industria_est ?? null,
+      usinas_est: cammesaUsinasByDate.get(f.fecha) ?? f.usinas_est,
+      exportaciones_est: f.exportaciones_est ?? exportacionesBaseline ?? null,
+      otros_est: sumNotNull(f.gnc_est, f.combustible_est),
     }))
 
   const base = [...historical, ...forecastRows]
@@ -70,10 +113,20 @@ export default function DemandChart({ data, forecast = [], cammesaDays = [], all
         {forecastRows.length > 0 && lastHistorical && (
           <ReferenceLine x={lastHistorical} stroke="#64748b" strokeDasharray="3 3" label={{ value: 'Hoy', fill: '#64748b', fontSize: 10 }} />
         )}
-        <Area type="monotone" dataKey="prioritaria" stackId="1" fill="#3b82f6" stroke="#3b82f6" name="Prioritaria" isAnimationActive={false} />
-        <Area type="monotone" dataKey="industria" stackId="1" fill="#10b981" stroke="#10b981" name="Industria" isAnimationActive={false} />
-        <Area type="monotone" dataKey="usinas" stackId="1" fill="#f59e0b" stroke="#f59e0b" name="Usinas" isAnimationActive={false} />
-        <Area type="monotone" dataKey="exportaciones" stackId="1" fill="#8b5cf6" stroke="#8b5cf6" name="Exportaciones" isAnimationActive={false} />
+
+        {/* Historical stack: solid fills. */}
+        <Area type="monotone" dataKey="prioritaria" stackId="real" fill={COLORS.prioritaria} stroke={COLORS.prioritaria} name="Prioritaria" isAnimationActive={false} />
+        <Area type="monotone" dataKey="industria" stackId="real" fill={COLORS.industria} stroke={COLORS.industria} name="Industria" isAnimationActive={false} />
+        <Area type="monotone" dataKey="usinas" stackId="real" fill={COLORS.usinas} stroke={COLORS.usinas} name="Usinas" isAnimationActive={false} />
+        <Area type="monotone" dataKey="otros" stackId="real" fill={COLORS.otros} stroke={COLORS.otros} name="GNC + combustible" isAnimationActive={false} />
+        <Area type="monotone" dataKey="exportaciones" stackId="real" fill={COLORS.exportaciones} stroke={COLORS.exportaciones} name="Exportaciones" isAnimationActive={false} />
+
+        {/* Forecast stack: light fill + dashed stroke, no legend entries — same colors convey the mapping. */}
+        <Area type="monotone" dataKey="prioritaria_est" stackId="est" fill={COLORS.prioritaria} fillOpacity={0.15} stroke={COLORS.prioritaria} strokeWidth={1} strokeDasharray="4 3" name="Prioritaria est." legendType="none" isAnimationActive={false} />
+        <Area type="monotone" dataKey="industria_est" stackId="est" fill={COLORS.industria} fillOpacity={0.15} stroke={COLORS.industria} strokeWidth={1} strokeDasharray="4 3" name="Industria est." legendType="none" isAnimationActive={false} />
+        <Area type="monotone" dataKey="usinas_est" stackId="est" fill={COLORS.usinas} fillOpacity={0.15} stroke={COLORS.usinas} strokeWidth={1} strokeDasharray="4 3" name="Usinas est." legendType="none" isAnimationActive={false} />
+        <Area type="monotone" dataKey="otros_est" stackId="est" fill={COLORS.otros} fillOpacity={0.15} stroke={COLORS.otros} strokeWidth={1} strokeDasharray="4 3" name="GNC+Comb est." legendType="none" isAnimationActive={false} />
+        <Area type="monotone" dataKey="exportaciones_est" stackId="est" fill={COLORS.exportaciones} fillOpacity={0.15} stroke={COLORS.exportaciones} strokeWidth={1} strokeDasharray="4 3" name="Exportaciones est." legendType="none" isAnimationActive={false} />
       </AreaChart>
     </ResponsiveContainer>
   )

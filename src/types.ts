@@ -79,18 +79,28 @@ export interface RegressionLine {
   slope: number | null
   intercept: number | null
   r2: number | null
+  r2_temp_only?: number | null
+  label?: string
+  n_points?: number
+  dow_offsets?: Record<string, number>
+  mean_abs_residual?: number | null
+  method?: string
 }
 
 export interface DemandForecast {
   forecast: DemandForecastDay[]
   regression: {
     n_points: number
+    features?: string[]
+    training_source?: string
     prioritaria: RegressionLine
     demanda_total: RegressionLine
     usinas?: RegressionLine
     industria?: RegressionLine
     gnc?: RegressionLine
     combustible?: RegressionLine
+    baseline_exportaciones?: number
+    total_method?: string
   }
 }
 

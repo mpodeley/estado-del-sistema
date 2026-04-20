@@ -269,10 +269,14 @@ def main():
 
     def model_payload(m):
         return {
+            'label': m['label'],
             'slope': m['slope'],
             'intercept': m['intercept'],
             'r2': m['r2_with_dow'],
             'r2_temp_only': m['r2_temp_only'],
+            'n_points': m['n_points'],
+            'dow_offsets': m['dow_offsets'],
+            'mean_abs_residual': m['mean_abs_residual'],
         }
 
     regression_out = {
