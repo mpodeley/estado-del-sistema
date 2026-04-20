@@ -13,6 +13,7 @@ permissions:
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +23,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install Python dependencies
-        run: pip install openpyxl pdfplumber requests beautifulsoup4
+        run: pip install -r requirements.txt
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,7 +34,11 @@ jobs:
         run: npm ci
 
       - name: Run data pipeline
+        timeout-minutes: 8
         run: python scripts/build_data.py
+
+      - name: Type check
+        run: npx tsc --noEmit
 
       - name: Build dashboard
         run: npm run build

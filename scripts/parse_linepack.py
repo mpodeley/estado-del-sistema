@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Parse linepack equilibrium Excel into JSON."""
 
-import json
 import os
+import sys
 import openpyxl
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _meta import write_json  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -44,8 +47,10 @@ def main():
                 row[key] = str(v)
         rows.append(row)
 
-    with open(os.path.join(OUT_DIR, 'linepack.json'), 'w', encoding='utf-8') as f:
-        json.dump(rows, f, ensure_ascii=False, indent=2)
+    write_json(
+        os.path.join(OUT_DIR, 'linepack.json'),
+        rows, source=linepack_file,
+    )
     print(f"linepack.json: {len(rows)} rows")
     wb.close()
 

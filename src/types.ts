@@ -40,4 +40,65 @@ export interface DailyRow {
 export interface Comments {
   daily: string[]
   weekly: string[]
+  note?: string
+}
+
+export interface ForecastDay {
+  fecha: string
+  temp_max: number | null
+  temp_min: number | null
+  temp_prom: number | null
+}
+
+export interface WeatherPayload {
+  forecast: ForecastDay[]
+}
+
+export interface RegionCity {
+  id: string
+  label: string
+  lat: number
+  lon: number
+  region: string
+  forecast: ForecastDay[]
+}
+
+export interface DemandForecastDay {
+  fecha: string
+  temp_prom: number | null
+  prioritaria_est: number | null
+  demanda_total_est: number | null
+  usinas_est: number | null
+}
+
+export interface RegressionLine {
+  slope: number | null
+  intercept: number | null
+  r2: number | null
+}
+
+export interface DemandForecast {
+  forecast: DemandForecastDay[]
+  regression: {
+    n_points: number
+    prioritaria: RegressionLine
+    demanda_total: RegressionLine
+  }
+}
+
+// Every JSON file produced by the pipeline is wrapped in this envelope.
+export interface Envelope<T> {
+  generated_at: string
+  source: string | null
+  source_date: string | null
+  data: T
+  [extra: string]: unknown
+}
+
+// Result shape returned by useJson.
+export interface FetchState<T> {
+  data: T | null
+  loading: boolean
+  error: Error | null
+  meta: { generated_at: string | null; source: string | null; source_date: string | null }
 }

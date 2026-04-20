@@ -1,90 +1,258 @@
 #!/usr/bin/env python3
-"""Parse ENARGAS TGS daily operational report PDF into structured data."""
+"""Parse ENARGAS Reporte Diario del Sistema (RDS_YYYYMMDD.pdf) into JSON.
+
+The RDS is the daily system estimate published by ENARGAS; it's fully public
+and carries most of the macro figures we currently source from the manual
+Excel:
+ - Line pack total del sistema + delta
+ - Importaciones (Bolivia / Chile / Escobar / Bahía Blanca)
+ - Exportaciones TGN / TGS
+ - Consumo estimado por segmento (prioritaria, CAMMESA, industria, GNC, combustible)
+ - Temperatura Buenos Aires del día + forecast 6 días
+
+Parser is tolerant: if a field is missing from a given PDF it's just omitted
+from the output (not fatal). A global `issues` list is written alongside.
+"""
 
 import os
 import re
-import json
+import sys
 import glob
+
 import pdfplumber
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _meta import write_json  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 
+MONTHS = {
+    'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6,
+    'julio': 7, 'agosto': 8, 'septiembre': 9, 'setiembre': 9,
+    'octubre': 10, 'noviembre': 11, 'diciembre': 12,
+}
 
-def parse_number(s):
-    """Parse a number string, handling comma as decimal separator."""
-    if not s:
+REQUIRED_FIELDS = {'fecha', 'linepack_total'}
+
+
+def num(s):
+    """Parse a Spanish number (comma decimal) into float, or None."""
+    if s is None:
         return None
-    s = s.strip().replace(',', '.')
+    s = str(s).strip()
+    if s == '' or s == '-':
+        return None
+    s = s.replace('.', '').replace(',', '.') if ',' in s and s.count(',') == 1 else s.replace(',', '.')
     try:
         return round(float(s), 2)
     except ValueError:
         return None
 
 
-def parse_enargas_pdf(path):
-    """Extract key data from ENARGAS TGS daily report."""
+def parse_spanish_date(text):
+    """Parse 'lunes, 20 de abril de 2026' -> '2026-04-20'. Returns None if no match."""
+    m = re.search(r'(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})', text)
+    if not m:
+        return None
+    day = int(m.group(1))
+    month = MONTHS.get(m.group(2).lower())
+    year = int(m.group(3))
+    if not month:
+        return None
+    return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+def extract_rds(text):
+    """Extract structured fields from a decoded RDS PDF text."""
+    d = {}
+
+    # Día operativo
+    m = re.search(r'D[ií]a Operativo:\s*([^\n]+)', text)
+    if m:
+        fecha = parse_spanish_date(m.group(1))
+        if fecha:
+            d['fecha'] = fecha
+
+    # Line Pack and Delta
+    m = re.search(r'Line\s*Pack\s*:?\s*([\d.,]+)\s*MM', text, re.I)
+    if m:
+        d['linepack_total'] = num(m.group(1))
+    m = re.search(r'Delta\s*:?\s*([-\d.,]+)\s*MM', text, re.I)
+    if m:
+        d['linepack_delta'] = num(m.group(1))
+
+    # Importaciones rows: "Bolivia 0,0 - 0,0 0,0" (the middle '-' is GNL, can be '-' or a number)
+    importaciones = {}
+    for key, label in [
+        ('bolivia', 'Bolivia'),
+        ('chile', 'Chile'),
+        ('escobar', 'Escobar'),
+        ('bahia_blanca', r'Bah[ií]a\s*Blanca'),
+    ]:
+        pattern = rf'{label}\s+([\d.,-]+)\s+[\d.,-]+\s+[\d.,-]+\s+([\d.,-]+)'
+        m = re.search(pattern, text)
+        if m:
+            importaciones[key] = {
+                'programa': num(m.group(1)),
+                'misma_semana_2025': num(m.group(2)),
+            }
+    if importaciones:
+        d['importaciones'] = importaciones
+
+    # Exportaciones TGN / TGS
+    exportaciones = {}
+    for key, label in [
+        ('tgn', 'Exportaciones en el Sistema de Transporte TGN'),
+        ('tgs', 'Exportaciones en el Sistema de Transporte TGS'),
+    ]:
+        m = re.search(rf'{label}\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)', text)
+        if m:
+            exportaciones[key] = {
+                'vol_exportar': num(m.group(1)),
+                'prom_mes_2025': num(m.group(2)),
+                'misma_semana_2025': num(m.group(3)),
+            }
+    if exportaciones:
+        d['exportaciones'] = exportaciones
+
+    # Consumos estimados
+    consumos = {}
+    for key, label in [
+        ('prioritaria', 'Demanda Prioritaria'),
+        ('cammesa', r'CAMMESA\s*\(\*\)'),
+        ('industria', r'Industria\s*\(P3\+GU\)'),
+        ('gnc', 'GNC'),
+        ('combustible', 'Combustible'),
+    ]:
+        m = re.search(rf'{label}\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)', text)
+        if m:
+            consumos[key] = {
+                'programa': num(m.group(1)),
+                'prom_mes_2025': num(m.group(2)),
+                'misma_semana_2025': num(m.group(3)),
+            }
+    if consumos:
+        d['consumos'] = consumos
+
+    # Total consumo — the PDF splits "TOTAL ... 122,9 MM m3/día ... Transporte"
+    # across two lines, so use DOTALL and a reasonable ceiling on the gap.
+    m = re.search(r'TOTAL[\s\S]{0,120}?([\d.,]+)\s*MM\s*m', text)
+    if m:
+        d['consumo_total_estimado'] = num(m.group(1))
+
+    # Temperature for día operativo: "lunes, 20 de abril de 2026 19 23 21,0 18,1 19,0"
+    # Followed by: "Mayormente nublado..."
+    # Pattern: date_line + 5 numbers (min, max, tm, tm_2025, tm_misma_semana)
+    if d.get('fecha'):
+        pattern = rf'{re.escape("")}(\d+)\s+(\d+)\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)'
+        # Simpler approach: locate a line with the fecha word "abril" then 5 numbers.
+        m = re.search(r'de\s+\w+\s+de\s+\d{4}\s+(\d+)\s+(\d+)\s+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)', text)
+        if m:
+            d['temperatura_ba'] = {
+                'min': num(m.group(1)),
+                'max': num(m.group(2)),
+                'tm': num(m.group(3)),
+                'tm_2025': num(m.group(4)),
+                'tm_misma_semana': num(m.group(5)),
+            }
+
+    # 6-day forecast table. Lines look like:
+    #   "martes, 21 de abril de 2026 19 23 21"
+    forecast = []
+    for m in re.finditer(
+        r'(\w+),\s+(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})\s+(\d+)\s+(\d+)\s+([\d.,]+)',
+        text,
+    ):
+        month = MONTHS.get(m.group(3).lower())
+        if not month:
+            continue
+        fecha = f"{int(m.group(4)):04d}-{month:02d}-{int(m.group(2)):02d}"
+        forecast.append({
+            'fecha': fecha,
+            'min': num(m.group(5)),
+            'max': num(m.group(6)),
+            'tm': num(m.group(7)),
+        })
+    # Drop duplicates (same fecha may appear for the current day).
+    seen = set()
+    dedup = []
+    for item in forecast:
+        if item['fecha'] in seen:
+            continue
+        seen.add(item['fecha'])
+        dedup.append(item)
+    if dedup and d.get('fecha'):
+        # Keep only future days relative to fecha.
+        dedup = [f for f in dedup if f['fecha'] > d['fecha']]
+    if dedup:
+        d['forecast_temp_ba'] = dedup
+
+    return d
+
+
+def parse_rds_pdf(path):
     with pdfplumber.open(path) as pdf:
-        text = pdf.pages[0].extract_text()
-
-    data = {'source': os.path.basename(path)}
-
-    # Date
-    m = re.search(r'Datos del d[ií]a operativo\s*(\d{2}/\d{2}/\d{4})', text)
-    if m:
-        d, mo, y = m.group(1).split('/')
-        data['fecha'] = f"{y}-{mo}-{d}"
-
-    # Recepciones globales
-    m = re.search(r'Cuenca Sur\s+([\d,.]+)\s+([\d,.]+)', text)
-    if m:
-        data['tgs_cuenca_sur_prog'] = parse_number(m.group(1))
-        data['tgs_cuenca_sur_real'] = parse_number(m.group(2))
-
-    m = re.search(r'Cuenca Neuquina\s+([\d,.]+)\s+([\d,.]+)', text)
-    if m:
-        data['tgs_cuenca_nqn_prog'] = parse_number(m.group(1))
-        data['tgs_cuenca_nqn_real'] = parse_number(m.group(2))
-
-    # Estado del sistema
-    m = re.search(r'Estado\s+(Normal|Alerta|Cr[ií]tico)', text)
-    if m:
-        data['estado_tgs'] = m.group(1)
-
-    m = re.search(r'Motivo\s+(.+?)(?:\n|$)', text)
-    if m:
-        data['motivo_tgs'] = m.group(1).strip()
-
-    # Linepack
-    m = re.search(r'D[ií]a Anterior\s+([\d,.]+)\s+D[ií]a Actual\s+([\d,.]+)\s+Variaci[oó]n\s+([-\d,.]+)', text)
-    if m:
-        data['linepack_tgs_anterior'] = parse_number(m.group(1))
-        data['linepack_tgs_actual'] = parse_number(m.group(2))
-        data['linepack_tgs_var'] = parse_number(m.group(3))
-
-    return data
+        text = '\n'.join((p.extract_text() or '') for p in pdf.pages)
+    d = extract_rds(text)
+    d['source'] = os.path.basename(path)
+    return d
 
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
-    # Find all ENARGAS PDFs
-    pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'ETGS*.pdf')))
-    if not pdfs:
-        print("No ENARGAS PDFs found")
-        return
+    rds_pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'RDS_*.pdf')))
+    # Keep old ETGS*.pdf support so we don't lose already-archived files, but
+    # RDS is the authoritative format going forward.
+    legacy = sorted(glob.glob(os.path.join(RAW_DIR, 'ETGS*.pdf')))
 
-    results = []
-    for p in pdfs:
+    rows = []
+    issues = []
+
+    for p in rds_pdfs:
         try:
-            d = parse_enargas_pdf(p)
-            results.append(d)
-            print(f"Parsed {os.path.basename(p)}: fecha={d.get('fecha')}, LP={d.get('linepack_tgs_actual')}, estado={d.get('estado_tgs')}")
+            with open(p, 'rb') as fh:
+                if fh.read(5) != b'%PDF-':
+                    issues.append(f"{os.path.basename(p)}: not a valid PDF (skipped)")
+                    continue
+            row = parse_rds_pdf(p)
+            missing = REQUIRED_FIELDS - row.keys()
+            if missing:
+                issues.append(f"{os.path.basename(p)}: missing {sorted(missing)}")
+            rows.append(row)
+            print(
+                f"Parsed {os.path.basename(p)}: "
+                f"fecha={row.get('fecha')} LP={row.get('linepack_total')} "
+                f"total={row.get('consumo_total_estimado')}"
+            )
         except Exception as e:
-            print(f"Error parsing {p}: {e}")
+            issues.append(f"{os.path.basename(p)}: exception {e}")
+            print(f"Error parsing {p}: {e}", file=sys.stderr)
 
-    with open(os.path.join(OUT_DIR, 'enargas.json'), 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
-    print(f"enargas.json: {len(results)} reports")
+    # Deduplicate by fecha, keep most recent entry
+    by_date = {}
+    for row in rows:
+        key = row.get('fecha') or row['source']
+        by_date[key] = row
+    rows = sorted(by_date.values(), key=lambda r: r.get('fecha') or '')
+
+    if legacy and not rows:
+        issues.append(f"Found {len(legacy)} legacy ETGS PDFs but no RDS — format likely changed")
+
+    if issues:
+        print("WARN: ENARGAS parse issues:", file=sys.stderr)
+        for msg in issues:
+            print(f"  {msg}", file=sys.stderr)
+
+    latest = max((r.get('fecha') for r in rows if r.get('fecha')), default=None)
+    write_json(
+        os.path.join(OUT_DIR, 'enargas.json'),
+        rows,
+        source='ENARGAS Reporte Diario del Sistema (RDS)',
+        source_date=latest,
+        issues=issues,
+    )
+    print(f"enargas.json: {len(rows)} reports")
 
 
 if __name__ == '__main__':

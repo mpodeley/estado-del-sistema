@@ -11,6 +11,10 @@ RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 WEEKLY_URL = 'https://cammesaweb.cammesa.com/programacion-semanal/'
 
 
+def looks_like_pdf(content: bytes) -> bool:
+    return content[:5] == b'%PDF-'
+
+
 def fetch_cammesa_weekly():
     """Try to download latest CAMMESA weekly programming PDF."""
     os.makedirs(RAW_DIR, exist_ok=True)
@@ -33,6 +37,9 @@ def fetch_cammesa_weekly():
                 print(f"Downloading {pdf_url}")
                 pdf_r = requests.get(pdf_url, headers=headers, timeout=60)
                 pdf_r.raise_for_status()
+                if not looks_like_pdf(pdf_r.content):
+                    print(f"Skip {fname}: response is not a PDF (first bytes {pdf_r.content[:10]!r})")
+                    continue
                 with open(out, 'wb') as f:
                     f.write(pdf_r.content)
                 print(f"Saved {fname} ({len(pdf_r.content)} bytes)")
@@ -52,7 +59,7 @@ def fetch_cammesa_weekly():
                 try:
                     url = base + fname
                     pdf_r = requests.get(url, headers=headers, timeout=15)
-                    if pdf_r.status_code == 200 and len(pdf_r.content) > 1000:
+                    if pdf_r.status_code == 200 and len(pdf_r.content) > 1000 and looks_like_pdf(pdf_r.content):
                         out = os.path.join(RAW_DIR, fname)
                         with open(out, 'wb') as f:
                             f.write(pdf_r.content)

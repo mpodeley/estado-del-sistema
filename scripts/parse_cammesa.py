@@ -3,12 +3,17 @@
 
 import os
 import re
-import json
+import sys
 import glob
 import pdfplumber
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _meta import write_json  # noqa: E402
+
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
+
+REQUIRED_FIELDS = {'demanda_total', 'temperatura', 'prioritaria'}
 
 MONTHS = {'ene': 1, 'feb': 2, 'mar': 3, 'abr': 4, 'may': 5, 'jun': 6,
            'jul': 7, 'ago': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dic': 12}
@@ -138,18 +143,36 @@ def main():
         return
 
     results = []
+    issues = []
     for p in pdfs:
         try:
+            with open(p, 'rb') as fh:
+                if fh.read(5) != b'%PDF-':
+                    issues.append(f"{os.path.basename(p)}: not a valid PDF (skipped)")
+                    continue
             d = parse_cammesa_pdf(p)
+            missing = REQUIRED_FIELDS - d.keys()
+            if missing:
+                issues.append(f"{os.path.basename(p)}: missing {sorted(missing)}")
             print(f"Parsed {os.path.basename(p)}: {len(d['days'])} days")
             for day in d['days']:
                 print(f"  Dia {day['dia']}/{day['mes']}: T={day.get('temperatura')}, Dem={day.get('demanda_total')}")
             results.append(d)
         except Exception as e:
-            print(f"Error parsing {p}: {e}")
+            issues.append(f"{os.path.basename(p)}: exception {e}")
+            print(f"Error parsing {p}: {e}", file=sys.stderr)
 
-    with open(os.path.join(OUT_DIR, 'cammesa_weekly.json'), 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+    if issues:
+        print("WARN: CAMMESA parse issues:", file=sys.stderr)
+        for msg in issues:
+            print(f"  {msg}", file=sys.stderr)
+
+    write_json(
+        os.path.join(OUT_DIR, 'cammesa_weekly.json'),
+        results,
+        source='CAMMESA weekly PS_* PDFs',
+        issues=issues,
+    )
     print(f"cammesa_weekly.json: {len(results)} reports")
 
 

@@ -1,59 +1,84 @@
 #!/usr/bin/env python3
-"""Parse 'Base Reporte Estado de Sistema.xlsx' into JSON files for the dashboard."""
+"""Parse 'Base Reporte Estado de Sistema.xlsx' into JSON files for the dashboard.
 
-import json
+Uses header-driven column mapping: validates row 1 (group) + row 2 (subheader)
+match the expected schema and reports loud when anything shifts.
+"""
+
 import os
+import sys
+import unicodedata
 from datetime import datetime
 import openpyxl
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _meta import write_json  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 
-# Column mapping for "Conv. valores" sheet (1-indexed)
-COL = {
-    'fecha': 2,
-    'demanda_total': 3,
-    'prioritaria': 4,
-    'industria': 5,
-    'usinas': 6,
-    'exportaciones': 7,
-    'iny_tgs': 8,
-    'iny_tgn': 9,
-    'iny_enarsa': 10,
-    'iny_gpm': 11,
-    'iny_bolivia': 12,
-    'iny_escobar': 13,
-    'iny_total': 14,
-    'linepack_tgs': 15,
-    'var_linepack_tgs': 16,
-    'lim_inf_tgs': 17,
-    'lim_sup_tgs': 18,
-    'linepack_tgn': 19,
-    'var_linepack_tgn': 20,
-    'lim_inf_tgn': 21,
-    'lim_sup_tgn': 22,
-    'linepack_total': 23,
-    'var_linepack_total': 24,
-    'lim_inf_total': 25,
-    'lim_sup_total': 26,
-    'tramo_final_tgs': 27,
-    'tf_lim_inf_tgs': 28,
-    'tf_lim_sup_tgs': 29,
-    'tramo_final_tgn': 30,
-    'tf_lim_inf_tgn': 31,
-    'tf_lim_sup_tgn': 32,
-    'temp_min_ba': 33,
-    'temp_max_ba': 34,
-    'temp_prom_ba': 35,
-    'temp_min_esquel': 36,
-    'temp_max_esquel': 37,
-    'temp_prom_esquel': 38,
-    'cammesa_gas': 39,
-    'cammesa_gasoil': 40,
-    'cammesa_fueloil': 41,
-    'cammesa_carbon': 42,
-    'cammesa_total': 43,
-}
+# Expected schema for sheet "Conv. valores"
+# (group_row1, header_row2, internal_key, treat_zero_as_null)
+SCHEMA = [
+    (None, 'FECHA', 'fecha', False),
+    (None, 'Demanda Total DS', 'demanda_total', True),
+    (None, 'Prioritaria', 'prioritaria', True),
+    (None, 'Industria', 'industria', False),
+    (None, 'Usinas', 'usinas', False),
+    (None, 'Exportaciones', 'exportaciones', False),
+    (None, 'TGS', 'iny_tgs', False),
+    (None, 'TGN', 'iny_tgn', False),
+    (None, 'Iny. Enarsa', 'iny_enarsa', False),
+    (None, 'GPM', 'iny_gpm', False),
+    (None, 'Bolivia', 'iny_bolivia', False),
+    (None, 'ESCOBAR', 'iny_escobar', False),
+    (None, 'Iny. Total', 'iny_total', False),
+    (None, 'Linepack TGS', 'linepack_tgs', True),
+    (None, 'Var. Linepack TGS', 'var_linepack_tgs', True),
+    (None, 'Limite Inf.', 'lim_inf_tgs', False),
+    (None, 'Limite Sup.', 'lim_sup_tgs', False),
+    (None, 'Linepack TGN', 'linepack_tgn', True),
+    (None, 'Var. Linepack TGN', 'var_linepack_tgn', True),
+    (None, 'Limite Inf.', 'lim_inf_tgn', False),
+    (None, 'Limite Sup.', 'lim_sup_tgn', False),
+    (None, 'Linepack Total', 'linepack_total', True),
+    (None, 'Variacion Total', 'var_linepack_total', True),
+    (None, 'Limite Inf.', 'lim_inf_total', False),
+    (None, 'Limite Sup.', 'lim_sup_total', False),
+    ('Tramos finales', 'TGS', 'tramo_final_tgs', False),
+    ('Tramos finales', 'Limite Inf.', 'tf_lim_inf_tgs', False),
+    ('Tramos finales', 'Limite Sup.', 'tf_lim_sup_tgs', False),
+    ('Tramos finales', 'TGN', 'tramo_final_tgn', False),
+    ('Tramos finales', 'Limite Inf.', 'tf_lim_inf_tgn', False),
+    ('Tramos finales', 'Limite Sup.', 'tf_lim_sup_tgn', False),
+    ('BUENOS AIRES', 'Temp. Min', 'temp_min_ba', False),
+    ('BUENOS AIRES', 'Temp. Max', 'temp_max_ba', False),
+    ('BUENOS AIRES', 'Temp Promedio', 'temp_prom_ba', False),
+    ('ESQUEL', 'Temp. Min', 'temp_min_esquel', False),
+    ('ESQUEL', 'Temp. Max', 'temp_max_esquel', False),
+    ('ESQUEL', 'Temp Promedio', 'temp_prom_esquel', False),
+    ('CAMMESA', 'GAS', 'cammesa_gas', False),
+    ('CAMMESA', 'GAS OIL', 'cammesa_gasoil', False),
+    ('CAMMESA', 'FUEL OIL', 'cammesa_fueloil', False),
+    ('CAMMESA', 'CARBON', 'cammesa_carbon', False),
+    ('CAMMESA', 'TOTAL', 'cammesa_total', False),
+]
+
+# Keys that must parse correctly or the pipeline aborts.
+CRITICAL_KEYS = {'fecha', 'demanda_total', 'linepack_tgs', 'linepack_tgn'}
+
+# First data column is col 2 (FECHA) — schema starts aligned there.
+FIRST_DATA_COL = 2
+
+
+def norm(s):
+    """Normalize for comparison: strip accents, lowercase, collapse whitespace."""
+    if s is None:
+        return ''
+    s = str(s).strip()
+    s = unicodedata.normalize('NFKD', s)
+    s = ''.join(c for c in s if not unicodedata.combining(c))
+    return ' '.join(s.lower().split())
 
 
 def safe_float(v):
@@ -65,37 +90,86 @@ def safe_float(v):
         return None
 
 
+def read_group_row(ws, row=1):
+    """Read row 1 with forward-fill (merged cells return None on non-lead columns)."""
+    groups = {}
+    last = None
+    for c in range(1, ws.max_column + 1):
+        v = ws.cell(row, c).value
+        if v is not None:
+            last = v
+        groups[c] = last
+    # Clear forward-fill once a new top-level section starts — detect by the
+    # presence of known section names. Here we keep it simple: reset to None
+    # when the forward-filled label no longer applies. Since the schema
+    # declares expected groups, any stale fill will be caught by validation.
+    return groups
+
+
+def build_column_map(ws):
+    """Validate headers match SCHEMA. Returns (col_map, issues).
+
+    col_map: {internal_key: column_number}
+    issues: list of strings describing mismatches.
+    """
+    col_map = {}
+    issues = []
+    groups = read_group_row(ws)
+
+    for i, (expected_group, expected_header, key, _) in enumerate(SCHEMA):
+        col = FIRST_DATA_COL + i
+        actual_group = groups.get(col) if expected_group is not None else None
+        actual_header = ws.cell(2, col).value
+
+        group_ok = (expected_group is None) or (norm(actual_group) == norm(expected_group))
+        header_ok = norm(actual_header) == norm(expected_header)
+
+        if group_ok and header_ok:
+            col_map[key] = col
+        else:
+            issues.append(
+                f"col {col} ({key}): expected ({expected_group!r}, {expected_header!r}) "
+                f"got ({actual_group!r}, {actual_header!r})"
+            )
+
+    return col_map, issues
+
+
 def parse_conv_valores(wb):
     ws = wb['Conv. valores']
+    col_map, issues = build_column_map(ws)
+
+    if issues:
+        print("WARN: header mismatches in 'Conv. valores':", file=sys.stderr)
+        for msg in issues:
+            print(f"  {msg}", file=sys.stderr)
+
+    missing_critical = CRITICAL_KEYS - col_map.keys()
+    if missing_critical:
+        print(f"ERROR: critical columns missing: {sorted(missing_critical)}", file=sys.stderr)
+        sys.exit(2)
+
+    # Which keys should have 0.0 → None
+    zero_as_null = {k for _, _, k, z in SCHEMA if z}
+
     rows = []
     for r in range(3, ws.max_row + 1):
-        fecha = ws.cell(r, COL['fecha']).value
-        if fecha is None:
+        fecha_val = ws.cell(r, col_map['fecha']).value
+        if fecha_val is None:
             continue
-        if isinstance(fecha, datetime):
-            fecha_str = fecha.strftime('%Y-%m-%d')
+        if isinstance(fecha_val, datetime):
+            fecha_str = fecha_val.strftime('%Y-%m-%d')
         else:
-            fecha_str = str(fecha)
+            fecha_str = str(fecha_val)
 
         row = {'fecha': fecha_str}
-        for key, col in COL.items():
+        for key, col in col_map.items():
             if key == 'fecha':
                 continue
-            row[key] = safe_float(ws.cell(r, col).value)
-
-        # Treat 0.0 linepack as missing (not yet published)
-        for lp_key in ['linepack_tgs', 'linepack_tgn', 'linepack_total']:
-            if row.get(lp_key) == 0.0:
-                row[lp_key] = None
-        for var_key in ['var_linepack_tgs', 'var_linepack_tgn', 'var_linepack_total']:
-            if row.get(var_key) == 0.0:
-                row[var_key] = None
-
-        # Treat 0.0 demand as missing (not yet published)
-        if row.get('demanda_total') == 0.0:
-            row['demanda_total'] = None
-        if row.get('prioritaria') == 0.0:
-            row['prioritaria'] = None
+            v = safe_float(ws.cell(r, col).value)
+            if v == 0.0 and key in zero_as_null:
+                v = None
+            row[key] = v
 
         # Skip rows where everything important is None (future dates)
         has_data = any(row.get(k) is not None for k in [
@@ -106,41 +180,33 @@ def parse_conv_valores(wb):
 
         rows.append(row)
 
-    # Remove duplicate dates (keep first occurrence which has more data)
+    # Deduplicate by date — keep first occurrence (typically richer)
     seen = set()
     deduped = []
     for row in rows:
-        if row['fecha'] not in seen:
-            seen.add(row['fecha'])
-            deduped.append(row)
+        if row['fecha'] in seen:
+            continue
+        seen.add(row['fecha'])
+        deduped.append(row)
 
-    return deduped
+    return deduped, len(col_map), len(SCHEMA)
 
 
 def parse_comments(wb):
     comments = {}
 
-    # Diario sheet - daily comments
-    if 'Diario' in wb.sheetnames:
-        ws = wb['Diario']
-        daily_comments = []
+    for sheet, bucket in [('Diario', 'daily'), ('Proyección Semanal', 'weekly')]:
+        if sheet not in wb.sheetnames:
+            comments[bucket] = []
+            continue
+        ws = wb[sheet]
+        out = []
         for r in range(1, ws.max_row + 1):
             for c in range(1, ws.max_column + 1):
                 v = ws.cell(r, c).value
                 if v and isinstance(v, str) and len(v) > 20:
-                    daily_comments.append(v.strip())
-        comments['daily'] = daily_comments
-
-    # Proyección Semanal - weekly comments
-    if 'Proyección Semanal' in wb.sheetnames:
-        ws = wb['Proyección Semanal']
-        weekly_comments = []
-        for r in range(1, ws.max_row + 1):
-            for c in range(1, ws.max_column + 1):
-                v = ws.cell(r, c).value
-                if v and isinstance(v, str) and len(v) > 20:
-                    weekly_comments.append(v.strip())
-        comments['weekly'] = weekly_comments
+                    out.append(v.strip())
+        comments[bucket] = out
 
     return comments
 
@@ -148,19 +214,36 @@ def parse_comments(wb):
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     xlsx_path = os.path.join(RAW_DIR, 'Base Reporte Estado de Sistema.xlsx')
+    if not os.path.exists(xlsx_path):
+        print(f"ERROR: {xlsx_path} not found", file=sys.stderr)
+        sys.exit(2)
     wb = openpyxl.load_workbook(xlsx_path, data_only=True)
 
-    # Parse daily data
-    daily = parse_conv_valores(wb)
-    with open(os.path.join(OUT_DIR, 'daily.json'), 'w', encoding='utf-8') as f:
-        json.dump(daily, f, ensure_ascii=False, indent=2)
-    print(f"daily.json: {len(daily)} rows ({daily[0]['fecha']} to {daily[-1]['fecha']})")
+    daily, matched, expected = parse_conv_valores(wb)
+    print(f"Column mapping: {matched}/{expected} headers matched")
 
-    # Parse comments
-    comments = parse_comments(wb)
-    with open(os.path.join(OUT_DIR, 'comments.json'), 'w', encoding='utf-8') as f:
-        json.dump(comments, f, ensure_ascii=False, indent=2)
-    print(f"comments.json: {len(comments.get('daily', []))} daily, {len(comments.get('weekly', []))} weekly")
+    latest_date = daily[-1]['fecha'] if daily else None
+    source = 'Base Reporte Estado de Sistema.xlsx'
+
+    write_json(
+        os.path.join(OUT_DIR, 'daily.json'),
+        daily, source=source, source_date=latest_date,
+        headers_matched=matched, headers_expected=expected,
+    )
+    if daily:
+        print(f"daily.json: {len(daily)} rows ({daily[0]['fecha']} to {daily[-1]['fecha']})")
+    else:
+        print("daily.json: 0 rows - check Excel content", file=sys.stderr)
+
+    # Manual comments from the Excel — auto-generator in generate_forecast.py
+    # overlays the authoritative comments.json; we save the manual ones separately
+    # so they can be surfaced in the UI if ever needed.
+    manual = parse_comments(wb)
+    write_json(
+        os.path.join(OUT_DIR, 'comments_manual.json'),
+        manual, source=source, source_date=latest_date,
+    )
+    print(f"comments_manual.json: {len(manual.get('daily', []))} daily, {len(manual.get('weekly', []))} weekly")
 
     wb.close()
 

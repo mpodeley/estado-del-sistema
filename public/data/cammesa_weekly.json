@@ -1,124 +1,130 @@
-[
-  {
-    "source": "PS_20260410.pdf",
-    "days": [
-      {
-        "dia": 9,
-        "mes": 4,
-        "temperatura": null,
-        "demanda_total": 145.2,
-        "prioritaria": 28.4,
-        "industria": null,
-        "usinas": 38.9,
-        "inyecciones": 127.1,
-        "stock": 312.0
-      },
-      {
-        "dia": 10,
-        "mes": 4,
-        "temperatura": null,
-        "demanda_total": 141.1,
-        "prioritaria": 27.9,
-        "industria": 38.3,
-        "usinas": 37.2,
-        "inyecciones": 127.2,
-        "stock": 368.0
-      },
-      {
-        "dia": 11,
-        "mes": 4,
-        "temperatura": 18.0,
-        "demanda_total": 139.6,
-        "prioritaria": 27.8,
-        "industria": 37.7,
-        "usinas": 35.1,
-        "inyecciones": 124.9,
-        "stock": 355.6
-      },
-      {
-        "dia": 12,
-        "mes": 4,
-        "temperatura": 16.1,
-        "demanda_total": 123.1,
-        "prioritaria": 22.3,
-        "industria": 38.2,
-        "usinas": 27.2,
-        "inyecciones": 121.6,
-        "stock": 357.5
-      },
-      {
-        "dia": 13,
-        "mes": 4,
-        "temperatura": 17.0,
-        "demanda_total": 121.2,
-        "prioritaria": 21.6,
-        "industria": 37.7,
-        "usinas": 27.2,
-        "inyecciones": 118.6,
-        "stock": 358.2
-      }
-    ],
-    "temperatura": [
-      null,
-      null,
-      18.0,
-      16.1,
-      17.0,
-      19.5,
-      21.0,
-      20.5
-    ],
-    "demanda_total": [
-      145.2,
-      141.1,
-      139.6,
-      123.1,
-      121.2,
-      131.8
-    ],
-    "prioritaria": [
-      28.4,
-      27.9,
-      27.8,
-      22.3,
-      21.6,
-      25.9
-    ],
-    "industria": [
-      null,
-      38.3,
-      37.7,
-      38.2,
-      37.7,
-      37.7,
-      38.7
-    ],
-    "usinas": [
-      38.9,
-      37.2,
-      35.1,
-      27.2,
-      27.2,
-      34.5
-    ],
-    "inyecciones": [
-      127.1,
-      127.2,
-      124.9,
-      121.6,
-      118.6,
-      110.7
-    ],
-    "stock": [
-      312.0,
-      368.0,
-      355.6,
-      357.5,
-      358.2,
-      369.8,
-      380.2
-    ],
-    "stock_min": 312.0,
-    "stock_max": 368.0
-  }
-]
+{
+  "generated_at": "2026-04-20T13:47:02+00:00",
+  "source": "CAMMESA weekly PS_* PDFs",
+  "source_date": null,
+  "data": [
+    {
+      "source": "PS_20260410.pdf",
+      "days": [
+        {
+          "dia": 9,
+          "mes": 4,
+          "temperatura": null,
+          "demanda_total": 145.2,
+          "prioritaria": 28.4,
+          "industria": null,
+          "usinas": 38.9,
+          "inyecciones": 127.1,
+          "stock": 312.0
+        },
+        {
+          "dia": 10,
+          "mes": 4,
+          "temperatura": null,
+          "demanda_total": 141.1,
+          "prioritaria": 27.9,
+          "industria": 38.3,
+          "usinas": 37.2,
+          "inyecciones": 127.2,
+          "stock": 368.0
+        },
+        {
+          "dia": 11,
+          "mes": 4,
+          "temperatura": 18.0,
+          "demanda_total": 139.6,
+          "prioritaria": 27.8,
+          "industria": 37.7,
+          "usinas": 35.1,
+          "inyecciones": 124.9,
+          "stock": 355.6
+        },
+        {
+          "dia": 12,
+          "mes": 4,
+          "temperatura": 16.1,
+          "demanda_total": 123.1,
+          "prioritaria": 22.3,
+          "industria": 38.2,
+          "usinas": 27.2,
+          "inyecciones": 121.6,
+          "stock": 357.5
+        },
+        {
+          "dia": 13,
+          "mes": 4,
+          "temperatura": 17.0,
+          "demanda_total": 121.2,
+          "prioritaria": 21.6,
+          "industria": 37.7,
+          "usinas": 27.2,
+          "inyecciones": 118.6,
+          "stock": 358.2
+        }
+      ],
+      "temperatura": [
+        null,
+        null,
+        18.0,
+        16.1,
+        17.0,
+        19.5,
+        21.0,
+        20.5
+      ],
+      "demanda_total": [
+        145.2,
+        141.1,
+        139.6,
+        123.1,
+        121.2,
+        131.8
+      ],
+      "prioritaria": [
+        28.4,
+        27.9,
+        27.8,
+        22.3,
+        21.6,
+        25.9
+      ],
+      "industria": [
+        null,
+        38.3,
+        37.7,
+        38.2,
+        37.7,
+        37.7,
+        38.7
+      ],
+      "usinas": [
+        38.9,
+        37.2,
+        35.1,
+        27.2,
+        27.2,
+        34.5
+      ],
+      "inyecciones": [
+        127.1,
+        127.2,
+        124.9,
+        121.6,
+        118.6,
+        110.7
+      ],
+      "stock": [
+        312.0,
+        368.0,
+        355.6,
+        357.5,
+        358.2,
+        369.8,
+        380.2
+      ],
+      "stock_min": 312.0,
+      "stock_max": 368.0
+    }
+  ],
+  "issues": []
+}

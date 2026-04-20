@@ -1,71 +1,75 @@
-import { useState, useEffect } from 'react'
-import type { DailyRow, Comments } from '../types'
+import { useEffect, useState } from 'react'
+import type {
+  Comments,
+  DailyRow,
+  DemandForecast,
+  Envelope,
+  FetchState,
+  RegionCity,
+  WeatherPayload,
+} from '../types'
 
-export function useDaily() {
-  const [data, setData] = useState<DailyRow[]>([])
-  const [loading, setLoading] = useState(true)
+// Re-exported so components that historically imported from this file still work.
+export type { ForecastDay, DemandForecastDay, DemandForecast } from '../types'
+
+/**
+ * Loads a JSON file from /public/data/ and unwraps the {generated_at, data}
+ * envelope produced by the Python pipeline. Legacy payloads (no envelope) are
+ * returned as-is.
+ */
+export function useJson<T>(path: string): FetchState<T> {
+  const [state, setState] = useState<FetchState<T>>({
+    data: null,
+    loading: true,
+    error: null,
+    meta: { generated_at: null, source: null, source_date: null },
+  })
+
   useEffect(() => {
-    fetch('./data/daily.json')
-      .then(r => r.json())
-      .then(d => { setData(d); setLoading(false) })
-      .catch(() => setLoading(false))
-  }, [])
-  return { data, loading }
+    let cancelled = false
+    fetch(path, { cache: 'no-store' })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status} fetching ${path}`)
+        return r.json()
+      })
+      .then((raw: unknown) => {
+        if (cancelled) return
+        if (raw && typeof raw === 'object' && 'data' in raw && 'generated_at' in raw) {
+          const env = raw as Envelope<T>
+          setState({
+            data: env.data,
+            loading: false,
+            error: null,
+            meta: {
+              generated_at: env.generated_at ?? null,
+              source: env.source ?? null,
+              source_date: env.source_date ?? null,
+            },
+          })
+        } else {
+          setState({
+            data: raw as T,
+            loading: false,
+            error: null,
+            meta: { generated_at: null, source: null, source_date: null },
+          })
+        }
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setState((s) => ({ ...s, loading: false, error: err }))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [path])
+
+  return state
 }
 
-export function useComments() {
-  const [data, setData] = useState<Comments>({ daily: [], weekly: [] })
-  useEffect(() => {
-    fetch('./data/comments.json')
-      .then(r => r.json())
-      .then(setData)
-      .catch(() => {})
-  }, [])
-  return data
-}
-
-export interface ForecastDay {
-  fecha: string
-  temp_max: number | null
-  temp_min: number | null
-  temp_prom: number | null
-}
-
-export function useWeather() {
-  const [data, setData] = useState<ForecastDay[]>([])
-  useEffect(() => {
-    fetch('./data/weather.json')
-      .then(r => r.json())
-      .then(d => setData(d.forecast || []))
-      .catch(() => {})
-  }, [])
-  return data
-}
-
-export interface DemandForecastDay {
-  fecha: string
-  temp_prom: number | null
-  prioritaria_est: number | null
-  demanda_total_est: number | null
-  usinas_est: number | null
-}
-
-export interface DemandForecast {
-  forecast: DemandForecastDay[]
-  regression: {
-    n_points: number
-    prioritaria: { slope: number | null; intercept: number | null; r2: number | null }
-    demanda_total: { slope: number | null; intercept: number | null; r2: number | null }
-  }
-}
-
-export function useDemandForecast() {
-  const [data, setData] = useState<DemandForecast | null>(null)
-  useEffect(() => {
-    fetch('./data/demand_forecast.json')
-      .then(r => r.json())
-      .then(setData)
-      .catch(() => {})
-  }, [])
-  return data
-}
+// One wrapper per dataset — gives each a clear name + typed payload.
+export const useDaily = () => useJson<DailyRow[]>('./data/daily.json')
+export const useComments = () => useJson<Comments>('./data/comments.json')
+export const useWeather = () => useJson<WeatherPayload>('./data/weather.json')
+export const useDemandForecast = () => useJson<DemandForecast>('./data/demand_forecast.json')
+export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_regions.json')
+export const useEnargasRDS = () => useJson<unknown[]>('./data/enargas.json')

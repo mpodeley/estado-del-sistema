@@ -1,50 +1,137 @@
-const items = [
-  { task: 'Parser de Excel base con limpieza de datos', status: 'done', notes: 'parse_base_excel.py - filtra 0s como no-publicado, deduplica fechas' },
-  { task: 'Parser de linepack equilibrio', status: 'done', notes: 'parse_linepack.py - TGN actual vs equilibrio' },
-  { task: 'Dashboard React con KPIs y charts', status: 'done', notes: 'Recharts, dark theme, responsive, 4 KPI cards' },
-  { task: 'Panel de estado por sistema (TGS/TGN)', status: 'done', notes: 'Ventana de 3 dias con estado NORMAL/BAJO/ALTO + limites' },
-  { task: 'Comparacion semanal automatica', status: 'done', notes: 'Sem N vs N-1 para demanda, temp, inyecciones' },
-  { task: 'Deploy a GitHub Pages', status: 'done', notes: 'gh-pages branch, mpodeley.github.io/estado-del-sistema' },
-  { task: 'Scraper ENARGAS (PDF semanal)', status: 'done', notes: 'fetch_enargas.py + parse_enargas.py con pdfplumber' },
-  { task: 'Scraper CAMMESA (PDF semanal)', status: 'done', notes: 'fetch_cammesa.py + parse_cammesa.py - extrae demanda, temp, inyecciones' },
-  { task: 'Forecast de temperatura (14 dias)', status: 'done', notes: 'fetch_weather.py - Open-Meteo API, gratis, sin API key' },
-  { task: 'Forecast automatico de demanda', status: 'done', notes: 'generate_forecast.py - regresion temp-demanda, R2=0.45 prioritaria' },
-  { task: 'Comentarios operativos auto-generados', status: 'done', notes: 'Diario + semanal generados desde datos + forecast' },
-  { task: 'Chart de forecast demanda real + estimada', status: 'done', notes: 'Lineas solidas (real) + punteadas (estimado) con marca Hoy' },
-  { task: 'Chart de temperatura real + forecast', status: 'done', notes: 'Datos historicos + 14 dias Open-Meteo' },
-  { task: 'GitHub Actions cron diario', status: 'done', notes: 'update-data.yml - 9 UTC diario + trigger manual' },
-  { task: 'Pipeline orquestador', status: 'done', notes: 'build_data.py - fetch + parse + forecast + comments en secuencia' },
-  { task: 'Pagina de fuentes de datos', status: 'done', notes: '9 fuentes listadas con URLs, frecuencia y estado' },
-  { task: 'Pagina de estado del proyecto', status: 'done', notes: 'Esta pagina - checklist con progreso' },
-  { task: 'Restricciones de transporte (Gas Andes, CCO)', status: 'pending', notes: 'Datos en sheet Datos cols CD-CI, parser pendiente' },
-  { task: 'Inyeccion GNL y stock', status: 'pending', notes: 'Datos disponibles en Excel, integrar al dashboard' },
-  { task: 'Datos de exportaciones CAMMESA', status: 'pending', notes: 'Fuente exacta por confirmar (volumen y destino)' },
-  { task: 'Mejorar modelo de demanda', status: 'pending', notes: 'Mas datos historicos, variables adicionales (dia de semana, feriados)' },
-  { task: 'Dominio custom (estadodelsistema.podeley.ar)', status: 'pending', notes: 'Configurar CNAME en GitHub Pages' },
+import { colors, space } from '../theme'
+
+type Wave = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+const items: { task: string; status: 'done' | 'pending'; wave: Wave; notes: string }[] = [
+  // Base / preexistente
+  { task: 'Parser de Excel base', status: 'done', wave: 0, notes: 'Header-driven + validación de columnas' },
+  { task: 'Dashboard React con KPIs y charts', status: 'done', wave: 0, notes: 'Recharts, dark theme, responsive' },
+  { task: 'Panel de estado TGS/TGN con badges', status: 'done', wave: 0, notes: 'Ventana 3 días, NORMAL/BAJO/ALTO' },
+  { task: 'Comparación semanal automática', status: 'done', wave: 0, notes: 'Sem N vs N-1 sobre demanda/temp/inyecciones' },
+  { task: 'Forecast de demanda por regresión', status: 'done', wave: 0, notes: 'R²=0.45 prioritaria — hay que mejorar con +data' },
+  { task: 'Comentarios auto-generados', status: 'done', wave: 0, notes: 'Diarios + semanales desde forecast' },
+  { task: 'Deploy GitHub Pages + Actions cron', status: 'done', wave: 0, notes: 'Build nocturno automático' },
+
+  // Wave 0 — foundation
+  { task: 'Envelope {generated_at} en todos los JSON', status: 'done', wave: 0, notes: 'Source + fecha de generación en cada archivo' },
+  { task: 'Hook useJson<T> genérico', status: 'done', wave: 0, notes: 'Unwrapping + error + meta automático' },
+  { task: 'ErrorBoundary + loading skeletons', status: 'done', wave: 0, notes: 'No más "Cargando datos…"' },
+  { task: 'Data freshness banner', status: 'done', wave: 0, notes: 'Badges de color por fuente en el header' },
+  { task: 'Theme tokens extraídos (theme.ts)', status: 'done', wave: 0, notes: 'Sin hex codes inline' },
+  { task: 'Mobile responsive', status: 'done', wave: 0, notes: 'Grids minmax, charts fluidos, tabs scroll' },
+  { task: 'LinepackChart sin límites hardcodeados', status: 'done', wave: 0, notes: 'Lee lim_inf/lim_sup del data' },
+  { task: 'Drop folder raw/incoming/', status: 'done', wave: 0, notes: 'Detecta tipo por magic bytes, archiva con timestamp' },
+  { task: 'Pipeline guards + validación de outputs', status: 'done', wave: 0, notes: 'Exit 1 si algo queda stale' },
+  { task: 'Página Guía en español', status: 'done', wave: 0, notes: 'Cómo leer, fuentes, drop folder, limitaciones' },
+  { task: 'CI: typecheck + timeout en workflow', status: 'done', wave: 0, notes: 'Falla antes del deploy si algo rompe' },
+
+  // Wave 1 — geográfico
+  { task: 'Multi-ciudad weather (10 ciudades)', status: 'done', wave: 1, notes: 'Open-Meteo BA + Rosario + Córdoba + ... + Esquel' },
+  { task: 'Mapa regional con MapLibre + OSM', status: 'done', wave: 1, notes: 'Círculos por ciudad coloreados por temp, slider de día' },
+  { task: 'Gasoductos + puntos de inyección', status: 'done', wave: 1, notes: 'TGN Norte/Centro-Oeste, TGS SM/Neuba, NK, Cordillerano' },
+  { task: 'TemperatureChart con selector de ciudad', status: 'done', wave: 1, notes: 'Click mapa o dropdown cambia la ciudad' },
+  { task: 'Ranking ciudades más frías', status: 'done', wave: 1, notes: 'Top-5 sobre próximos 7 días' },
+
+  // Wave 2 — más fuentes públicas
+  { task: 'ENARGAS RDS diario (automático)', status: 'done', wave: 2, notes: 'Line pack, importaciones, exportaciones, consumos, temp BA — todo del PDF oficial' },
+  { task: 'Panel ENARGAS RDS en outlook', status: 'done', wave: 2, notes: 'Stats + breakdown por consumo/importación/exportación' },
+  { task: 'CAMMESA diaria (programación)', status: 'pending', wave: 2, notes: 'Scraper pendiente' },
+  { task: 'CAMMESA resultados (dato cerrado)', status: 'pending', wave: 2, notes: 'BLOQUEADO: requiere credenciales o drop manual' },
+  { task: 'ENARGAS stock GNL mensual', status: 'pending', wave: 2, notes: 'Escobar + Bahía Blanca' },
+  { task: 'SMN alertas meteorológicas', status: 'pending', wave: 2, notes: 'Trigger de picos extremos' },
+  { task: 'Open-Meteo histórico (backfill 2 años)', status: 'pending', wave: 2, notes: 'Mejora el modelo de demanda' },
+
+  // Wave 3 — forecast creíble
+  { task: 'Features adicionales en modelo de demanda', status: 'pending', wave: 3, notes: 'Día de semana, feriado, estacionalidad' },
+  { task: 'Backtesting del forecast', status: 'pending', wave: 3, notes: 'MAE/MAPE por horizonte' },
+
+  // Wave 4 — interactividad
+  { task: 'Date range picker + deep links', status: 'pending', wave: 4, notes: 'URL copiable con filtros' },
+  { task: 'Alertas configurables', status: 'pending', wave: 4, notes: 'Umbrales definidos por usuario' },
+  { task: 'Export CSV / PDF del outlook', status: 'pending', wave: 4, notes: '' },
+
+  // Fuera de scope inmediato
+  { task: 'Datos privados TGS/TGN (credenciales)', status: 'pending', wave: 5, notes: 'Pospuesto — drop folder cubre el caso manual' },
+  { task: 'Topología de red tipo gasoductos', status: 'pending', wave: 6, notes: 'Stress coloring por tramo con flujo/capacidad' },
 ]
 
-const icon = (s: string) => s === 'done' ? '✓' : '○'
-const color = (s: string) => s === 'done' ? '#10b981' : '#64748b'
+const icon = (s: string) => (s === 'done' ? '✓' : '○')
+const statusColor = (s: string) => (s === 'done' ? colors.status.ok : colors.textDim)
+const waveLabel = (w: Wave) =>
+  ['Base', 'Foundation', 'Mapa', 'Más fuentes', 'Forecast', 'Interactividad', 'Privado', 'Red'][w] ?? `W${w}`
 
 export default function StatusPage() {
-  const done = items.filter(i => i.status === 'done').length
+  const done = items.filter((i) => i.status === 'done').length
   const total = items.length
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 16px' }}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>Estado del proyecto</h2>
-      <p style={{ color: '#64748b', fontSize: 14, marginBottom: 20 }}>
-        {done}/{total} tareas completadas — {Math.round(done / total * 100)}% de avance
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: `${space.xl}px ${space.lg}px` }}>
+      <h2 style={{ fontSize: 22, fontWeight: 700, color: colors.textPrimary, marginBottom: 4 }}>
+        Estado del proyecto
+      </h2>
+      <p style={{ color: colors.textDim, fontSize: 14, marginBottom: space.xl }}>
+        {done}/{total} tareas completadas — {Math.round((done / total) * 100)}% de avance
       </p>
-      <div style={{ background: '#334155', borderRadius: 8, height: 8, marginBottom: 24 }}>
-        <div style={{ background: '#10b981', borderRadius: 8, height: 8, width: `${done / total * 100}%` }} />
+      <div style={{ background: colors.border, borderRadius: 8, height: 8, marginBottom: space.xl }}>
+        <div
+          style={{
+            background: colors.status.ok,
+            borderRadius: 8,
+            height: 8,
+            width: `${(done / total) * 100}%`,
+          }}
+        />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {items.map(i => (
-          <div key={i.task} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 16px', background: '#1e293b', borderRadius: 8, border: '1px solid #334155' }}>
-            <span style={{ color: color(i.status), fontSize: 18, fontWeight: 700, minWidth: 20, textAlign: 'center' }}>{icon(i.status)}</span>
-            <div>
-              <p style={{ color: i.status === 'done' ? '#e2e8f0' : '#94a3b8', fontSize: 14, fontWeight: 500 }}>{i.task}</p>
-              <p style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>{i.notes}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: space.sm }}>
+        {items.map((i) => (
+          <div
+            key={i.task}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: space.md,
+              padding: `${space.sm + 2}px ${space.lg}px`,
+              background: colors.surface,
+              borderRadius: 8,
+              border: `1px solid ${colors.border}`,
+            }}
+          >
+            <span
+              style={{
+                color: statusColor(i.status),
+                fontSize: 18,
+                fontWeight: 700,
+                minWidth: 20,
+                textAlign: 'center',
+              }}
+            >
+              {icon(i.status)}
+            </span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <p
+                  style={{
+                    color: i.status === 'done' ? colors.textSecondary : colors.textMuted,
+                    fontSize: 14,
+                    fontWeight: 500,
+                  }}
+                >
+                  {i.task}
+                </p>
+                <span
+                  style={{
+                    background: colors.surfaceAlt,
+                    color: colors.textDim,
+                    padding: '1px 8px',
+                    borderRadius: 4,
+                    fontSize: 10,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Wave {i.wave} · {waveLabel(i.wave)}
+                </span>
+              </div>
+              {i.notes && <p style={{ color: colors.textDim, fontSize: 12, marginTop: 2 }}>{i.notes}</p>}
             </div>
           </div>
         ))}

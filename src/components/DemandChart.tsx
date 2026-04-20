@@ -1,14 +1,22 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import type { DailyRow } from '../types'
+import { padToDates } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5) // MM-DD
 
-export default function DemandChart({ data }: { data: DailyRow[] }) {
+interface Props {
+  data: DailyRow[]
+  allDates?: string[]
+  yDomain?: [number, number]
+}
+
+export default function DemandChart({ data, allDates, yDomain }: Props) {
+  const rows = allDates ? padToDates(data, allDates) : data
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={data}>
-        <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} />
-        <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
+      <AreaChart data={rows}>
+        <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" />
+        <YAxis tick={{ fill: '#64748b', fontSize: 11 }} domain={yDomain ?? ['auto', 'auto']} />
         <Tooltip
           contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
           labelStyle={{ color: '#94a3b8' }}
