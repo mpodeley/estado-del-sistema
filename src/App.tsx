@@ -28,6 +28,7 @@ import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
+import PulseCard from './components/PulseCard'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
@@ -145,6 +146,8 @@ function OutlookPage() {
     <>
       <Header lastDate={latest?.fecha} freshness={freshness} />
       <KPICards latest={latest} />
+
+      <PulseCard rows={rdsReports as never} />
 
       <div style={{ ...card, marginTop: space.xl }}>
         <CommentsSection comments={comments} />
