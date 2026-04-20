@@ -172,8 +172,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
 
   // Stroke/font scale tuned for the SVG being rendered around 560 px wide —
   // viewBox units are Mercator metres, so multipliers look weirdly large.
-  const strokeBase = Math.min(width, height) * 0.01
-  const fontScale = Math.min(width, height) * 0.048
+  const strokeBase = Math.min(width, height) * 0.015
+  const fontScale = Math.min(width, height) * 0.1
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
