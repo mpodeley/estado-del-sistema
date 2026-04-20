@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T17:24:54+00:00",
+  "generated_at": "2026-04-20T17:58:56+00:00",
   "source": "CAMMESA weekly PS_* PDFs",
   "source_date": null,
   "data": [
@@ -9,6 +9,7 @@
         {
           "dia": 9,
           "mes": 4,
+          "fecha": "2026-04-09",
           "temperatura": null,
           "demanda_total": 145.2,
           "prioritaria": 28.4,
@@ -20,6 +21,7 @@
         {
           "dia": 10,
           "mes": 4,
+          "fecha": "2026-04-10",
           "temperatura": null,
           "demanda_total": 141.1,
           "prioritaria": 27.9,
@@ -31,6 +33,7 @@
         {
           "dia": 11,
           "mes": 4,
+          "fecha": "2026-04-11",
           "temperatura": 18.0,
           "demanda_total": 139.6,
           "prioritaria": 27.8,
@@ -42,6 +45,7 @@
         {
           "dia": 12,
           "mes": 4,
+          "fecha": "2026-04-12",
           "temperatura": 16.1,
           "demanda_total": 123.1,
           "prioritaria": 22.3,
@@ -53,6 +57,7 @@
         {
           "dia": 13,
           "mes": 4,
+          "fecha": "2026-04-13",
           "temperatura": 17.0,
           "demanda_total": 121.2,
           "prioritaria": 21.6,
