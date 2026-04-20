@@ -75,3 +75,4 @@ export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_reg
 export const useEnargasRDS = () => useJson<unknown[]>('./data/enargas.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
 export const useCammesaWeekly = () => useJson<unknown[]>('./data/cammesa_weekly.json')
+export const useCammesaPPO = () => useJson<unknown[]>('./data/cammesa_ppo.json')

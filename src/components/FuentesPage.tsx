@@ -5,6 +5,7 @@ import {
   useWeatherRegions,
   useEnargasRDS,
   useCammesaWeekly,
+  useCammesaPPO,
   useSMNAlerts,
 } from '../hooks/useData'
 
@@ -54,6 +55,7 @@ export default function FuentesPage() {
   const regions = useWeatherRegions()
   const rds = useEnargasRDS()
   const cammesaWeekly = useCammesaWeekly()
+  const cammesaPPO = useCammesaPPO()
   const smn = useSMNAlerts()
 
   const sources: Source[] = [
@@ -102,6 +104,15 @@ export default function FuentesPage() {
       meta: cammesaWeekly.meta,
     },
     {
+      id: 'cammesa-ppo',
+      name: 'CAMMESA — Parte Post Operativo (PPO) diario',
+      url: 'https://cammesaweb.cammesa.com/reportes-resultados-de-operaciones/',
+      kind: 'auto',
+      freq: 'Diaria',
+      note: 'API pública (api.cammesa.com/pub-svc/public). Excel .xls "protegido" con password default VelvetSweatshop de Office. Se decripta sin login y se agrega por día: consumo de gas/gasoil/fueloil/carbón por todas las centrales + generación neta MWh. Dato cerrado oficial, reemplaza al fuel mix del Excel manual.',
+      meta: cammesaPPO.meta,
+    },
+    {
       id: 'smn-alertas',
       name: 'SMN — alertas meteorológicas',
       url: 'https://ssl.smn.gob.ar/dpd/zipopendata.php?dato=alertas',
@@ -131,14 +142,6 @@ export default function FuentesPage() {
       kind: 'manual',
       freq: 'Según se droppe',
       note: 'Usuario dropea PDFs/Excel, el pipeline los detecta por magic bytes y rutea al parser. Archivo ingerido se copia a raw/incoming/_archive con timestamp.',
-    },
-    {
-      id: 'cammesa-resultados',
-      name: 'CAMMESA — Resultados de operaciones',
-      url: 'https://cammesaweb.cammesa.com/reportes-resultados-de-operaciones/',
-      kind: 'blocked',
-      freq: 'Diaria (cierre)',
-      note: 'Requiere login de agente. Alternativa: dropear PDFs manualmente en raw/incoming/.',
     },
     {
       id: 'cammesa-diaria',

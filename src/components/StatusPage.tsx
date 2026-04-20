@@ -39,7 +39,7 @@ const items: { task: string; status: 'done' | 'pending'; wave: Wave; notes: stri
   { task: 'Open-Meteo histórico (2 años × 10 ciudades)', status: 'done', wave: 2, notes: '7310 filas en weather_history.json, listas para modelo' },
   { task: 'Selector de escala temporal + cursor sincronizado', status: 'done', wave: 2, notes: '7d/30d/90d/todo, hover en un chart marca los otros' },
   { task: 'CAMMESA diaria (programación)', status: 'pending', wave: 2, notes: 'Descartado: PDF público dice "Sin novedades", sin contenido útil' },
-  { task: 'CAMMESA resultados (dato cerrado)', status: 'pending', wave: 2, notes: 'BLOQUEADO: requiere credenciales o drop manual' },
+  { task: 'CAMMESA resultados (PPO diario)', status: 'done', wave: 2, notes: 'API pública + msoffcrypto decrypt. 90 días backfilled. Autoritativo para fuel mix.' },
   { task: 'ENARGAS stock GNL mensual', status: 'pending', wave: 2, notes: 'Escobar + Bahía Blanca — el RDS ya da el snapshot diario' },
   { task: 'SMN alertas meteorológicas', status: 'pending', wave: 2, notes: 'Trigger de picos extremos' },
 
