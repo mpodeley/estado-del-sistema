@@ -84,7 +84,11 @@ def extract_rds(text):
     if m:
         d['linepack_delta'] = num(m.group(1))
 
-    # Importaciones rows: "Bolivia 0,0 - 0,0 0,0" (the middle '-' is GNL, can be '-' or a number)
+    # Importaciones rows, 4 cols:
+    #   Programa (MMm³/d) | Próximo barco (fecha "DD-MMM" or "-") | Prom Mes prev-year | Misma Sem prev-year
+    # The second column is NOT a volume; it's the date of the next LNG cargo
+    # (e.g. "18-jul" for Escobar). We parse it as text and keep it only when
+    # it's meaningful (skip the "-" placeholder).
     importaciones = {}
     for key, label in [
         ('bolivia', 'Bolivia'),
@@ -92,12 +96,15 @@ def extract_rds(text):
         ('escobar', 'Escobar'),
         ('bahia_blanca', r'Bah[ií]a\s*Blanca'),
     ]:
-        pattern = rf'{label}\s+([\d.,-]+)\s+[\d.,-]+\s+[\d.,-]+\s+([\d.,-]+)'
+        pattern = rf'{label}\s+([\d.,-]+)\s+(\S+)\s+([\d.,-]+)\s+([\d.,-]+)'
         m = re.search(pattern, text)
         if m:
+            prox = m.group(2).strip()
             importaciones[key] = {
                 'programa': num(m.group(1)),
-                'misma_semana_2025': num(m.group(2)),
+                'proximo_barco': prox if prox and prox != '-' else None,
+                'prom_mes_prev_year': num(m.group(3)),
+                'misma_semana_prev_year': num(m.group(4)),
             }
     if importaciones:
         d['importaciones'] = importaciones

@@ -70,6 +70,13 @@ export default function GuidePage() {
             la oferta en el tiempo, más una tabla abajo con los valores exactos de los últimos días.
           </dd>
 
+          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Próximos barcos GNL</dt>
+          <dd style={{ margin: 0 }}>
+            Calendario de cargamentos LNG programados por puerto (GNL Escobar, GNL Bahía Blanca),
+            expresado en MMm³/día de regasificación. Fuente: campo "Vol. a Inyectar Próximos Barcos"
+            del RDS. Los volúmenes concentran en meses de invierno (mayo–agosto).
+          </dd>
+
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Ranking "Ciudades más frías"</dt>
           <dd style={{ margin: 0 }}>
             Top‑5 de ciudades con el mínimo más bajo en los próximos 7 días (forecast Open-Meteo para

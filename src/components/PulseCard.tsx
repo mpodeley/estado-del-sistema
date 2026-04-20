@@ -1,5 +1,10 @@
 import { colors, radius, space } from '../theme'
 
+interface Importacion {
+  programa?: number | null
+  proximo_barco?: string | null
+}
+
 interface RDSRow {
   fecha?: string
   linepack_total?: number | null
@@ -7,6 +12,10 @@ interface RDSRow {
   consumo_total_estimado?: number | null
   temperatura_ba?: { tm?: number | null } | null
   forecast_temp_ba?: Array<{ fecha: string; min?: number | null; max?: number | null; tm?: number | null }> | null
+  importaciones?: {
+    escobar?: Importacion
+    bahia_blanca?: Importacion
+  }
   [k: string]: unknown
 }
 
@@ -98,6 +107,34 @@ export default function PulseCard({ rows }: Props) {
       label: 'Δ Linepack ayer→hoy',
       value: `${today.linepack_delta >= 0 ? '+' : ''}${today.linepack_delta.toFixed(1)} MMm³`,
       color: deltaColor,
+    })
+  }
+
+  // Regasificación activa hoy + fecha del próximo cargamento si está programado.
+  const regasEsc = today.importaciones?.escobar?.programa ?? 0
+  const regasBB = today.importaciones?.bahia_blanca?.programa ?? 0
+  const regasTotal = regasEsc + regasBB
+  if (regasTotal > 0) {
+    bullets.push({
+      label: 'Regasificación LNG hoy',
+      value: `${regasTotal.toFixed(1)} MMm³/d`,
+      sub: [
+        regasEsc > 0 ? `Escobar ${regasEsc.toFixed(1)}` : null,
+        regasBB > 0 ? `B.Blanca ${regasBB.toFixed(1)}` : null,
+      ].filter(Boolean).join(' · '),
+      color: colors.accent.purple,
+    })
+  }
+  const nextEsc = today.importaciones?.escobar?.proximo_barco
+  const nextBB = today.importaciones?.bahia_blanca?.proximo_barco
+  if (nextEsc || nextBB) {
+    bullets.push({
+      label: 'Próximo barco GNL',
+      value: [
+        nextEsc ? `Escobar ${nextEsc}` : null,
+        nextBB ? `B.Blanca ${nextBB}` : null,
+      ].filter(Boolean).join(' · '),
+      color: colors.accent.orange,
     })
   }
 

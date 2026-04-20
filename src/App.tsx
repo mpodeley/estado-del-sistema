@@ -29,6 +29,7 @@ import EnargasRDSPanel from './components/EnargasRDSPanel'
 import YearOverYearChart from './components/YearOverYearChart'
 import HistoricalBandChart from './components/HistoricalBandChart'
 import PulseCard from './components/PulseCard'
+import LNGArrivalsChart from './components/LNGArrivalsChart'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
@@ -255,6 +256,16 @@ function OutlookPage() {
           <h3 style={sectionTitle}>Linepack TGS + TGN (MMm³)</h3>
           <LinepackChart data={valid} allDates={visibleDates} />
         </div>
+        {rdsReports.length > 0 && (
+          <div style={card}>
+            <h3 style={sectionTitle}>Próximos barcos GNL (MMm³/día programados)</h3>
+            <LNGArrivalsChart rows={rdsReports as never} />
+            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+              Volumen programado de regasificación por puerto. Fuente: ENARGAS RDS diario.
+              Cargamentos son estacionales — concentrados en meses de invierno (mayo-agosto).
+            </p>
+          </div>
+        )}
       </ChartGroup>
 
       {/* Grupo 4: Histórico — comparación vs años previos (rango + YoY). */}
