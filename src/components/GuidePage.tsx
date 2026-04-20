@@ -64,25 +64,17 @@ export default function GuidePage() {
             forecast 14 días, y mix de combustibles eléctrico de CAMMESA.
           </dd>
 
-          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Tabla de inyecciones</dt>
-          <dd style={{ margin: 0 }}>Últimos 10 días por fuente: TGS, TGN, ENARSA, GPM, Bolivia y total.</dd>
-
-          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Mapa regional</dt>
+          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Inyecciones (chart + tabla)</dt>
           <dd style={{ margin: 0 }}>
-            Mapa de Argentina con temperatura promedio de 10 ciudades clave (BA, Rosario, Córdoba,
-            Santa Fe, Mendoza, Neuquén, Bahía Blanca, Esquel, Salta, Tucumán), trazado simplificado
-            de los gasoductos principales (TGN Norte/Centro‑Oeste, TGS San Martín/Neuba, Néstor
-            Kirchner, Cordillerano) y puntos de inyección (Neuquén, GNL Escobar, GNL Bahía Blanca,
-            Campo Durán).
-            <br />
-            Usá el deslizador "Día" para ver cómo cambian las temperaturas hasta 14 días adelante;
-            clickear una ciudad la selecciona en el chart de temperatura de arriba.
+            Área apilada por fuente (TGS, TGN, ENARSA, GPM, Bolivia, Escobar) para ver cómo evoluciona
+            la oferta en el tiempo, más una tabla abajo con los valores exactos de los últimos días.
           </dd>
 
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Ranking "Ciudades más frías"</dt>
           <dd style={{ margin: 0 }}>
-            Top‑5 de ciudades con el mínimo más bajo en los próximos 7 días. Sirve como alerta
-            temprana de picos de demanda prioritaria (calefacción).
+            Top‑5 de ciudades con el mínimo más bajo en los próximos 7 días (forecast Open-Meteo para
+            10 ciudades clave: BA, Rosario, Córdoba, Santa Fe, Mendoza, Neuquén, Bahía Blanca, Esquel,
+            Salta, Tucumán). Sirve como alerta temprana de picos de demanda prioritaria.
           </dd>
         </dl>
       </div>

@@ -1,0 +1,33 @@
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import type { DailyRow } from '../types'
+import { padToDates } from '../utils/charts'
+
+const fmt = (d: string) => d.slice(5)
+
+interface Props {
+  data: DailyRow[]
+  allDates?: string[]
+}
+
+export default function InjectionsChart({ data, allDates }: Props) {
+  const rows = allDates ? padToDates(data, allDates) : data
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart data={rows}>
+        <XAxis dataKey="fecha" tickFormatter={fmt} tick={{ fill: '#64748b', fontSize: 11 }} interval="preserveStartEnd" />
+        <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
+        <Tooltip
+          contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
+          labelStyle={{ color: '#94a3b8' }}
+        />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
+        <Area type="monotone" dataKey="iny_tgs" stackId="1" fill="#10b981" stroke="#10b981" name="TGS" />
+        <Area type="monotone" dataKey="iny_tgn" stackId="1" fill="#3b82f6" stroke="#3b82f6" name="TGN" />
+        <Area type="monotone" dataKey="iny_enarsa" stackId="1" fill="#f59e0b" stroke="#f59e0b" name="ENARSA" />
+        <Area type="monotone" dataKey="iny_gpm" stackId="1" fill="#8b5cf6" stroke="#8b5cf6" name="GPM" />
+        <Area type="monotone" dataKey="iny_bolivia" stackId="1" fill="#ef4444" stroke="#ef4444" name="Bolivia" />
+        <Area type="monotone" dataKey="iny_escobar" stackId="1" fill="#6b7280" stroke="#6b7280" name="Escobar" />
+      </AreaChart>
+    </ResponsiveContainer>
+  )
+}

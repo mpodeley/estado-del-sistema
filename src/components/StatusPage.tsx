@@ -27,9 +27,8 @@ const items: { task: string; status: 'done' | 'pending'; wave: Wave; notes: stri
 
   // Wave 1 — geográfico
   { task: 'Multi-ciudad weather (10 ciudades)', status: 'done', wave: 1, notes: 'Open-Meteo BA + Rosario + Córdoba + ... + Esquel' },
-  { task: 'Mapa regional con MapLibre + OSM', status: 'done', wave: 1, notes: 'Círculos por ciudad coloreados por temp, slider de día' },
-  { task: 'Gasoductos + puntos de inyección', status: 'done', wave: 1, notes: 'TGN Norte/Centro-Oeste, TGS SM/Neuba, NK, Cordillerano' },
-  { task: 'TemperatureChart con selector de ciudad', status: 'done', wave: 1, notes: 'Click mapa o dropdown cambia la ciudad' },
+  { task: 'Mapa regional con MapLibre', status: 'pending', wave: 1, notes: 'Removido por ahora — se puede retomar con estilo tipo gasoductos' },
+  { task: 'TemperatureChart con selector de ciudad', status: 'done', wave: 1, notes: 'Dropdown cambia la ciudad' },
   { task: 'Ranking ciudades más frías', status: 'done', wave: 1, notes: 'Top-5 sobre próximos 7 días' },
 
   // Wave 2 — más fuentes públicas

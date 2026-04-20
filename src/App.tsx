@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { useDaily, useComments, useWeather, useDemandForecast, useWeatherRegions, useEnargasRDS } from './hooks/useData'
+import {
+  useDaily,
+  useComments,
+  useWeather,
+  useDemandForecast,
+  useWeatherRegions,
+  useEnargasRDS,
+} from './hooks/useData'
 import { card, colors, radius, sectionTitle, space } from './theme'
 import ErrorBoundary from './components/ErrorBoundary'
 import Header from './components/Header'
@@ -10,13 +17,13 @@ import DemandForecastChart from './components/DemandForecastChart'
 import LinepackChart from './components/LinepackChart'
 import TemperatureChart from './components/TemperatureChart'
 import FuelMixChart from './components/FuelMixChart'
+import InjectionsChart from './components/InjectionsChart'
 import InjectionsTable from './components/InjectionsTable'
 import WeeklyComparison from './components/WeeklyComparison'
 import CommentsSection from './components/CommentsSection'
 import FuentesPage from './components/FuentesPage'
 import StatusPage from './components/StatusPage'
 import GuidePage from './components/GuidePage'
-import RegionalMap from './components/RegionalMap'
 import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
@@ -83,16 +90,7 @@ function OutlookLoading() {
         ))}
       </div>
       <SkeletonBlock height={120} style={{ marginBottom: space.lg }} />
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: space.lg,
-        }}
-      >
-        <ChartSkeleton />
-        <ChartSkeleton />
-      </div>
+      <ChartSkeleton height={360} />
     </>
   )
 }
@@ -106,7 +104,6 @@ function OutlookPage() {
   const rdsState = useEnargasRDS()
 
   const [selectedCity, setSelectedCity] = useState('ba')
-  const [mapDay, setMapDay] = useState(0)
 
   if (dailyState.loading) return <OutlookLoading />
 
@@ -128,9 +125,8 @@ function OutlookPage() {
   const regions = regionsState.data ?? []
   const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
 
-  // Shared axes across every time-series chart so users can scan them in
-  // parallel. X = union of all fechas (history + forecast). Y for demand
-  // charts = auto-computed top based on historical + forecast.
+  // Shared X range and demand Y range so the 5 small charts + the hero chart
+  // can be scanned in parallel without recalibrating the eye.
   const allDates = collectDates(data, demandFc?.forecast ?? [], weatherForecast)
   const demandY = demandYDomain(valid, demandFc?.forecast ?? [])
 
@@ -156,10 +152,11 @@ function OutlookPage() {
         </div>
       )}
 
+      {/* Panels row: estado por sistema, comparación semanal, frío regional. */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
           gap: space.lg,
           marginTop: space.xl,
         }}
@@ -185,8 +182,14 @@ function OutlookPage() {
         <div style={{ ...card, borderTop: `3px solid ${colors.accent.orange}` }}>
           <WeeklyComparison data={valid} />
         </div>
+        {regions.length > 0 && (
+          <div style={{ ...card, borderTop: `3px solid ${colors.accent.purple}` }}>
+            <ColdRanking cities={regions} />
+          </div>
+        )}
       </div>
 
+      {/* Hero chart: forecast de demanda a pantalla ancha. */}
       {demandFc && demandFc.forecast.length > 0 && (
         <div style={{ ...card, marginTop: space.xl }}>
           <h3 style={sectionTitle}>Forecast de demanda (real + estimada por temperatura)</h3>
@@ -209,10 +212,11 @@ function OutlookPage() {
         </div>
       )}
 
+      {/* 5 charts chicos del mismo tamaño, ejes X alineados. */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: space.lg,
           marginTop: space.xl,
         }}
@@ -240,73 +244,17 @@ function OutlookPage() {
           <h3 style={sectionTitle}>Despacho eléctrico - Combustibles</h3>
           <FuelMixChart data={data} allDates={allDates} />
         </div>
+        <div style={card}>
+          <h3 style={sectionTitle}>Inyecciones por fuente (MMm3/día)</h3>
+          <InjectionsChart data={valid} allDates={allDates} />
+        </div>
       </div>
 
-      {regions.length > 0 && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: space.lg,
-            marginTop: space.xl,
-          }}
-        >
-          <div style={{ ...card, gridColumn: 'span 2', minWidth: 0 }}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: space.sm,
-                marginBottom: space.sm,
-              }}
-            >
-              <h3 style={{ ...sectionTitle, marginBottom: 0 }}>Mapa regional de temperaturas + gasoductos</h3>
-              <MapDayPicker value={mapDay} cities={regions} onChange={setMapDay} />
-            </div>
-            <RegionalMap cities={regions} dayIndex={mapDay} onSelectCity={setSelectedCity} />
-          </div>
-          <div style={card}>
-            <ColdRanking cities={regions} />
-          </div>
-        </div>
-      )}
-
       <div style={{ ...card, marginTop: space.xl }}>
-        <h3 style={sectionTitle}>Inyecciones por fuente (MMm3/día)</h3>
+        <h3 style={sectionTitle}>Tabla de inyecciones — últimos días</h3>
         <InjectionsTable data={valid} />
       </div>
     </>
-  )
-}
-
-function MapDayPicker({
-  value,
-  cities,
-  onChange,
-}: {
-  value: number
-  cities: { forecast: { fecha: string }[] }[]
-  onChange: (v: number) => void
-}) {
-  const dates = cities[0]?.forecast ?? []
-  if (dates.length === 0) return null
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: space.sm }}>
-      <label style={{ color: colors.textMuted, fontSize: 12 }}>Día</label>
-      <input
-        type="range"
-        min={0}
-        max={dates.length - 1}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: 160 }}
-      />
-      <span style={{ color: colors.textSecondary, fontSize: 12, minWidth: 60, textAlign: 'right' }}>
-        {dates[value]?.fecha.slice(5) ?? ''}
-      </span>
-    </div>
   )
 }
 
