@@ -54,3 +54,61 @@ function buildCalendar(): string[] {
   }
   return days
 }
+
+export interface HistoricalBandRow {
+  mmdd: string
+  min: number | null
+  max: number | null
+  avg: number | null
+  current: number | null
+}
+
+/**
+ * For each calendar day, compute min/avg/max from prior years and pair with
+ * the current-year value. Renders as "EIA storage report" style: a grey band
+ * (historical range) with the current year overlaid.
+ */
+export function historicalBand<T extends HistoricalRow>(
+  rows: T[],
+  valueKey: keyof T,
+): HistoricalBandRow[] {
+  const currentYear = String(new Date().getFullYear())
+  const byKey = new Map<string, { prior: number[]; current: number | null }>()
+
+  for (const row of rows) {
+    const fecha = row.fecha
+    if (!fecha || fecha.length < 10) continue
+    const year = fecha.slice(0, 4)
+    const mmdd = fecha.slice(5)
+    const raw = row[valueKey]
+    if (typeof raw !== 'number') continue
+    const entry = byKey.get(mmdd) ?? { prior: [], current: null }
+    if (year === currentYear) {
+      entry.current = raw
+    } else {
+      entry.prior.push(raw)
+    }
+    byKey.set(mmdd, entry)
+  }
+
+  return buildCalendar().map((mmdd) => {
+    const entry = byKey.get(mmdd)
+    if (!entry || entry.prior.length === 0) {
+      return {
+        mmdd,
+        min: null,
+        max: null,
+        avg: null,
+        current: entry?.current ?? null,
+      }
+    }
+    const sum = entry.prior.reduce((a, b) => a + b, 0)
+    return {
+      mmdd,
+      min: Math.round(Math.min(...entry.prior) * 10) / 10,
+      max: Math.round(Math.max(...entry.prior) * 10) / 10,
+      avg: Math.round((sum / entry.prior.length) * 10) / 10,
+      current: entry.current ?? null,
+    }
+  })
+}

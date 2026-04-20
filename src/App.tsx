@@ -27,6 +27,7 @@ import GuidePage from './components/GuidePage'
 import ColdRanking from './components/ColdRanking'
 import EnargasRDSPanel from './components/EnargasRDSPanel'
 import YearOverYearChart from './components/YearOverYearChart'
+import HistoricalBandChart from './components/HistoricalBandChart'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
 
@@ -253,23 +254,34 @@ function OutlookPage() {
         </div>
       </ChartGroup>
 
-      {/* Grupo 4: Histórico — comparación año-sobre-año usando RDS backfilleado. */}
+      {/* Grupo 4: Histórico — comparación vs años previos (rango + YoY). */}
       {rdsReports.length >= 60 && (
-        <ChartGroup title="Histórico — comparación año-sobre-año">
+        <ChartGroup title="Histórico — año actual vs años previos">
           <div style={card}>
-            <h3 style={sectionTitle}>Linepack total (MMm³) — año actual vs previos</h3>
-            <YearOverYearChart rows={rdsReports as never} field="linepack_total" unit="MMm³" />
+            <h3 style={sectionTitle}>Linepack — año actual vs rango histórico</h3>
+            <HistoricalBandChart rows={rdsReports as never} field="linepack_total" unit="MMm³" />
             <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
-              Fuente: ENARGAS RDS diario. Año actual con línea gruesa; años previos más tenues para
-              ver el patrón estacional.
+              Banda gris = min/max histórico por día del año. Línea azul = 2026. Si la línea
+              sale del rango es una anomalía vs los años previos.
             </p>
           </div>
           <div style={card}>
-            <h3 style={sectionTitle}>Consumo total estimado (MMm³/d) — histórico</h3>
-            <YearOverYearChart rows={rdsReports as never} field="consumo_total_estimado" unit="MMm³/d" />
+            <h3 style={sectionTitle}>Linepack — años superpuestos</h3>
+            <YearOverYearChart rows={rdsReports as never} field="linepack_total" unit="MMm³" />
             <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
-              Programa de consumo diario publicado por ENARGAS. Ojo: es planificado, no realizado.
+              Año actual con línea gruesa; años previos tenues para ver el patrón estacional.
             </p>
+          </div>
+          <div style={card}>
+            <h3 style={sectionTitle}>Consumo total — año actual vs rango histórico</h3>
+            <HistoricalBandChart rows={rdsReports as never} field="consumo_total_estimado" unit="MMm³/d" />
+            <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+              Programa de consumo diario publicado por ENARGAS (planificado, no realizado).
+            </p>
+          </div>
+          <div style={card}>
+            <h3 style={sectionTitle}>Consumo total — años superpuestos</h3>
+            <YearOverYearChart rows={rdsReports as never} field="consumo_total_estimado" unit="MMm³/d" />
           </div>
         </ChartGroup>
       )}
