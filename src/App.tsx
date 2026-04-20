@@ -358,6 +358,7 @@ function OutlookPage() {
                 outline={outlineState.data}
                 tramos={tramosState.data}
                 distribuidoras={distribuidorasState.data}
+                monthly={monthlyState.data}
               />
             </div>
           )}
