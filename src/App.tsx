@@ -111,6 +111,24 @@ function OutlookPage() {
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('all')
 
+  // All hooks must run on every render — keep them above any early return,
+  // otherwise React complains about "rendered more hooks than the previous
+  // render" when loading flips from true to false.
+  const data = dailyState.data ?? []
+  const weatherForecast = weatherState.data?.forecast ?? []
+  const demandFc = forecastState.data
+
+  const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
+  const allDates = useMemo(
+    () => collectDates(data, demandFc?.forecast ?? [], weatherForecast),
+    [data, demandFc, weatherForecast],
+  )
+  const visibleDates = useMemo(() => filterDatesByScale(allDates, scale), [allDates, scale])
+  const demandY = useMemo(
+    () => demandYDomain(valid, demandFc?.forecast ?? []),
+    [valid, demandFc],
+  )
+
   if (dailyState.loading) return <OutlookLoading />
 
   if (dailyState.error) {
@@ -121,27 +139,10 @@ function OutlookPage() {
     )
   }
 
-  const data = dailyState.data ?? []
-  const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
   const latest = valid[valid.length - 1]
-
   const comments = commentsState.data ?? { daily: [], weekly: [] }
-  const weatherForecast = weatherState.data?.forecast ?? []
-  const demandFc = forecastState.data
   const regions = regionsState.data ?? []
   const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
-
-  // Recomputing these on every render was a big chunk of the slowness with
-  // 720 rows of history — memoize against the raw data references.
-  const allDates = useMemo(
-    () => collectDates(data, demandFc?.forecast ?? [], weatherForecast),
-    [data, demandFc, weatherForecast],
-  )
-  const visibleDates = useMemo(() => filterDatesByScale(allDates, scale), [allDates, scale])
-  const demandY = useMemo(
-    () => demandYDomain(valid, demandFc?.forecast ?? []),
-    [valid, demandFc],
-  )
 
   const freshness = [
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
