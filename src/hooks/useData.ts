@@ -3,6 +3,7 @@ import type {
   Comments,
   DailyRow,
   DemandForecast,
+  EnargasRDSRow,
   Envelope,
   FetchState,
   RegionCity,
@@ -72,7 +73,7 @@ export const useComments = () => useJson<Comments>('./data/comments.json')
 export const useWeather = () => useJson<WeatherPayload>('./data/weather.json')
 export const useDemandForecast = () => useJson<DemandForecast>('./data/demand_forecast.json')
 export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_regions.json')
-export const useEnargasRDS = () => useJson<unknown[]>('./data/enargas.json')
+export const useEnargasRDS = () => useJson<EnargasRDSRow[]>('./data/enargas.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
 export const useCammesaWeekly = () => useJson<unknown[]>('./data/cammesa_weekly.json')
 export interface CammesaPPORow {

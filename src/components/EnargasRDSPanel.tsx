@@ -1,25 +1,8 @@
 import { colors, sectionTitle, space } from '../theme'
-
-interface Consumo {
-  programa: number | null
-  prom_mes_2025?: number | null
-  misma_semana_2025?: number | null
-}
-
-interface RDSReport {
-  fecha?: string
-  linepack_total?: number | null
-  linepack_delta?: number | null
-  consumo_total_estimado?: number | null
-  consumos?: Record<string, Consumo>
-  importaciones?: Record<string, Consumo>
-  exportaciones?: Record<string, { vol_exportar?: number | null }>
-  temperatura_ba?: { min?: number | null; max?: number | null; tm?: number | null }
-  source?: string
-}
+import type { EnargasRDSRow } from '../types'
 
 interface Props {
-  reports: RDSReport[]
+  reports: EnargasRDSRow[]
 }
 
 const consumoLabels: Record<string, string> = {
@@ -91,8 +74,8 @@ export default function EnargasRDSPanel({ reports }: Props) {
       <BreakdownTable
         items={Object.entries(latest.importaciones ?? {}).map(([key, v]) => ({
           label: importLabels[key] ?? key,
-          value: v.programa,
-          compare: v.misma_semana_2025 ?? null,
+          value: v.programa ?? null,
+          compare: v.misma_semana_prev_year ?? null,
         }))}
         compareLabel="Misma sem 25"
       />

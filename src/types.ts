@@ -37,6 +37,41 @@ export interface DailyRow {
   cammesa_total: number | null
 }
 
+// One row of the parsed ENARGAS RDS. Historical rows are "slim" (only a
+// subset of fields); the most recent row keeps the full payload including
+// prev-year comparisons and the 6-day temperature forecast.
+export interface EnargasRDSConsumo {
+  programa: number | null
+  prom_mes_2025?: number | null
+  misma_semana_2025?: number | null
+}
+
+export interface EnargasRDSImport {
+  programa?: number | null
+  proximo_barco?: string | null
+  prom_mes_prev_year?: number | null
+  misma_semana_prev_year?: number | null
+}
+
+export interface EnargasRDSRow {
+  fecha?: string
+  source?: string
+  linepack_total?: number | null
+  linepack_delta?: number | null
+  consumo_total_estimado?: number | null
+  consumos?: Record<string, EnargasRDSConsumo>
+  importaciones?: Record<string, EnargasRDSImport>
+  exportaciones?: Record<string, { vol_exportar?: number | null }>
+  temperatura_ba?: {
+    min?: number | null
+    max?: number | null
+    tm?: number | null
+    tm_2025?: number | null
+    tm_misma_semana?: number | null
+  }
+  forecast_temp_ba?: { fecha: string; min: number | null; max: number | null; tm: number | null }[]
+}
+
 export interface Comments {
   daily: string[]
   weekly: string[]

@@ -47,6 +47,7 @@ import PulseCard from './components/PulseCard'
 import LNGArrivalsChart from './components/LNGArrivalsChart'
 import { ChartSkeleton, SkeletonBlock } from './components/Skeleton'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from './utils/charts'
+import { mergeDailyWithRDS } from './utils/mergeDaily'
 
 type Page = 'outlook' | 'forecast' | 'guia' | 'fuentes' | 'status'
 
@@ -138,10 +139,17 @@ function OutlookPage() {
   // All hooks must run on every render — keep them above any early return,
   // otherwise React complains about "rendered more hooks than the previous
   // render" when loading flips from true to false.
-  const data = dailyState.data ?? []
+  const rawDaily = dailyState.data ?? []
   const weatherForecast = weatherState.data?.forecast ?? []
   const demandFc = forecastState.data
 
+  // Fill the tail of daily.json (which lags 1–3 days while the analyst updates
+  // the Excel) with the ENARGAS RDS, which publishes next-day. Daily values
+  // always win when present; RDS only fills holes.
+  const data = useMemo(
+    () => mergeDailyWithRDS(rawDaily, rdsState.data ?? null),
+    [rawDaily, rdsState.data],
+  )
   const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
   const allDates = useMemo(
     () => collectDates(data, demandFc?.forecast ?? [], weatherForecast),
