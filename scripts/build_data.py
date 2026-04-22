@@ -83,6 +83,12 @@ def validate_outputs():
         if rows < spec['min_rows']:
             failures.append(f"{name}: only {rows} rows (min {spec['min_rows']})")
 
+        # Every required tabular JSON should have a sibling CSV for download
+        # from the Fuentes page. Missing CSV => audit story broken.
+        csv_path = path[:-5] + '.csv'  # .json -> .csv
+        if not os.path.exists(csv_path):
+            failures.append(f"{name}: sibling CSV missing ({os.path.basename(csv_path)})")
+
     if failures:
         print("\nValidation FAILED:", file=sys.stderr)
         for msg in failures:

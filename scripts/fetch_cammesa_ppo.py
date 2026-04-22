@@ -36,7 +36,7 @@ except ImportError as e:
     sys.exit(1)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 CAMMESA_JSON = os.path.join(OUT_DIR, 'cammesa_ppo.json')
@@ -238,6 +238,12 @@ def main():
         source_date=latest,
         failures=failures[-30:],
     )
+    ppo_cols = [
+        'fecha', 'source', 'gas_mmm3', 'carbon_tn', 'fueloil_tn', 'gasoil_m3',
+        'gen_gas_mwh', 'gen_carbon_mwh', 'gen_fueloil_mwh', 'gen_gasoil_mwh',
+        'plants_counted',
+    ]
+    write_csv(json_to_csv_path(CAMMESA_JSON), rows, fieldnames=ppo_cols)
     print(f"\ncammesa_ppo.json: {len(rows)} rows ({added} new, {len(failures)} failed)")
     return 0
 

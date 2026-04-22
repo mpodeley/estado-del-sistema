@@ -12,7 +12,7 @@ from datetime import datetime
 import openpyxl
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -262,11 +262,15 @@ def main():
     latest_date = daily[-1]['fecha'] if daily else None
     source = 'Base Reporte Estado de Sistema.xlsx'
 
+    daily_path = os.path.join(OUT_DIR, 'daily.json')
     write_json(
-        os.path.join(OUT_DIR, 'daily.json'),
+        daily_path,
         daily, source=source, source_date=latest_date,
         headers_matched=matched, headers_expected=expected,
     )
+    # CSV with all schema columns, in schema order (first is 'fecha').
+    daily_cols = [key for _, _, key, _ in SCHEMA]
+    write_csv(json_to_csv_path(daily_path), daily, fieldnames=daily_cols)
     if daily:
         print(f"daily.json: {len(daily)} rows ({daily[0]['fecha']} to {daily[-1]['fecha']})")
     else:
@@ -276,19 +280,24 @@ def main():
     # overlays the authoritative comments.json; we save the manual ones separately
     # so they can be surfaced in the UI if ever needed.
     manual = parse_comments(wb)
+    manual_path = os.path.join(OUT_DIR, 'comments_manual.json')
     write_json(
-        os.path.join(OUT_DIR, 'comments_manual.json'),
+        manual_path,
         manual, source=source, source_date=latest_date,
     )
+    manual_rows = (
+        [{'tipo': 'daily', 'texto': t} for t in manual.get('daily', [])]
+        + [{'tipo': 'weekly', 'texto': t} for t in manual.get('weekly', [])]
+    )
+    write_csv(json_to_csv_path(manual_path), manual_rows, fieldnames=['tipo', 'texto'])
     print(f"comments_manual.json: {len(manual.get('daily', []))} daily, {len(manual.get('weekly', []))} weekly")
 
     # Transport restrictions: Gas Andes / CCO / TGS NQN from sheet "Datos".
     tramos = parse_tramos(wb)
     tramos_latest = tramos[-1]['fecha'] if tramos else None
-    write_json(
-        os.path.join(OUT_DIR, 'tramos.json'),
-        tramos, source=source, source_date=tramos_latest,
-    )
+    tramos_path = os.path.join(OUT_DIR, 'tramos.json')
+    write_json(tramos_path, tramos, source=source, source_date=tramos_latest)
+    write_csv(json_to_csv_path(tramos_path), tramos)
     print(f"tramos.json: {len(tramos)} rows")
 
     wb.close()

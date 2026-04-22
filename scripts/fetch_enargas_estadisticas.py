@@ -21,7 +21,7 @@ import requests
 import openpyxl
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import wrap  # noqa: E402
+from _meta import wrap, write_csv  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 BASE = 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/datos-estadisticos'
@@ -246,6 +246,15 @@ def main():
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(envelope, f, ensure_ascii=False, separators=(',', ':'))
     print(f"enargas_monthly.json: latest={latest}, size={os.path.getsize(out_path) // 1024} KB")
+
+    # Four sub-CSVs — the JSON is an object with heterogeneous sub-tables so
+    # each one becomes its own flat CSV, keeping the audit trail tabular.
+    base = os.path.splitext(out_path)[0]
+    grt = payload.get('gas_recibido') or {}
+    write_csv(f'{base}_cuenca.csv', grt.get('cuenca') or [])
+    write_csv(f'{base}_gasoducto.csv', grt.get('gasoducto') or [])
+    write_csv(f'{base}_contratos.csv', payload.get('contratos_firme') or [])
+    write_csv(f'{base}_entregado.csv', payload.get('gas_entregado') or [])
 
 
 if __name__ == '__main__':

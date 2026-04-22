@@ -13,7 +13,7 @@ from datetime import date, timedelta
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 from fetch_weather import CITIES  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -75,13 +75,30 @@ def main():
             failures.append(f"{city_id}: {e}")
             print(f"  {city_id}: FAILED ({e})", file=sys.stderr)
 
+    history_path = os.path.join(OUT_DIR, 'weather_history.json')
     write_json(
-        os.path.join(OUT_DIR, 'weather_history.json'),
+        history_path,
         cities_out,
         source=f'Open-Meteo Archive API ({start} to {end})',
         source_date=end.isoformat(),
         failures=failures,
     )
+    # Long format: one row per (ciudad, fecha). ~7300 rows per city → ~73k total.
+    history_flat = [
+        {
+            'ciudad_id': c['id'],
+            'ciudad': c['label'],
+            'region': c['region'],
+            'lat': c['lat'],
+            'lon': c['lon'],
+            'fecha': h['fecha'],
+            'temp_max': h['temp_max'],
+            'temp_min': h['temp_min'],
+            'temp_prom': h['temp_prom'],
+        }
+        for c in cities_out for h in c.get('history', [])
+    ]
+    write_csv(json_to_csv_path(history_path), history_flat)
     print(f"weather_history.json: {len(cities_out)} cities, "
           f"{sum(len(c['history']) for c in cities_out)} total rows")
 

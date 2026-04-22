@@ -6,7 +6,7 @@ import sys
 import openpyxl
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -47,10 +47,9 @@ def main():
                 row[key] = str(v)
         rows.append(row)
 
-    write_json(
-        os.path.join(OUT_DIR, 'linepack.json'),
-        rows, source=linepack_file,
-    )
+    json_path = os.path.join(OUT_DIR, 'linepack.json')
+    write_json(json_path, rows, source=linepack_file)
+    write_csv(json_to_csv_path(json_path), rows)
     print(f"linepack.json: {len(rows)} rows")
     wb.close()
 

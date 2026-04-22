@@ -20,7 +20,7 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 ENARGAS_JSON = os.path.join(OUT_DIR, 'enargas.json')
@@ -214,11 +214,30 @@ def main():
         m = payload['metrics']
         print(f"  {seg:16s} MAE={m['mae']} MMm³/d   MAPE={m['mape']}%   n={m['n']}")
 
+    backtest_path = os.path.join(OUT_DIR, 'forecast_backtest.json')
     write_json(
-        os.path.join(OUT_DIR, 'forecast_backtest.json'),
+        backtest_path,
         output,
         source='rolling train/predict on ENARGAS RDS',
     )
+    # Long format: one row per (segmento, fecha). Residual = actual - predicted.
+    flat = []
+    for seg, payload in output['segments'].items():
+        for p in payload['series']:
+            actual = p.get('actual')
+            predicted = p.get('predicted')
+            residual = None
+            if actual is not None and predicted is not None:
+                residual = round(actual - predicted, 2)
+            flat.append({
+                'segmento': seg,
+                'fecha': p.get('fecha'),
+                'actual': actual,
+                'predicted': predicted,
+                'residual': residual,
+            })
+    write_csv(json_to_csv_path(backtest_path), flat,
+              fieldnames=['segmento', 'fecha', 'actual', 'predicted', 'residual'])
     print(f"\nforecast_backtest.json written")
     return 0
 

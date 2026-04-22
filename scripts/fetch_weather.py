@@ -11,7 +11,7 @@ import sys
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 
@@ -97,21 +97,44 @@ def main():
     # Backwards-compat: weather.json keeps just BA so existing charts/forecast
     # pipeline don't change. Everything else reads weather_regions.json.
     ba = next((c for c in cities_out if c['id'] == 'ba'), cities_out[0])
+    weather_path = os.path.join(OUT_DIR, 'weather.json')
     write_json(
-        os.path.join(OUT_DIR, 'weather.json'),
+        weather_path,
         {'forecast': ba['forecast']},
         source='Open-Meteo API (Buenos Aires)',
         source_date=first_date,
     )
+    write_csv(
+        json_to_csv_path(weather_path),
+        ba['forecast'],
+        fieldnames=['fecha', 'temp_max', 'temp_min', 'temp_prom'],
+    )
     print(f"weather.json: {len(ba['forecast'])} days (BA)")
 
+    regions_path = os.path.join(OUT_DIR, 'weather_regions.json')
     write_json(
-        os.path.join(OUT_DIR, 'weather_regions.json'),
+        regions_path,
         cities_out,
         source='Open-Meteo API (multi-ciudad)',
         source_date=first_date,
         failures=failures,
     )
+    # Long format: one row per (ciudad, fecha).
+    regions_flat = [
+        {
+            'ciudad_id': c['id'],
+            'ciudad': c['label'],
+            'region': c['region'],
+            'lat': c['lat'],
+            'lon': c['lon'],
+            'fecha': f['fecha'],
+            'temp_max': f['temp_max'],
+            'temp_min': f['temp_min'],
+            'temp_prom': f['temp_prom'],
+        }
+        for c in cities_out for f in c.get('forecast', [])
+    ]
+    write_csv(json_to_csv_path(regions_path), regions_flat)
     print(f"weather_regions.json: {len(cities_out)} cities")
 
 

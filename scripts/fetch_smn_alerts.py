@@ -19,10 +19,11 @@ import zipfile
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 URL = 'https://ssl.smn.gob.ar/dpd/zipopendata.php?dato=alertas'
+ALERTS_CSV_COLS = ['fecha_hora', 'numero', 'zona', 'fenomeno', 'situacion', 'descripcion']
 
 
 def parse_alerts_text(text: str):
@@ -60,13 +61,16 @@ def main():
         r.raise_for_status()
     except Exception as e:
         print(f"ERROR fetching SMN: {e}", file=sys.stderr)
-        write_json(os.path.join(OUT_DIR, 'smn_alerts.json'), [], source='SMN alertas (fetch failed)',
-                   error=str(e))
+        alerts_path = os.path.join(OUT_DIR, 'smn_alerts.json')
+        write_json(alerts_path, [], source='SMN alertas (fetch failed)', error=str(e))
+        write_csv(json_to_csv_path(alerts_path), [], fieldnames=ALERTS_CSV_COLS)
         return
 
     if r.content[:2] != b'PK':
         print(f"SMN response is not a ZIP (first bytes {r.content[:10]!r})", file=sys.stderr)
-        write_json(os.path.join(OUT_DIR, 'smn_alerts.json'), [], source='SMN alertas (unexpected response)')
+        alerts_path = os.path.join(OUT_DIR, 'smn_alerts.json')
+        write_json(alerts_path, [], source='SMN alertas (unexpected response)')
+        write_csv(json_to_csv_path(alerts_path), [], fieldnames=ALERTS_CSV_COLS)
         return
 
     try:
@@ -79,16 +83,20 @@ def main():
                     text = fh.read().decode('latin-1', errors='replace')
     except Exception as e:
         print(f"ERROR unzipping SMN: {e}", file=sys.stderr)
-        write_json(os.path.join(OUT_DIR, 'smn_alerts.json'), [], source='SMN alertas (zip error)',
-                   error=str(e))
+        alerts_path = os.path.join(OUT_DIR, 'smn_alerts.json')
+        write_json(alerts_path, [], source='SMN alertas (zip error)', error=str(e))
+        write_csv(json_to_csv_path(alerts_path), [], fieldnames=ALERTS_CSV_COLS)
         return
 
     alerts = parse_alerts_text(text)
+    alerts_path = os.path.join(OUT_DIR, 'smn_alerts.json')
     write_json(
-        os.path.join(OUT_DIR, 'smn_alerts.json'),
+        alerts_path,
         alerts,
         source='SMN Open Data — alertas meteorológicas',
     )
+    # Drop the 'raw' field from CSV — it duplicates the parsed columns.
+    write_csv(json_to_csv_path(alerts_path), alerts, fieldnames=ALERTS_CSV_COLS)
     print(f"smn_alerts.json: {len(alerts)} active alerts")
 
 

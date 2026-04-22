@@ -8,7 +8,7 @@ import glob
 import pdfplumber
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -177,12 +177,32 @@ def main():
         for msg in issues:
             print(f"  {msg}", file=sys.stderr)
 
+    weekly_path = os.path.join(OUT_DIR, 'cammesa_weekly.json')
     write_json(
-        os.path.join(OUT_DIR, 'cammesa_weekly.json'),
+        weekly_path,
         results,
         source='CAMMESA weekly PS_* PDFs',
         issues=issues,
     )
+    # Flatten to one row per (source, day) so the CSV is auditable day-by-day.
+    weekly_flat = []
+    for rep in results:
+        source = rep.get('source')
+        for day in rep.get('days', []):
+            weekly_flat.append({
+                'source': source,
+                'fecha': day.get('fecha'),
+                'dia': day.get('dia'),
+                'mes': day.get('mes'),
+                'temperatura': day.get('temperatura'),
+                'demanda_total': day.get('demanda_total'),
+                'prioritaria': day.get('prioritaria'),
+                'industria': day.get('industria'),
+                'usinas': day.get('usinas'),
+                'inyecciones': day.get('inyecciones'),
+                'stock': day.get('stock'),
+            })
+    write_csv(json_to_csv_path(weekly_path), weekly_flat)
     print(f"cammesa_weekly.json: {len(results)} reports")
 
 

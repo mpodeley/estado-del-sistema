@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 BASE = 'https://www.megsa.ar/api/'
@@ -68,12 +68,22 @@ def main():
         'fetched_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),
     }
 
+    megsa_path = os.path.join(OUT_DIR, 'megsa.json')
     write_json(
-        os.path.join(OUT_DIR, 'megsa.json'),
+        megsa_path,
         payload,
         source='MEGSA public API (megsa.ar/api)',
         errors=errors or None,
     )
+    # Three sub-CSVs, one per logical table. Named with the dataset as prefix.
+    # megsa_benchmarks.csv — Henry Hub, TTF, Brent, WTI (MEGSA hidrocarburos endpoint).
+    # megsa_fx.csv — one-row USD/ARS rate snapshot.
+    # megsa_rondas.csv — upcoming/published trading rounds.
+    base = os.path.splitext(megsa_path)[0]
+    write_csv(f'{base}_benchmarks.csv', benchmarks or [])
+    write_csv(f'{base}_fx.csv', [dolar] if dolar else [])
+    write_csv(f'{base}_rondas.csv', rondas or [],
+              fieldnames=['id', 'descripcion', 'publicaDesde', 'fechaUltimaModificacion'])
     ng = next((b for b in benchmarks if b.get('product') == 'NAT_GAS'), None)
     print(f"megsa.json written")
     print(f"  NAT GAS: {ng['currentPrice']} USD/MMbtu" if ng else "  NAT GAS: no price")

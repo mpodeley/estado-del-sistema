@@ -23,7 +23,7 @@ import glob
 import pdfplumber
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
@@ -218,6 +218,66 @@ def load_existing():
     return {r['fecha']: r for r in (data or []) if r.get('fecha')}
 
 
+ENARGAS_CSV_COLS = [
+    'fecha', 'source',
+    'linepack_total', 'linepack_delta', 'consumo_total_estimado',
+    'temp_min_ba', 'temp_max_ba', 'temp_tm_ba', 'temp_tm_2025', 'temp_tm_misma_semana',
+    'imp_bolivia', 'imp_chile', 'imp_escobar', 'imp_bahia_blanca',
+    'imp_escobar_proximo_barco', 'imp_bahia_blanca_proximo_barco',
+    'cons_prioritaria', 'cons_cammesa', 'cons_industria', 'cons_gnc', 'cons_combustible',
+    'exp_tgn', 'exp_tgs',
+]
+
+
+def flatten_for_csv(row):
+    """Flatten one RDS row (possibly slim) to a CSV-friendly flat dict.
+
+    Columns defined in ENARGAS_CSV_COLS. Missing nested fields render empty.
+    """
+    t = row.get('temperatura_ba') or {}
+    imps = row.get('importaciones') or {}
+    cons = row.get('consumos') or {}
+    exps = row.get('exportaciones') or {}
+
+    def imp(key, field='programa'):
+        v = imps.get(key) or {}
+        return v.get(field)
+
+    def cn(key):
+        v = cons.get(key) or {}
+        return v.get('programa')
+
+    def ex(key):
+        v = exps.get(key) or {}
+        return v.get('vol_exportar')
+
+    return {
+        'fecha': row.get('fecha'),
+        'source': row.get('source'),
+        'linepack_total': row.get('linepack_total'),
+        'linepack_delta': row.get('linepack_delta'),
+        'consumo_total_estimado': row.get('consumo_total_estimado'),
+        'temp_min_ba': t.get('min'),
+        'temp_max_ba': t.get('max'),
+        'temp_tm_ba': t.get('tm'),
+        'temp_tm_2025': t.get('tm_2025'),
+        'temp_tm_misma_semana': t.get('tm_misma_semana'),
+        'imp_bolivia': imp('bolivia'),
+        'imp_chile': imp('chile'),
+        'imp_escobar': imp('escobar'),
+        'imp_bahia_blanca': imp('bahia_blanca'),
+        'imp_escobar_proximo_barco': imp('escobar', 'proximo_barco'),
+        'imp_bahia_blanca_proximo_barco': imp('bahia_blanca', 'proximo_barco'),
+        'cons_prioritaria': cn('prioritaria'),
+        'cons_cammesa': cn('cammesa'),
+        'cons_industria': cn('industria'),
+        'cons_gnc': cn('gnc'),
+        'cons_combustible': cn('combustible'),
+        'exp_tgn': ex('tgn'),
+        'exp_tgs': ex('tgs'),
+    }
+
+
 def slim_row(row):
     """Drop fields the dashboard doesn't need on historical rows.
 
@@ -320,6 +380,11 @@ def main():
         source='ENARGAS Reporte Diario del Sistema (RDS)',
         source_date=latest,
         issues=issues,
+    )
+    write_csv(
+        json_to_csv_path(ENARGAS_JSON),
+        (flatten_for_csv(r) for r in rows),
+        fieldnames=ENARGAS_CSV_COLS,
     )
     print(f"enargas.json: {len(rows)} reports")
 

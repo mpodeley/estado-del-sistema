@@ -27,8 +27,8 @@ import requests
 import pdfplumber
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _meta import write_json  # noqa: E402
-from parse_enargas import extract_rds  # noqa: E402
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
+from parse_enargas import extract_rds, flatten_for_csv, ENARGAS_CSV_COLS  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 ENARGAS_JSON = os.path.join(OUT_DIR, 'enargas.json')
@@ -113,6 +113,11 @@ def main():
         source='ENARGAS RDS (backfilled)',
         source_date=latest,
         failures=failures[-50:],  # truncate to avoid huge logs
+    )
+    write_csv(
+        json_to_csv_path(ENARGAS_JSON),
+        (flatten_for_csv(r) for r in rows),
+        fieldnames=ENARGAS_CSV_COLS,
     )
     print(f"\nenargas.json: {len(rows)} total rows ({added} added, {skipped} already had)")
     if failures:
