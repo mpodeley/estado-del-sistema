@@ -34,6 +34,7 @@ import PulseCard from './PulseCard'
 import LNGArrivalsChart from './LNGArrivalsChart'
 import TomorrowCard from './TomorrowCard'
 import AlertBanner from './AlertBanner'
+import TGSPanel from './TGSPanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 import { ChartGroup, ScaleSelector } from './_layout'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from '../utils/charts'
@@ -168,6 +169,8 @@ export default function OperacionPage() {
           <TransportRestrictionsPanel rows={tramosState.data} />
         </div>
       )}
+
+      <TGSPanel />
 
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>

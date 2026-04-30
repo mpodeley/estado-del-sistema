@@ -21,15 +21,20 @@ import imaplib
 import os
 import re
 import sys
-from datetime import datetime, timezone
 from email.message import Message
 
 INCOMING_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw', 'incoming')
 
 ALLOWED_SENDERS = {
-    # Add the addresses that are authorised to feed parts to the dashboard.
-    # Mails from any other address are left unread and ignored. Use lowercase.
-    # 'mpodeley@gmail.com',
+    # Specific addresses that are authorised to feed parts. Use lowercase.
+    # Empty by default — domain allow-list below is the primary mechanism.
+}
+
+ALLOWED_SENDER_DOMAINS = {
+    # Whole domains. Anything @<domain> is accepted.
+    'pluspetrol.net',
+    'tgs.com.ar',
+    'tgn.com.ar',
 }
 
 ALLOWED_EXTS = ('.pdf', '.xlsx', '.xls')
@@ -71,15 +76,20 @@ def magic_ok(content: bytes, ext: str) -> bool:
     return False
 
 
-def save_attachment(content: bytes, original_name: str, msg_date: str) -> str | None:
-    """Drop an attachment into raw/incoming/ if it passes magic-byte checks."""
+def save_attachment(content: bytes, original_name: str) -> str | None:
+    """Drop an attachment into raw/incoming/ if it passes magic-byte checks.
+
+    Filename is preserved (sanitised). ingest_incoming.py classifies by
+    prefix (^etgs, ^ps_, etc.), so we must NOT prepend timestamps. If the
+    same filename arrives twice it gets overwritten — desirable for the
+    common case of "latest version of today's report".
+    """
     ext = os.path.splitext(original_name.lower())[1]
     if ext not in ALLOWED_EXTS:
         return None
     if not magic_ok(content, ext):
         return None
-    stamp = msg_date.replace(':', '').replace(' ', '_')[:14] if msg_date else datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')
-    fname = f'{stamp}__{safe_filename(original_name)}'
+    fname = safe_filename(original_name)
     dest = os.path.join(INCOMING_DIR, fname)
     with open(dest, 'wb') as f:
         f.write(content)
@@ -90,13 +100,13 @@ def process_message(raw_msg: bytes, summary: list[str]) -> int:
     """Save matched attachments. Return number saved."""
     msg = email.message_from_bytes(raw_msg)
     sender = address_of(msg.get('From'))
-    if ALLOWED_SENDERS and sender not in ALLOWED_SENDERS:
+    sender_domain = sender.split('@', 1)[1] if '@' in sender else ''
+    if sender not in ALLOWED_SENDERS and sender_domain not in ALLOWED_SENDER_DOMAINS:
         summary.append(f'  SKIP from={sender}: not in allow-list')
         return 0
     if not has_dkim_pass(msg):
         summary.append(f'  SKIP from={sender}: DKIM did not pass')
         return 0
-    msg_date = msg.get('Date', '')
     saved = 0
     for part in msg.walk():
         if part.is_multipart():
@@ -110,7 +120,7 @@ def process_message(raw_msg: bytes, summary: list[str]) -> int:
             continue
         if not isinstance(content, bytes) or len(content) == 0:
             continue
-        dest = save_attachment(content, filename, msg_date)
+        dest = save_attachment(content, filename)
         if dest:
             saved += 1
             summary.append(f'  OK   from={sender}: {os.path.basename(dest)}')
@@ -123,8 +133,8 @@ def main():
     if not user or not pw:
         print('fetch_inbox: GMAIL_USER/GMAIL_APP_PASSWORD not set, skipping')
         return 0
-    if not ALLOWED_SENDERS:
-        print('fetch_inbox: ALLOWED_SENDERS empty, refusing to ingest anything', file=sys.stderr)
+    if not ALLOWED_SENDERS and not ALLOWED_SENDER_DOMAINS:
+        print('fetch_inbox: allow-list empty, refusing to ingest anything', file=sys.stderr)
         return 0
 
     os.makedirs(INCOMING_DIR, exist_ok=True)

@@ -127,6 +127,7 @@ def main():
     errors += run('parse_linepack.py')
     errors += run('parse_enargas.py')
     errors += run('parse_enargas_ing.py')
+    errors += run('parse_etgs.py')
     errors += run('parse_cammesa.py')
 
     # Phase 3: Generate forecast + auto-comments

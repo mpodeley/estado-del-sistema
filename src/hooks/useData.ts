@@ -6,6 +6,7 @@ import type {
   EnargasINGRow,
   EnargasRDSRow,
   Envelope,
+  ETGSRow,
   FetchState,
   RegionCity,
   WeatherPayload,
@@ -76,6 +77,7 @@ export const useDemandForecast = () => useJson<DemandForecast>('./data/demand_fo
 export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_regions.json')
 export const useEnargasRDS = () => useJson<EnargasRDSRow[]>('./data/enargas.json')
 export const useEnargasING = () => useJson<EnargasINGRow[]>('./data/enargas_ing.json')
+export const useETGS = () => useJson<ETGSRow[]>('./data/etgs.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
 export const useCammesaWeekly = () => useJson<unknown[]>('./data/cammesa_weekly.json')
 export interface CammesaPPORow {

@@ -91,6 +91,29 @@ export interface EnargasINGRow {
   source?: string
 }
 
+// One row of the daily TGS "Síntesis del Estado Operativo" report (ETGS),
+// arrived via email-ingest. Linepack values are in MMm³ (stock, not delta);
+// recepción values are in MMm³/d. PCS values are Kcal integers.
+export interface ETGSRow {
+  fecha: string
+  source?: string
+  generado_at?: string
+  linepack_tgs_dia_anterior: number | null
+  linepack_tgs_dia_actual: number | null
+  linepack_tgs_variacion: number | null
+  recepcion_sur_programada: number | null
+  recepcion_sur_realizada: number | null
+  recepcion_neuquina_programada: number | null
+  recepcion_neuquina_realizada: number | null
+  alerta_estado: string | null
+  alerta_motivo: string | null
+  pcs_san_martin: number | null
+  pcs_neuba_1: number | null
+  pcs_neuba_2: number | null
+  pcs_troncal: number | null
+  pcs_paralelo: number | null
+}
+
 export interface Comments {
   daily: string[]
   weekly: string[]

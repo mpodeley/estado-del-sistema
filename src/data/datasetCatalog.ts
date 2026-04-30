@@ -37,6 +37,7 @@ export type FreshnessKey =
   | 'weatherRegions'
   | 'rds'
   | 'ing'
+  | 'etgs'
   | 'cammesaWeekly'
   | 'cammesaPPO'
   | 'smn'
@@ -95,6 +96,27 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/backfill_enargas_ing.py',
         purpose: 'Walk-back configurable; cada PDF cubre 13-16 días con upsert por fecha.',
+      },
+    ],
+  },
+  {
+    id: 'etgs',
+    name: 'TGS — Síntesis del Estado Operativo (ETGS)',
+    shortDescription:
+      'Reporte diario que TGS envía por mail con el estado interno del sistema: linepack TGS en MMm³ (stock absoluto, no disponible públicamente), recepciones programadas vs realizadas por cuenca (Sur y Neuquina), alerta operativa con motivo, y poder calorífico por gasoducto. Llega vía la casilla de ingestión por mail.',
+    kind: 'manual',
+    frequency: 'Diaria (vía email)',
+    jsonPath: './data/etgs.json',
+    csvPath: './data/etgs.csv',
+    freshnessKey: 'etgs',
+    scripts: [
+      {
+        file: 'scripts/fetch_inbox.py',
+        purpose: 'Descarga adjuntos PDF/XLSX desde la casilla Gmail dedicada con allow-list por dominio.',
+      },
+      {
+        file: 'scripts/parse_etgs.py',
+        purpose: 'Extrae linepack, recepciones, alerta y PCS de cada PDF ETGS_*.pdf en raw/.',
       },
     ],
   },
