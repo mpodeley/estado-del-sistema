@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-30T13:49:18+00:00",
-  "source": "ENARGAS ING (backfilled)",
+  "generated_at": "2026-04-30T15:40:09+00:00",
+  "source": "ENARGAS Inyección Nacional por Gasoducto (ING)",
   "source_date": "2026-05-03",
   "data": [
     {
@@ -7676,5 +7676,5 @@
       "tgn": 31.3
     }
   ],
-  "failures": []
+  "issues": []
 }
