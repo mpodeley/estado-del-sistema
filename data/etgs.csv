@@ -1,0 +1,3 @@
+﻿fecha,source,generado_at,linepack_tgs_dia_anterior,linepack_tgs_dia_actual,linepack_tgs_variacion,recepcion_sur_programada,recepcion_sur_realizada,recepcion_neuquina_programada,recepcion_neuquina_realizada,alerta_estado,alerta_motivo,pcs_san_martin,pcs_neuba_1,pcs_neuba_2,pcs_troncal,pcs_paralelo
+2026-04-12,ETGS1776049200000.pdf,2026-04-13T08:25:53,235.81,235.46,-0.36,21.822,22.057,45.317,45.393,TGSA - Alerta,Por alto linepack en el sistema.,9537,9991,10345,9259,9428
+2026-04-29,ETGS1777518000000.pdf,2026-04-30T08:34:52,208.16,204.96,-3.2,24.378,22.654,57.392,55.214,TGSA - Alerta,Por bajo linepack del sistema,9638,9959,10362,9476,9525
