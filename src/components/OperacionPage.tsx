@@ -6,6 +6,8 @@ import {
   useDemandForecast,
   useWeatherRegions,
   useEnargasRDS,
+  useEnargasING,
+  useETGS,
   useSMNAlerts,
   useCammesaWeekly,
   useMEGSA,
@@ -38,7 +40,7 @@ import TGSPanel from './TGSPanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 import { ChartGroup, ScaleSelector } from './_layout'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from '../utils/charts'
-import { mergeDailyWithRDS } from '../utils/mergeDaily'
+import { mergeDailyWithSources } from '../utils/mergeDaily'
 import { linepackAlerts } from '../utils/alerts'
 
 // Operational view: last 1-2 weeks of history + 5-7 days of forecast.
@@ -72,6 +74,8 @@ export default function OperacionPage() {
   const forecastState = useDemandForecast()
   const regionsState = useWeatherRegions()
   const rdsState = useEnargasRDS()
+  const ingState = useEnargasING()
+  const etgsState = useETGS()
   const smnState = useSMNAlerts()
   const cammesaWeeklyState = useCammesaWeekly()
   const megsaState = useMEGSA()
@@ -89,8 +93,13 @@ export default function OperacionPage() {
   const demandFc = forecastState.data
 
   const data = useMemo(
-    () => mergeDailyWithRDS(rawDaily, rdsState.data ?? null),
-    [rawDaily, rdsState.data],
+    () => mergeDailyWithSources(rawDaily, {
+      rds: rdsState.data,
+      ing: ingState.data,
+      etgs: etgsState.data,
+      ppo: ppoState.data,
+    }),
+    [rawDaily, rdsState.data, ingState.data, etgsState.data, ppoState.data],
   )
   const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
   const allDates = useMemo(

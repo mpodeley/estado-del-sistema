@@ -22,10 +22,12 @@ interface Props {
 /**
  * Regasification volume per LNG port over time. During winter (may-aug) the
  * RDS reports non-zero "programa" values for Escobar and Bahía Blanca when
- * LNG cargoes are being regasified. Off-season the values are zero.
+ * LNG cargoes are being regasified. Off-season the values are zero, in which
+ * case we show the placeholder rather than a chart of historical winter peaks
+ * which would be misleading next to the rest of the operational view.
  */
 export default function LNGArrivalsChart({ rows }: Props) {
-  const data = rows
+  const sorted = rows
     .filter((r): r is RDSRow & { fecha: string } => typeof r.fecha === 'string')
     .map((r) => ({
       fecha: r.fecha,
@@ -34,12 +36,21 @@ export default function LNGArrivalsChart({ rows }: Props) {
     }))
     .sort((a, b) => a.fecha.localeCompare(b.fecha))
 
-  const hasAny = data.some((r) => (r.escobar ?? 0) > 0 || (r.bahia_blanca ?? 0) > 0)
-  if (!hasAny) {
+  // Render only the last 60 days, matching the operational horizon. Showing
+  // the entire 2-year history alongside 7d charts confused dispatch readers.
+  const data = sorted.slice(-60)
+  const recent = sorted.slice(-14)
+  const hasRecentActivity = recent.some((r) => (r.escobar ?? 0) > 0 || (r.bahia_blanca ?? 0) > 0)
+  if (!hasRecentActivity) {
+    const nonZero = sorted.filter((r) => (r.escobar ?? 0) > 0 || (r.bahia_blanca ?? 0) > 0)
+    const lastNonZero = nonZero.length > 0 ? nonZero[nonZero.length - 1] : null
     return (
       <p style={{ color: colors.textDim, fontSize: 13 }}>
-        Sin regasificación activa en el período. Aparece cuando hay cargamentos LNG en
-        los puertos (típicamente mayo–agosto).
+        Sin regasificación activa en los últimos 14 días.{' '}
+        {lastNonZero
+          ? `Último cargamento programado: ${lastNonZero.fecha}.`
+          : ''}{' '}
+        Los puertos GNL Escobar y GNL Bahía Blanca operan típicamente entre mayo y agosto.
       </p>
     )
   }
