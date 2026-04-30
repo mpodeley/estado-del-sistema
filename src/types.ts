@@ -72,6 +72,25 @@ export interface EnargasRDSRow {
   forecast_temp_ba?: { fecha: string; min: number | null; max: number | null; tm: number | null }[]
 }
 
+// One row of the ENARGAS Inyección Nacional por Gasoducto (ING) PDF parser.
+// Each row is one fecha; `tipo` is "R" (real) or "P" (programado). Six gas
+// pipelines are tracked: san_martin, neuba_1, neuba_2, gpfm (Perito Moreno),
+// centro_oeste, norte. `tgs` and `tgn` are derived sums per transportista.
+export interface EnargasINGRow {
+  fecha: string
+  tipo: 'R' | 'P' | null
+  san_martin: number | null
+  neuba_1: number | null
+  neuba_2: number | null
+  gpfm: number | null
+  centro_oeste: number | null
+  norte: number | null
+  total: number | null
+  tgs: number | null
+  tgn: number | null
+  source?: string
+}
+
 export interface Comments {
   daily: string[]
   weekly: string[]

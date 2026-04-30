@@ -105,11 +105,14 @@ def main():
 
     errors = 0
 
-    # Phase 0: Ingest manual drops (raw/incoming/ -> raw/)
+    # Phase 0: Pull email attachments (no-op if GMAIL_APP_PASSWORD unset),
+    # then route raw/incoming/ -> raw/.
+    errors += run('fetch_inbox.py')
     errors += run('ingest_incoming.py')
 
     # Phase 1: Fetch new data
     errors += run('fetch_enargas.py')
+    errors += run('fetch_enargas_ing.py')
     errors += run('fetch_cammesa.py')
     errors += run('fetch_weather.py')
     errors += run('fetch_smn_alerts.py')
@@ -123,6 +126,7 @@ def main():
     errors += run('parse_base_excel.py')
     errors += run('parse_linepack.py')
     errors += run('parse_enargas.py')
+    errors += run('parse_enargas_ing.py')
     errors += run('parse_cammesa.py')
 
     # Phase 3: Generate forecast + auto-comments

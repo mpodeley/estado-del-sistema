@@ -1,4 +1,5 @@
 import { card, colors, sectionTitle, space } from '../theme'
+import ForecastPage from './ForecastPage'
 
 const linkStyle: React.CSSProperties = { color: colors.accent.blue, textDecoration: 'none' }
 
@@ -180,6 +181,9 @@ export default function GuidePage() {
           <li>Stock GNL (Escobar, Bahía Blanca) se publica en el RDS pero todavía no lo graficamos aparte.</li>
         </ul>
       </div>
+
+      <hr style={{ marginTop: space.xl * 2, marginBottom: space.xl, border: 0, borderTop: `1px solid ${colors.border}` }} />
+      <ForecastPage />
     </div>
   )
 }

@@ -35,6 +35,9 @@ jobs:
 
       - name: Run data pipeline
         timeout-minutes: 8
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python scripts/build_data.py
 
       - name: Type check

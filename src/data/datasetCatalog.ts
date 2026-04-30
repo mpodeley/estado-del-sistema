@@ -36,6 +36,7 @@ export type FreshnessKey =
   | 'weather'
   | 'weatherRegions'
   | 'rds'
+  | 'ing'
   | 'cammesaWeekly'
   | 'cammesaPPO'
   | 'smn'
@@ -67,6 +68,33 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/backfill_enargas.py',
         purpose: 'One-shot: trae hasta 2 años de histórico reutilizando extract_rds().',
+      },
+    ],
+  },
+  {
+    id: 'enargas_ing',
+    name: 'ENARGAS — Inyección Nacional por Gasoducto (ING)',
+    shortDescription:
+      'PDF diario del Power BI de ENARGAS con inyección por gasoducto: San Martín, Neuba I, Neuba II, GPFM (Perito Moreno) operados por TGS, Centro Oeste y Norte por TGN. Cada reporte incluye 8 días reales (R) y 5 programados (P). 18 meses de histórico disponibles.',
+    kind: 'auto',
+    frequency: 'Diaria (días hábiles)',
+    sourceUrl:
+      'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/dod-graficos-de-programacion-items.php?cat=6',
+    jsonPath: './data/enargas_ing.json',
+    csvPath: './data/enargas_ing.csv',
+    freshnessKey: 'ing',
+    scripts: [
+      {
+        file: 'scripts/fetch_enargas_ing.py',
+        purpose: 'Descarga los últimos PDFs ING_YYYYMMDD.pdf a raw/.',
+      },
+      {
+        file: 'scripts/parse_enargas_ing.py',
+        purpose: 'Extrae con pdfplumber 6 series (gasoductos) por fecha usando posiciones X/Y de los labels.',
+      },
+      {
+        file: 'scripts/backfill_enargas_ing.py',
+        purpose: 'Walk-back configurable; cada PDF cubre 13-16 días con upsert por fecha.',
       },
     ],
   },
