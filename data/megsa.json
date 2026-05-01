@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T17:41:06+00:00",
+  "generated_at": "2026-05-01T10:26:03+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -12,11 +12,11 @@
         "units": "USD/MMbtu",
         "currentPrice": 2.76,
         "currentPeriod": "2026-04-30T00:00:00",
-        "previousPrice": 2.63,
+        "previousPrice": 2.64,
         "previousPeriod": null,
-        "nominalDifference": 0.13,
-        "percentageDifference": 4.94,
-        "lastUpdated": "2026-04-30T14:40:09.8705152",
+        "nominalDifference": 0.12,
+        "percentageDifference": 4.55,
+        "lastUpdated": "2026-04-30T19:50:03.0201911",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -32,7 +32,7 @@
         "previousPeriod": null,
         "nominalDifference": -1.06,
         "percentageDifference": -2.27,
-        "lastUpdated": "2026-04-30T14:40:12.6687546",
+        "lastUpdated": "2026-04-30T19:50:03.4687046",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -42,13 +42,13 @@
         "series": "BRENT_CRUDE_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 113.84,
+        "currentPrice": 114.09,
         "currentPeriod": "2026-04-30T00:00:00",
-        "previousPrice": 119.32,
+        "previousPrice": 117.92,
         "previousPeriod": null,
-        "nominalDifference": -5.48,
-        "percentageDifference": -4.59,
-        "lastUpdated": "2026-04-30T14:40:05.881566",
+        "nominalDifference": -3.83,
+        "percentageDifference": -3.25,
+        "lastUpdated": "2026-04-30T19:50:02.4626314",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 104.08,
+        "currentPrice": 105.87,
         "currentPeriod": "2026-04-30T00:00:00",
-        "previousPrice": 106.83,
+        "previousPrice": 108.63,
         "previousPeriod": null,
-        "nominalDifference": -2.75,
-        "percentageDifference": -2.57,
-        "lastUpdated": "2026-04-30T14:40:02.7724591",
+        "nominalDifference": -2.76,
+        "percentageDifference": -2.54,
+        "lastUpdated": "2026-04-30T19:50:01.9385962",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -72,17 +72,23 @@
     "dolar": {
       "currency": "USD",
       "currencyName": "Dolar U.S.A",
-      "currentPrice": 1405.0,
-      "currentPeriod": "2026-04-30T11:04:00",
-      "previousPrice": 1410.0,
-      "previousPeriod": "2026-04-30T10:30:00",
-      "nominalDifference": -5.0,
-      "percentageDifference": -0.3546099290780142,
-      "lastUpdated": "2026-04-30T11:30:10.4226008",
+      "currentPrice": 1415.0,
+      "currentPeriod": "2026-04-30T17:03:00",
+      "previousPrice": 1415.0,
+      "previousPeriod": "2026-04-30T16:16:00",
+      "nominalDifference": 0.0,
+      "percentageDifference": 0.0,
+      "lastUpdated": "2026-04-30T17:30:06.082634",
       "marketType": "Dollar",
       "displayName": "DOLAR"
     },
     "rondas": [
+      {
+        "id": 383.0,
+        "descripcion": "SUBASTA - PRODUCTORES EN GENERAL Y COMERCIALIZADORAS\r\nPERIODO DE ABASTECIMIENTO: 18/05/2026 al 31/05/2026\r\nFecha de Negociación: 07/05 de 10:00 a 10:30",
+        "publicaDesde": "2026-04-30T00:00:00",
+        "fechaUltimaModificacion": "2026-04-30T15:49:40"
+      },
       {
         "id": 380.0,
         "descripcion": "SUBASTA ENARSA – VENTA DEMANDA PRIORITARIA\r\nPERIODO DE ABASTECIMIENTO: 16/05/2026 – 31/05/2026\r\nFecha de Negociación: 29/04/2026 de 15:00 a 15:30",
@@ -102,7 +108,7 @@
         "fechaUltimaModificacion": "2026-04-29T14:33:27"
       }
     ],
-    "fetched_at": "2026-04-30T17:41:06+00:00"
+    "fetched_at": "2026-05-01T10:26:03+00:00"
   },
   "errors": null
 }
