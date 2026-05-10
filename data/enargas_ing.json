@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-09T10:07:07+00:00",
+  "generated_at": "2026-05-10T10:13:18+00:00",
   "source": "ENARGAS Inyección Nacional por Gasoducto (ING)",
   "source_date": "2026-05-10",
   "data": [
@@ -7530,7 +7530,7 @@
       "gpfm": 19.8,
       "centro_oeste": 32.4,
       "total": 125.5,
-      "source": "ING_20260429.pdf",
+      "source": "ING_20260427.pdf",
       "norte": 1.9,
       "tgs": 91.2,
       "tgn": 34.3
