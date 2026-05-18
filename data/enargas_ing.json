@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-17T10:24:42+00:00",
+  "generated_at": "2026-05-18T12:30:42+00:00",
   "source": "ENARGAS Inyección Nacional por Gasoducto (ING)",
   "source_date": "2026-05-17",
   "data": [
@@ -7621,17 +7621,17 @@
     },
     {
       "fecha": "2026-04-30",
-      "tipo": "R",
-      "san_martin": 21.1,
-      "neuba_1": 9.7,
-      "neuba_2": 36.0,
-      "gpfm": 21.0,
-      "centro_oeste": 35.1,
-      "total": 124.3,
-      "source": "ING_20260507.pdf",
-      "norte": 1.4,
-      "tgs": 87.8,
-      "tgn": 36.5
+      "tipo": "P",
+      "san_martin": 24.8,
+      "neuba_1": 10.0,
+      "neuba_2": 40.1,
+      "gpfm": 21.4,
+      "centro_oeste": 31.5,
+      "total": 129.6,
+      "source": "ING_20260427.pdf",
+      "norte": 1.8,
+      "tgs": 96.3,
+      "tgn": 33.3
     },
     {
       "fecha": "2026-05-01",
