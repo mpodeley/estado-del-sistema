@@ -31,7 +31,11 @@ export default defineConfig({
         },
         { label: '0. Bienvenida', link: '/' },
         { label: '1. De Excel a una aplicación', link: '/01-de-excel-a-app/' },
-        { label: '2. Vocabulario', link: '/02-vocabulario/' },
+        {
+          label: '2. Vocabulario',
+          link: '/02-vocabulario/',
+          badge: { text: 'Completo', variant: 'success' },
+        },
         {
           label: '3. Diseño y paradigmas',
           link: '/03-diseno-paradigmas/',
@@ -39,14 +43,26 @@ export default defineConfig({
         },
         { label: '4. Las partes del proyecto', link: '/04-partes-del-proyecto/' },
         { label: '5. Lenguajes y librerías', link: '/05-lenguajes-y-librerias/' },
-        { label: '6. Coding agents', link: '/06-coding-agents/' },
+        {
+          label: '6. Coding agents',
+          link: '/06-coding-agents/',
+          badge: { text: 'Completo', variant: 'success' },
+        },
         {
           label: '7. Skills y mejores prácticas',
           link: '/07-skills-mejores-practicas/',
           badge: { text: 'Completo', variant: 'success' },
         },
-        { label: '8. Git, GitHub y deploy', link: '/08-git-github-deploy/' },
-        { label: '9. Tu primer aporte', link: '/09-primer-aporte/' },
+        {
+          label: '8. Git, GitHub y deploy',
+          link: '/08-git-github-deploy/',
+          badge: { text: 'Completo', variant: 'success' },
+        },
+        {
+          label: '9. Tu primer aporte',
+          link: '/09-primer-aporte/',
+          badge: { text: 'Completo', variant: 'success' },
+        },
         { label: '10. Cómo seguir', link: '/10-como-seguir/' },
       ],
     }),
