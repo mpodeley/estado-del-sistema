@@ -46,6 +46,19 @@ jobs:
       - name: Build dashboard
         run: npm run build
 
+      - name: Install course dependencies
+        working-directory: ./curso
+        run: npm ci
+
+      - name: Build course site
+        working-directory: ./curso
+        run: npm run build
+
+      - name: Place course under dist/curso
+        run: |
+          mkdir -p dist/curso
+          cp -r curso/dist/. dist/curso/
+
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"

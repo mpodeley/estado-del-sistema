@@ -7,3 +7,6 @@ __pycache__/
 ~$*
 .claude/
 raw/incoming/_archive/
+curso/node_modules/
+curso/dist/
+curso/.astro/

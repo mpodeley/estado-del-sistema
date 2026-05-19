@@ -54,6 +54,19 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
     { id: 'fuentes', label: 'Fuentes' },
     { id: 'status', label: 'Estado' },
   ]
+  const tabStyle = (active: boolean): React.CSSProperties => ({
+    background: active ? colors.border : 'transparent',
+    color: active ? colors.textPrimary : colors.textDim,
+    border: 'none',
+    borderRadius: radius.sm,
+    padding: `${space.sm}px ${space.xl}px`,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    textDecoration: 'none',
+    display: 'inline-block',
+  })
   return (
     <div
       style={{
@@ -67,24 +80,13 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
       }}
     >
       {tabs.map((t) => (
-        <button
-          key={t.id}
-          onClick={() => setPage(t.id)}
-          style={{
-            background: page === t.id ? colors.border : 'transparent',
-            color: page === t.id ? colors.textPrimary : colors.textDim,
-            border: 'none',
-            borderRadius: radius.sm,
-            padding: `${space.sm}px ${space.xl}px`,
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <button key={t.id} onClick={() => setPage(t.id)} style={tabStyle(page === t.id)}>
           {t.label}
         </button>
       ))}
+      <a href="./curso/" style={tabStyle(false)} title="Curso introductorio para contribuir al tablero">
+        Curso ↗
+      </a>
     </div>
   )
 }

@@ -1,0 +1,65 @@
+---
+title: Bienvenida
+description: Curso introductorio para analistas que quieren contribuir al tablero usando coding agents.
+template: splash
+hero:
+  tagline: De Excel a contribuir código — sin haber programado antes.
+  actions:
+    - text: Empezar con el Módulo 3 (Diseño y paradigmas)
+      link: /estado-del-sistema/curso/03-diseno-paradigmas/
+      icon: right-arrow
+      variant: primary
+    - text: Ver el código en GitHub
+      link: https://github.com/mpodeley/estado-del-sistema
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## Para quién es este curso
+
+Sos analista comercial o despachante de gas. Vivís en Excel todo el día. Cuando entrás al [tablero **Estado del Sistema**](https://mpodeley.github.io/estado-del-sistema/) ves linepack, demanda, forecasts — pero el código que produce todo eso te queda como una caja negra. Querés (a) entender qué hay adentro, y (b) poder pedir cambios o mejoras sin depender de que otra persona los haga.
+
+Este curso te lleva de ahí a abrir tu primer Pull Request, usando un **coding agent** (Claude Code o Codex) como copiloto. No vas a necesitar memorizar sintaxis ni estudiar libros gordos: vas a aprender a *leer* el código, a *describir lo que querés* con precisión, y a *revisar* lo que el agente te propone.
+
+## Qué vas a aprender
+
+<CardGrid>
+  <Card title="Cómo se piensa una app" icon="puzzle">
+    Por qué se separan los datos de la lógica y de la presentación, y por qué eso te sirve cuando tenés que cambiar algo.
+  </Card>
+  <Card title="Qué hace cada parte de este repo" icon="open-book">
+    El pipeline en Python, la web en React, el contrato JSON que los une, y cómo se publica solo a GitHub Pages.
+  </Card>
+  <Card title="Cómo usar bien un coding agent" icon="rocket">
+    Slash commands, modo plan, memoria persistente, y las buenas prácticas que separan a un usuario eficaz de uno frustrado.
+  </Card>
+  <Card title="Git, GitHub y deploy automático" icon="approve-check">
+    Clone, branch, commit, PR — qué significa cada paso y cómo el agente te asiste en cada uno.
+  </Card>
+</CardGrid>
+
+## Cómo está organizado
+
+El curso tiene **11 módulos** numerados en el sidebar (a la izquierda). No hace falta leerlos en orden estricto, pero el orden numérico es la curva más suave si arrancás de cero.
+
+Los módulos con la insignia **Completo** son los que están escritos a fondo en esta versión inicial. El resto son placeholders que se completarán en pasadas siguientes — pueden servirte ya como vista del temario.
+
+## Convenciones
+
+- **Cuadros de código** así:
+  ```python
+  def fetch_city(city):
+      r = requests.get(f"https://api.open-meteo.com/v1/forecast?...")
+      return r.json()
+  ```
+- **Links a archivos del repo** así: [`scripts/fetch_weather.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/fetch_weather.py). Cliqueá y se abre en GitHub.
+- **Términos técnicos en inglés** cuando no hay traducción natural: *commit*, *branch*, *fetch*, *parser*. La primera vez que aparece cada uno, hay una explicación.
+
+---
+
+¿Listo? Arrancá por el [Módulo 1 — De Excel a una aplicación](/estado-del-sistema/curso/01-de-excel-a-app/), o saltá directamente a uno de los módulos completos:
+
+- [**Módulo 3 — Diseño y paradigmas**](/estado-del-sistema/curso/03-diseno-paradigmas/)
+- [**Módulo 7 — Skills y mejores prácticas con coding agents**](/estado-del-sistema/curso/07-skills-mejores-practicas/)
