@@ -1,6 +1,6 @@
 ---
 title: "1. De Excel a una aplicación"
-description: "Qué cambia y qué no cuando pasás de un Excel a una aplicación web. Vista panorámica del tablero."
+description: "Qué cambia y qué no cuando un reporte deja de ser un Excel y pasa a ser una aplicación web. Tour rápido por el tablero."
 sidebar:
   order: 1
   badge:
@@ -8,25 +8,25 @@ sidebar:
     variant: caution
 ---
 
-> **Próximamente** — este módulo todavía no está escrito a fondo. Acá quedan los objetivos y un sumario para que sepas qué esperar.
+> **Próximamente** — este módulo todavía está en borrador. Te dejamos los objetivos y el índice para que veas qué va a haber acá.
 
-## Objetivos de aprendizaje
+## Qué te vas a llevar
 
-- Identificar **qué problemas de Excel** resuelve una aplicación web, y cuáles no.
-- Tener una vista panorámica del tablero [Estado del Sistema](https://mpodeley.github.io/estado-del-sistema/) antes de meterse con el código.
-- Entender por qué este proyecto existe como app y no como un Excel compartido.
+- Identificar **qué problemas de Excel** resuelve una aplicación web, y cuáles **no**.
+- Tener una vista panorámica del tablero [Estado del Sistema](https://mpodeley.github.io/estado-del-sistema/) antes de meterte con el código.
+- Entender por qué este proyecto existe como aplicación web y no como un Excel compartido en OneDrive.
 
-## Sumario
+## Lo que va a haber acá
 
-1. **Qué hace Excel bien** — fórmulas ad hoc, exploración rápida, gráficos al toque, todos saben usarlo.
-2. **Qué hace Excel mal a escala** — versionado (¿cuál es el archivo bueno?), reproducibilidad (¿lo corro y sale lo mismo?), automatización (alguien lo tiene que abrir todos los días).
-3. **Qué problemas resuelve una app web** — datos siempre frescos, una sola fuente de verdad, accesible desde cualquier browser, se actualiza sola.
-4. **Lo que sigue valiendo de Excel** — para exploración personal y prototipado sigue siendo lo mejor. La app no compite con eso.
-5. **Tour del tablero** — Operación / Mapa / Histórico / Guía / Fuentes / Estado. Qué hay en cada una.
+1. **Qué hace bien Excel** — fórmulas a medida, exploración rápida, gráficos al toque, todo el mundo lo sabe usar.
+2. **Qué hace mal Excel a escala** — versionado (¿cuál es el archivo bueno?), reproducibilidad (¿lo corro yo y me sale lo mismo que a vos?), automatización (alguien lo tiene que abrir todos los días para que se actualice).
+3. **Qué resuelve una aplicación web** — datos siempre frescos, una sola fuente de verdad, accesible desde cualquier navegador, se actualiza sola.
+4. **Lo que Excel sigue haciendo mejor** — para exploración personal y prototipado sigue ganando. La aplicación no compite con eso, lo complementa.
+5. **Tour del tablero** — Operación / Mapa / Histórico / Guía / Fuentes / Estado. Qué hay en cada uno.
 
-## Lecturas mientras tanto
+## Por mientras
 
-- [`README.md`](https://github.com/mpodeley/estado-del-sistema) del repo.
-- [`src/components/GuidePage.tsx`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/components/GuidePage.tsx) — la Guía del tablero ya es una buena intro al producto.
+Si querés ir entrando en clima:
 
-Cuando lo tengamos completo, este módulo va a ser la antesala natural del [Módulo 3 — Diseño y paradigmas](/estado-del-sistema/curso/03-diseno-paradigmas/), que ya está escrito.
+- Mirá la [Guía dentro del tablero mismo](https://mpodeley.github.io/estado-del-sistema/?tab=guia) — ya es una buena introducción al producto.
+- Después saltá al [Módulo 3 — Diseño y paradigmas](/estado-del-sistema/curso/03-diseno-paradigmas/), que **sí** está completo y arranca por una analogía con Excel.

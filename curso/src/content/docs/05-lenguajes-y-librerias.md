@@ -1,6 +1,6 @@
 ---
 title: "5. Lenguajes y librerías"
-description: "Python, TypeScript, React, Recharts, Vite — y por qué cada uno es lo que es."
+description: "Python, TypeScript, React, Vite — para qué sirve cada uno y por qué se eligió ese y no otro."
 sidebar:
   order: 5
   badge:
@@ -8,38 +8,43 @@ sidebar:
     variant: caution
 ---
 
-> **Próximamente** — este módulo todavía no está escrito a fondo. Acá quedan los objetivos y un sumario para que sepas qué esperar.
+> **Próximamente** — este módulo todavía está en borrador. Te dejamos los objetivos y el índice para que veas qué va a haber acá.
 
-## Objetivos de aprendizaje
+## Qué te vas a llevar
 
-- Saber para qué sirve cada lenguaje y cada librería que usa este proyecto.
-- Tener una analogía Excel por cada uno, para que cuando escuches el nombre tengas una intuición.
+- Saber para qué sirve cada **lenguaje** y cada **librería** que usa el proyecto.
+- Tener una analogía con Excel o con algo conocido para cada una, así cuando aparezca el nombre en una conversación con el asistente, ya tenés una intuición de qué es.
 
-## Sumario
+## Lo que va a haber acá
 
 ### Python (la pipeline)
 
-- **`requests`** — hacer pedidos HTTP. *Como `=SERVICIOWEB(...)` pero más potente.*
-- **`beautifulsoup4`** — leer HTML scrapeado (buscar enlaces, tablas).
-- **`pdfplumber`** — extraer texto y tablas de PDFs. *Como abrir un PDF y copiar la tabla, pero programable.*
-- **`openpyxl`** / **`xlrd`** — leer y escribir Excels.
-- **`msoffcrypto-tool`** — desencriptar Office "protegidos" con password (CAMMESA usa el password default de Excel, `VelvetSweatshop`).
+| Librería | Para qué sirve | Analogía |
+|---|---|---|
+| **`requests`** | Hacer pedidos a un servidor por internet (descargar archivos, consultar APIs). | `=SERVICIOWEB(...)` de Excel, pero mucho más potente. |
+| **`beautifulsoup4`** | Leer páginas HTML y sacarles información (links, tablas, textos). | Como copiar una tabla de una web a Excel, pero programable. |
+| **`pdfplumber`** | Extraer texto y tablas de archivos PDF. | Abrir un PDF y copiar la tabla a Excel, pero hecho por un script. |
+| **`openpyxl`** / **`xlrd`** | Leer y escribir archivos Excel. | Tener Excel adentro de un programa. |
+| **`msoffcrypto-tool`** | Desbloquear archivos de Office "protegidos" con contraseña. | El típico "Quitar contraseña al abrir" en Office. |
 
-Ver dónde se usan: [`requirements.txt`](https://github.com/mpodeley/estado-del-sistema/blob/master/requirements.txt) y los scripts en [`scripts/`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts).
+Las dependencias están listadas en [`requirements.txt`](https://github.com/mpodeley/estado-del-sistema/blob/master/requirements.txt) y se ven usadas en los archivos de [`scripts/`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts).
 
-### TypeScript (el frontend)
+### TypeScript (la web)
 
-- **TypeScript** vs JavaScript — TS es JS con tipos. Te avisa antes de correr si pasaste un número donde esperaba un string. Para una app de datos donde una columna mal nombrada rompe un gráfico, vale oro.
-- **React** — librería para construir UIs como un árbol de componentes. *Cada componente es como una "subhoja" reusable de Excel.*
-- **Recharts** — librería de gráficos basada en React. Por qué ésta y no Highcharts/Plotly: simple, buena para series temporales, sin licencia.
-- **Vite** — la herramienta que arma todo y lo sirve en dev. *El "compilador" del lado JS.*
+| Tecnología | Qué es | Por qué se usa |
+|---|---|---|
+| **TypeScript** vs JavaScript | TypeScript es JavaScript con "tipos": le decís qué clase de dato espera cada función (número, texto, fecha) y el compilador te avisa **antes de correr** si te equivocaste. | Para una aplicación de datos donde una columna mal nombrada rompe un gráfico, vale oro. |
+| **React** | Una librería para armar interfaces como un árbol de componentes reusables. | Cada gráfico, cada panel, cada KPI es un componente. Se combinan como bloques. |
+| **Recharts** | Librería de gráficos basada en React. | Buena para series temporales, simple, sin licencia comercial. |
+| **Vite** | La herramienta que arma la web final y la sirve durante el desarrollo. | El "compilador" del lado JavaScript. |
 
-Ver: [`package.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/package.json), [`tsconfig.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/tsconfig.json), [`vite.config.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/vite.config.ts).
+Las dependencias de la web están en [`package.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/package.json) y la configuración en [`tsconfig.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/tsconfig.json) y [`vite.config.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/vite.config.ts).
 
-### ¿Por qué dos lenguajes?
+### ¿Por qué dos lenguajes y no uno solo?
 
-Porque cada uno es bueno para algo distinto:
-- Python tiene el mejor ecosistema para *traer y procesar datos* (PDFs, Excel, APIs).
-- TypeScript/React tienen el mejor ecosistema para *mostrar datos en el browser*.
+Porque cada uno tiene su fuerte:
 
-Y el contrato JSON entre ellos (Módulo 3) hace que la convivencia no sea un problema.
+- **Python** tiene el mejor "ecosistema" — la mejor colección de librerías ya hechas — para **traer y procesar datos**: PDFs, Excels, APIs, modelos estadísticos.
+- **TypeScript con React** tiene el mejor ecosistema para **mostrar datos en el navegador**: gráficos interactivos, componentes reusables, manejo de estado.
+
+Y el acuerdo (los archivos JSON, ver [Módulo 3](/estado-del-sistema/curso/03-diseno-paradigmas/)) hace que la convivencia entre los dos no sea un problema.

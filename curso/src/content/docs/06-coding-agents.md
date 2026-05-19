@@ -1,6 +1,6 @@
 ---
 title: "6. Coding agents: tu nuevo asistente"
-description: "Qué son Claude Code y Codex, cómo instalarlos, anatomía de una conversación útil."
+description: "Qué es y qué no es un asistente de código. Cómo instalar Claude Code. Anatomía de una primera conversación productiva."
 sidebar:
   order: 6
   badge:
@@ -8,28 +8,28 @@ sidebar:
     variant: caution
 ---
 
-> **Próximamente** — este módulo todavía no está escrito a fondo. Acá quedan los objetivos y un sumario para que sepas qué esperar.
+> **Próximamente** — este módulo todavía está en borrador. Te dejamos los objetivos y el índice para que veas qué va a haber acá.
 
-## Objetivos de aprendizaje
+## Qué te vas a llevar
 
-- Entender qué *es* y qué *no es* un coding agent.
-- Tener Claude Code instalado y funcionando en tu máquina.
-- Tener una primera conversación productiva.
+- Entender **qué es** y **qué no es** un asistente de código (Claude Code, Codex, Cursor).
+- Tenerlo instalado y andando en tu máquina.
+- Una primera conversación productiva, sin que toque nada importante.
 
-## Sumario
+## Lo que va a haber acá
 
-1. **Qué hace un coding agent** — lee, escribe, corre comandos (todo con tu aprobación).
-2. **Claude Code vs Codex vs Cursor** — diferencias prácticas. Para este curso, usamos Claude Code como ejemplo.
-3. **Instalación**:
-   - Requisitos: tener una terminal (PowerShell en Windows ya viene), Node.js, y una cuenta de Anthropic.
-   - `npm install -g @anthropic-ai/claude-code` (verificar comando actual en la docs oficial).
-   - Primera vez: `claude` en una terminal abierta en la carpeta del repo.
-4. **Anatomía de una conversación**:
-   - Pedido claro + contexto + un siguiente paso propuesto.
-   - El agente responde con un plan o con cambios.
+1. **Qué hace un asistente de código** — lee, escribe, corre comandos (todo con tu aprobación).
+2. **Claude Code vs Codex vs Cursor** — diferencias en la práctica. Para este curso vamos a usar Claude Code como ejemplo, pero las ideas se transfieren.
+3. **Instalación de Claude Code**:
+   - Lo que necesitás: una terminal (Windows ya viene con PowerShell), Node.js, una cuenta de Anthropic.
+   - El comando exacto está en la [documentación oficial](https://docs.claude.com/en/docs/claude-code) — la cito acá cuando esté el módulo terminado.
+   - La primera vez: `claude` en una terminal abierta dentro de la carpeta del repo.
+4. **Anatomía de una conversación útil**:
+   - Pedido claro + contexto + siguiente paso propuesto.
+   - El asistente contesta con un plan o con cambios.
    - Vos aprobás, ajustás o rechazás.
-   - Iterás.
-5. **Costo y límites** — qué consume cada mensaje, cómo cuidar la suscripción.
+   - Y así seguís.
+5. **Costos y límites** — qué consume cada mensaje, cómo cuidar la suscripción.
 6. **Primera conversación de práctica** — un cambio chico, controlado, reversible.
 
-> Para las **mejores prácticas** y los **anti-patrones** detallados → andá ya al [Módulo 7](/estado-del-sistema/curso/07-skills-mejores-practicas/), que sí está completo.
+> Si lo que querés son **las buenas prácticas** y los **errores típicos**, andá directo al [Módulo 7](/estado-del-sistema/curso/07-skills-mejores-practicas/), que ya está escrito a fondo.

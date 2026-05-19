@@ -1,65 +1,72 @@
 ---
 title: Bienvenida
-description: Curso introductorio para analistas que quieren contribuir al tablero usando coding agents.
+description: Curso introductorio para analistas que quieren aportar al tablero, sin haber programado antes.
 template: splash
 hero:
-  tagline: De Excel a contribuir código — sin haber programado antes.
+  tagline: De Excel a aportar al tablero — sin haber programado antes.
   actions:
-    - text: Empezar con el Módulo 3 (Diseño y paradigmas)
-      link: /estado-del-sistema/curso/03-diseno-paradigmas/
+    - text: Empezar por el principio
+      link: /estado-del-sistema/curso/01-de-excel-a-app/
       icon: right-arrow
       variant: primary
+    - text: Ir al módulo "Diseño y paradigmas"
+      link: /estado-del-sistema/curso/03-diseno-paradigmas/
+      icon: right-arrow
+      variant: secondary
     - text: Ver el código en GitHub
       link: https://github.com/mpodeley/estado-del-sistema
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components'
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components'
 
-## Para quién es este curso
+## ¿Esto es para mí?
 
-Sos analista comercial o despachante de gas. Vivís en Excel todo el día. Cuando entrás al [tablero **Estado del Sistema**](https://mpodeley.github.io/estado-del-sistema/) ves linepack, demanda, forecasts — pero el código que produce todo eso te queda como una caja negra. Querés (a) entender qué hay adentro, y (b) poder pedir cambios o mejoras sin depender de que otra persona los haga.
+Probablemente sí, si:
 
-Este curso te lleva de ahí a abrir tu primer Pull Request, usando un **coding agent** (Claude Code o Codex) como copiloto. No vas a necesitar memorizar sintaxis ni estudiar libros gordos: vas a aprender a *leer* el código, a *describir lo que querés* con precisión, y a *revisar* lo que el agente te propone.
+- Trabajás todo el día en Excel y conocés bien el flujo "bajar archivos → procesar → sacar un reporte".
+- Mirás [el tablero **Estado del Sistema**](https://mpodeley.github.io/estado-del-sistema/) y querés entender qué pasa "abajo" — qué genera los gráficos, de dónde salen los datos, cómo se actualiza solo cada noche.
+- Te gustaría poder pedir o proponer cambios sin depender de que otra persona los haga.
 
-## Qué vas a aprender
+**No hace falta** que hayas escrito código antes. Tampoco que sepas inglés técnico. Lo único que asumimos es que te movés bien con la PC: archivos, carpetas, Excel, navegador, ese tipo de cosas.
+
+## Un acuerdo sobre cómo está escrito
+
+<Aside type="tip" title="Pasá el mouse por encima">
+Las palabras que aparecen subrayadas con <abbr title="línea de puntitos abajo del texto, como esta">puntitos</abbr> tienen una definición corta que aparece al pasar el cursor por encima. No hace falta que las hovereés todas — están para cuando aparece un término que no te suena.
+</Aside>
+
+- Lenguaje llano. Cuando aparece una palabra técnica por primera vez, la explicamos.
+- Si una palabra suele decirse en inglés (porque la vas a ver así en las herramientas), la usamos en inglés y te decimos qué quiere decir.
+- Los <abbr title="cajas grises con texto en otra tipografía, como un bloque de cita técnica">bloques de código</abbr> los podés saltear si te abruman al principio. Lo importante es el texto que los rodea.
+
+## Qué vas a poder hacer al final
 
 <CardGrid>
-  <Card title="Cómo se piensa una app" icon="puzzle">
-    Por qué se separan los datos de la lógica y de la presentación, y por qué eso te sirve cuando tenés que cambiar algo.
+  <Card title="Entender qué hace cada parte" icon="puzzle">
+    Saber qué pasa dentro del tablero: de dónde salen los datos, cómo se procesan, cómo terminan en un gráfico.
   </Card>
-  <Card title="Qué hace cada parte de este repo" icon="open-book">
-    El pipeline en Python, la web en React, el contrato JSON que los une, y cómo se publica solo a GitHub Pages.
+  <Card title="Pedir cambios con precisión" icon="pencil">
+    Aprender a describir lo que querés cambiar de forma que un asistente de código pueda hacerlo bien — y vos puedas revisar el resultado.
   </Card>
-  <Card title="Cómo usar bien un coding agent" icon="rocket">
-    Slash commands, modo plan, memoria persistente, y las buenas prácticas que separan a un usuario eficaz de uno frustrado.
+  <Card title="Usar bien un asistente de código" icon="rocket">
+    Conocer los atajos, los modos, la memoria y las buenas prácticas para que el asistente sea una ayuda y no una fuente de frustración.
   </Card>
-  <Card title="Git, GitHub y deploy automático" icon="approve-check">
-    Clone, branch, commit, PR — qué significa cada paso y cómo el agente te asiste en cada uno.
+  <Card title="Hacer tu primer aporte" icon="approve-check">
+    Llegar a abrir tu primera <abbr title="del inglés 'pull request' — pedido para incorporar tus cambios al proyecto, con revisión por el medio">propuesta de cambio</abbr> con una mejora chica y reversible.
   </Card>
 </CardGrid>
 
 ## Cómo está organizado
 
-El curso tiene **11 módulos** numerados en el sidebar (a la izquierda). No hace falta leerlos en orden estricto, pero el orden numérico es la curva más suave si arrancás de cero.
+Hay **11 módulos numerados** en la barra de la izquierda. No hace falta leerlos en orden estricto, pero el orden numérico es la curva más suave si arrancás desde cero.
 
-Los módulos con la insignia **Completo** son los que están escritos a fondo en esta versión inicial. El resto son placeholders que se completarán en pasadas siguientes — pueden servirte ya como vista del temario.
-
-## Convenciones
-
-- **Cuadros de código** así:
-  ```python
-  def fetch_city(city):
-      r = requests.get(f"https://api.open-meteo.com/v1/forecast?...")
-      return r.json()
-  ```
-- **Links a archivos del repo** así: [`scripts/fetch_weather.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/fetch_weather.py). Cliqueá y se abre en GitHub.
-- **Términos técnicos en inglés** cuando no hay traducción natural: *commit*, *branch*, *fetch*, *parser*. La primera vez que aparece cada uno, hay una explicación.
+Los que tienen la insignia **Completo** ya están escritos a fondo. El resto son borradores con el índice y los objetivos del módulo — sirven para que veas el temario completo mientras se van completando.
 
 ---
 
-¿Listo? Arrancá por el [Módulo 1 — De Excel a una aplicación](/estado-del-sistema/curso/01-de-excel-a-app/), o saltá directamente a uno de los módulos completos:
+¿Listo? Andá al [**Módulo 1 — De Excel a una aplicación**](/estado-del-sistema/curso/01-de-excel-a-app/), o saltá directo a los módulos más maduros:
 
-- [**Módulo 3 — Diseño y paradigmas**](/estado-del-sistema/curso/03-diseno-paradigmas/)
-- [**Módulo 7 — Skills y mejores prácticas con coding agents**](/estado-del-sistema/curso/07-skills-mejores-practicas/)
+- [**Módulo 3 — Diseño y paradigmas**](/estado-del-sistema/curso/03-diseno-paradigmas/) — *cómo se piensa una app por dentro*.
+- [**Módulo 7 — Skills y mejores prácticas con coding agents**](/estado-del-sistema/curso/07-skills-mejores-practicas/) — *cómo hablarle bien al asistente*.
