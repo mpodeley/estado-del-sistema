@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-22T11:47:30+00:00",
+  "generated_at": "2026-05-25T12:29:53+00:00",
   "source": "CAMMESA PPO — Consumo Combustibles (aggregated per day)",
-  "source_date": "2026-05-20",
+  "source_date": "2026-05-21",
   "data": [
     {
       "fecha": "2026-01-20",
@@ -1575,6 +1575,19 @@
       "gen_gasoil_mwh": 8013.6,
       "plants_counted": 239,
       "source": "Parte_200526.xls"
+    },
+    {
+      "fecha": "2026-05-21",
+      "gas_mmm3": 35.638,
+      "carbon_tn": 3588.0,
+      "fueloil_tn": 2925.4,
+      "gasoil_m3": 10274.1,
+      "gen_gas_mwh": 173208.0,
+      "gen_carbon_mwh": 7219.4,
+      "gen_fueloil_mwh": 12931.1,
+      "gen_gasoil_mwh": 50024.1,
+      "plants_counted": 239,
+      "source": "Parte_210526.xls"
     }
   ],
   "failures": []
