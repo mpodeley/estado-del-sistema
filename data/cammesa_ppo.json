@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-25T12:29:53+00:00",
+  "generated_at": "2026-05-27T12:20:13+00:00",
   "source": "CAMMESA PPO — Consumo Combustibles (aggregated per day)",
-  "source_date": "2026-05-21",
+  "source_date": "2026-05-25",
   "data": [
     {
       "fecha": "2026-01-20",
@@ -1588,6 +1588,58 @@
       "gen_gasoil_mwh": 50024.1,
       "plants_counted": 239,
       "source": "Parte_210526.xls"
+    },
+    {
+      "fecha": "2026-05-22",
+      "gas_mmm3": 34.422,
+      "carbon_tn": 3553.1,
+      "fueloil_tn": 2042.8,
+      "gasoil_m3": 10401.8,
+      "gen_gas_mwh": 167665.1,
+      "gen_carbon_mwh": 7185.3,
+      "gen_fueloil_mwh": 8669.0,
+      "gen_gasoil_mwh": 49995.3,
+      "plants_counted": 239,
+      "source": "Parte_220526.xls"
+    },
+    {
+      "fecha": "2026-05-23",
+      "gas_mmm3": 34.269,
+      "carbon_tn": 3518.4,
+      "fueloil_tn": 1843.4,
+      "gasoil_m3": 2566.2,
+      "gen_gas_mwh": 167833.8,
+      "gen_carbon_mwh": 7107.6,
+      "gen_fueloil_mwh": 7698.7,
+      "gen_gasoil_mwh": 10786.2,
+      "plants_counted": 239,
+      "source": "Parte_230526.xls"
+    },
+    {
+      "fecha": "2026-05-24",
+      "gas_mmm3": 35.632,
+      "carbon_tn": 3432.2,
+      "fueloil_tn": 926.5,
+      "gasoil_m3": 422.9,
+      "gen_gas_mwh": 175322.0,
+      "gen_carbon_mwh": 6937.2,
+      "gen_fueloil_mwh": 3799.2,
+      "gen_gasoil_mwh": 1546.3,
+      "plants_counted": 239,
+      "source": "Parte_240526.xls"
+    },
+    {
+      "fecha": "2026-05-25",
+      "gas_mmm3": 36.557,
+      "carbon_tn": 3436.9,
+      "fueloil_tn": 569.9,
+      "gasoil_m3": 554.1,
+      "gen_gas_mwh": 179697.8,
+      "gen_carbon_mwh": 6948.6,
+      "gen_fueloil_mwh": 2311.8,
+      "gen_gasoil_mwh": 2785.1,
+      "plants_counted": 239,
+      "source": "Parte_250526.xls"
     }
   ],
   "failures": []
