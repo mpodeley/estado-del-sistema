@@ -1,92 +1,92 @@
 {
-  "generated_at": "2026-05-27T12:19:23+00:00",
+  "generated_at": "2026-05-28T12:26:25+00:00",
   "source": "Open-Meteo API (Buenos Aires)",
-  "source_date": "2026-05-27",
+  "source_date": "2026-05-28",
   "data": {
     "forecast": [
       {
-        "fecha": "2026-05-27",
-        "temp_max": 13.9,
-        "temp_min": 10.4,
-        "temp_prom": 12.2
-      },
-      {
         "fecha": "2026-05-28",
-        "temp_max": 15.5,
-        "temp_min": 13.0,
-        "temp_prom": 14.2
+        "temp_max": 14.4,
+        "temp_min": 12.4,
+        "temp_prom": 13.4
       },
       {
         "fecha": "2026-05-29",
-        "temp_max": 14.9,
+        "temp_max": 14.2,
         "temp_min": 12.4,
-        "temp_prom": 13.7
+        "temp_prom": 13.3
       },
       {
         "fecha": "2026-05-30",
-        "temp_max": 16.3,
-        "temp_min": 10.6,
-        "temp_prom": 13.4
-      },
-      {
-        "fecha": "2026-05-31",
-        "temp_max": 15.4,
-        "temp_min": 8.8,
-        "temp_prom": 12.1
-      },
-      {
-        "fecha": "2026-06-01",
-        "temp_max": 14.1,
-        "temp_min": 8.1,
-        "temp_prom": 11.1
-      },
-      {
-        "fecha": "2026-06-02",
-        "temp_max": 13.4,
-        "temp_min": 10.6,
-        "temp_prom": 12.0
-      },
-      {
-        "fecha": "2026-06-03",
-        "temp_max": 15.1,
-        "temp_min": 11.4,
-        "temp_prom": 13.2
-      },
-      {
-        "fecha": "2026-06-04",
-        "temp_max": 15.2,
-        "temp_min": 11.8,
+        "temp_max": 15.8,
+        "temp_min": 11.2,
         "temp_prom": 13.5
       },
       {
+        "fecha": "2026-05-31",
+        "temp_max": 14.4,
+        "temp_min": 8.2,
+        "temp_prom": 11.3
+      },
+      {
+        "fecha": "2026-06-01",
+        "temp_max": 14.0,
+        "temp_min": 9.9,
+        "temp_prom": 11.9
+      },
+      {
+        "fecha": "2026-06-02",
+        "temp_max": 14.6,
+        "temp_min": 12.4,
+        "temp_prom": 13.5
+      },
+      {
+        "fecha": "2026-06-03",
+        "temp_max": 15.6,
+        "temp_min": 11.7,
+        "temp_prom": 13.6
+      },
+      {
+        "fecha": "2026-06-04",
+        "temp_max": 15.1,
+        "temp_min": 12.5,
+        "temp_prom": 13.8
+      },
+      {
         "fecha": "2026-06-05",
-        "temp_max": 16.0,
-        "temp_min": 13.8,
-        "temp_prom": 14.9
+        "temp_max": 17.1,
+        "temp_min": 14.4,
+        "temp_prom": 15.8
       },
       {
         "fecha": "2026-06-06",
-        "temp_max": 14.8,
-        "temp_min": 11.9,
-        "temp_prom": 13.4
+        "temp_max": 15.9,
+        "temp_min": 12.6,
+        "temp_prom": 14.2
       },
       {
         "fecha": "2026-06-07",
-        "temp_max": 13.5,
-        "temp_min": 12.3,
-        "temp_prom": 12.9
+        "temp_max": 14.9,
+        "temp_min": 12.9,
+        "temp_prom": 13.9
       },
       {
         "fecha": "2026-06-08",
-        "temp_max": 14.9,
-        "temp_min": 10.2,
-        "temp_prom": 12.6
+        "temp_max": 14.4,
+        "temp_min": 11.6,
+        "temp_prom": 13.0
       },
       {
         "fecha": "2026-06-09",
-        "temp_max": 13.1,
-        "temp_min": 9.8,
-        "temp_prom": 11.4
+        "temp_max": 14.3,
+        "temp_min": 9.0,
+        "temp_prom": 11.7
+      },
+      {
+        "fecha": "2026-06-10",
+        "temp_max": 13.0,
+        "temp_min": 9.4,
+        "temp_prom": 11.2
       }
     ]
   }
