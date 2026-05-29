@@ -195,15 +195,20 @@ def _iso_date(raw):
 def _save_system_state(rows, desde, hasta, headers):
     out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
     os.makedirs(OUT_DIR, exist_ok=True)
-    # Strip the literal '<br>' that pdfplumber-style textContent leaves
-    # in header keys ('Día <br>Operativo') and surface a normalised
+    # The HTML uses 'Día <br>Operativo' (with surrounding spaces) for
+    # the date column header, which textContent surfaces verbatim. Strip
+    # the <br> *and* collapse the resulting double space so the key
+    # matches 'Día Operativo' downstream, then surface a normalised
     # 'fecha' (YYYY-MM-DD) so the dashboard can join on it.
+    def _clean(s):
+        return re.sub(r'\s+', ' ', str(s).replace('<br>', ' ')).strip()
+
     cleaned = []
     for r in rows:
-        record = {k.replace('<br>', ' ').strip(): v for k, v in r.items()}
+        record = {_clean(k): v for k, v in r.items()}
         record['fecha'] = _iso_date(record.get('Día Operativo'))
         cleaned.append(record)
-    headers = [h.replace('<br>', ' ').strip() for h in headers]
+    headers = [_clean(h) for h in headers]
 
     # Upsert against any rows we wrote on previous runs — the public
     # report only goes back ~30 days so without this we'd lose anything
