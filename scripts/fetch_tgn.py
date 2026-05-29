@@ -105,60 +105,53 @@ def scrape_system_state(page):
     # lookup so we don't hit a different button with the same label.
     try:
         page.click('button[id="formulario:report_btnSearch_id"]')
-        # PrimeFaces shows a spinner; wait for the grilla panel to be
-        # repopulated rather than networkidle (postback can keep alive
-        # connections open).
-        page.wait_for_selector(
-            'div[id="formulario:panelGrilla"] table',
-            state='attached', timeout=30000,
-        )
-        page.wait_for_load_state('networkidle')
     except Exception as e:
-        print(f'fetch_tgn: failed to run report: {e}', file=sys.stderr)
+        print(f'fetch_tgn: click Ver reporte failed: {e}', file=sys.stderr)
         return
 
-    # Detect the 'communication lost' modal and bail with no rows.
-    error_visible = page.eval_on_selector_all(
-        'div.ui-messages-error, .ui-growl-message-error',
-        'els => els.map(e => (e.textContent || "").trim()).filter(Boolean)',
-    )
-    if error_visible:
-        print(f'fetch_tgn: server reported error(s): {error_visible[:3]}',
-              file=sys.stderr)
+    # Wait for the result panel to actually populate. JSF replaces the
+    # panelGrilla's inner content via XHR — we look for a real data
+    # table inside it (not just any descendant), with a generous
+    # timeout because the report can take a while.
+    try:
+        page.wait_for_function(
+            """() => {
+                const p = document.getElementById('formulario:panelGrilla');
+                if (!p) return false;
+                const tbl = p.querySelector('table');
+                return tbl && tbl.rows.length >= 2;
+            }""",
+            timeout=60000,
+        )
+    except Exception as e:
+        print(f'fetch_tgn: panelGrilla never populated: {e}', file=sys.stderr)
+        # Dump the panelGrilla HTML to learn why.
+        try:
+            panel_html = page.eval_on_selector(
+                'div[id="formulario:panelGrilla"]',
+                'el => el.outerHTML.slice(0, 2000)',
+            )
+            print(f'  panelGrilla HTML head: {panel_html}')
+        except Exception:
+            pass
         _save_system_state([], desde, hasta, [])
         return
 
-    # The result lives in a table under the form. Dump every data table
-    # on the page and pick the one with the most rows that doesn't
-    # match the known filter/header panel ids.
-    tables = page.eval_on_selector_all(
-        'table',
-        """els => els.map(t => ({
+    # Read the result table directly from panelGrilla so we never grab
+    # the hidden 'comunicación perdida' message panel by accident.
+    result = page.eval_on_selector(
+        'div[id="formulario:panelGrilla"] table',
+        """t => ({
             id: t.id,
             cls: t.className.slice(0,80),
             rows: Array.from(t.rows).map(r =>
                 Array.from(r.cells).map(c => (c.textContent || '').trim())
             )
-        }))""",
+        })"""
     )
-    # Skip filter/header/footer tables.
-    skip_id_prefixes = ('headerForm:', 'formulario:panelFiltro',
-                        'formulario:report_panelFiltro')
-    candidates = [
-        t for t in tables
-        if not any((t.get('id') or '').startswith(p) for p in skip_id_prefixes)
-        and len(t.get('rows') or []) >= 2
-    ]
-    candidates.sort(key=lambda t: len(t.get('rows') or []), reverse=True)
-    if not candidates:
-        print('fetch_tgn: no result table found in system_state', file=sys.stderr)
-        _save_system_state([], desde, hasta, [])
-        return
-
-    best = candidates[0]
-    rows = best.get('rows') or []
+    rows = result.get('rows') or []
     headers = rows[0] if rows else []
-    print(f"fetch_tgn: system_state result table id={best.get('id')!r} "
+    print(f"fetch_tgn: system_state result table id={result.get('id')!r} "
           f"{len(rows)} rows x {len(headers)} cols")
     print(f"  headers={headers}")
 
