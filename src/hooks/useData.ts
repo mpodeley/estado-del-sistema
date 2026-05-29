@@ -352,6 +352,16 @@ export interface DistribuidorasCollection {
   features: DistribuidoraFeature[]
   crs?: unknown
 }
+export interface TGNSystemStateRow {
+  'Día Operativo': string
+  'Actual': string
+  'Equilibrio': string
+  'Desbalance del sistema': string
+  'Desbalance porcentual': string
+}
+export const useTGNSystemState = () =>
+  useJson<TGNSystemStateRow[]>('./data/tgn_system_state.json')
+
 /** Distribuidoras GeoJSON: uses the GeoJSON envelope directly, no pipeline
  *  metadata wrapper — so we can't use useJson's envelope-unwrap. Fetch
  *  manually. */

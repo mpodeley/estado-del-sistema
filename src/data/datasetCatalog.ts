@@ -44,6 +44,7 @@ export type FreshnessKey =
   | 'megsa'
   | 'capiv'
   | 'planesDesarrollo'
+  | 'tgnSystemState'
 
 export const CATALOG: DatasetEntry[] = [
   {
@@ -475,5 +476,24 @@ export const CATALOG: DatasetEntry[] = [
     frequency: '—',
     sourceUrl: 'https://cammesaweb.cammesa.com/programacion-diaria/',
     scripts: [],
+  },
+  {
+    id: 'tgn_system_state',
+    name: 'TGN ABII — Estado del Sistema',
+    shortDescription:
+      'Reporte oficial de TGN: inyección real vs equilibrio del sistema y desbalance porcentual por día operativo. Se scrapea con Playwright detrás del login del portal ABII.',
+    kind: 'auto',
+    frequency: 'Cada 6 hs',
+    sourceUrl: 'https://abii.tgn.com.ar/pages/reports/system_state/system-state-report.xhtml',
+    jsonPath: './data/tgn_system_state.json',
+    csvPath: './data/tgn_system_state.csv',
+    freshnessKey: 'tgnSystemState',
+    scripts: [
+      {
+        file: 'scripts/fetch_tgn.py',
+        purpose:
+          'Login con Playwright, navega al reporte, selecciona todos los gasoductos y extrae la tabla resultante.',
+      },
+    ],
   },
 ]

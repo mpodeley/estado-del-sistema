@@ -12,6 +12,7 @@ import {
   useMEGSA,
   useTramos,
   useCammesaPPO,
+  useTGNSystemState,
 } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import Header from './Header'
@@ -36,6 +37,7 @@ import LNGArrivalsChart from './LNGArrivalsChart'
 import TomorrowCard from './TomorrowCard'
 import AlertBanner from './AlertBanner'
 import TGSPanel from './TGSPanel'
+import TGNSystemStatePanel from './TGNSystemStatePanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 import { ChartGroup, ScaleSelector } from './_layout'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from '../utils/charts'
@@ -79,6 +81,7 @@ export default function OperacionPage() {
   const megsaState = useMEGSA()
   const tramosState = useTramos()
   const ppoState = useCammesaPPO()
+  const tgnSystemState = useTGNSystemState()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('7d')
@@ -130,6 +133,7 @@ export default function OperacionPage() {
     { label: 'Clima', generatedAt: weatherState.meta.generated_at },
     { label: 'ENARGAS', generatedAt: rdsState.meta.generated_at },
     { label: 'MEGSA', generatedAt: megsaState.meta.generated_at },
+    { label: 'TGN', generatedAt: tgnSystemState.meta.generated_at },
     { label: 'Forecast', generatedAt: forecastState.meta.generated_at },
   ]
 
@@ -173,6 +177,11 @@ export default function OperacionPage() {
       )}
 
       <TGSPanel />
+
+      <TGNSystemStatePanel
+        rows={tgnSystemState.data}
+        generatedAt={tgnSystemState.meta.generated_at}
+      />
 
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>
