@@ -62,28 +62,62 @@ def login(page, user, pw):
     page.wait_for_load_state('networkidle')
 
 
-def scrape_system_state(page):
-    """Open the Estado del Sistema report with ayer→hoy as the date
-    range and 'all gasoductos' as the selection, then extract the
-    resulting table into tgn_system_state.json.
+def _load_existing_fechas():
+    out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
+    if not os.path.exists(out_path):
+        return set()
+    try:
+        with open(out_path, encoding='utf-8') as f:
+            payload = json.load(f)
+        return {r.get('fecha') for r in (payload.get('data') or []) if r.get('fecha')}
+    except (OSError, json.JSONDecodeError):
+        return set()
 
-    The page is server-rendered JSF. Filters live on a fixed-id form
-    'formulario:'; date pickers use PrimeFaces calendar widgets and
-    the gasoducto multi-select is a checkbox-style widget. We submit
-    by clicking the 'Ver reporte' button and wait for the AJAX
-    postback to settle before reading the result table.
+
+def scrape_system_state(page):
+    """Iterate Estado del Sistema day-by-day (the report returns a single
+    line per query, the most recent closed day inside the range we ask
+    for). Each missing day in the last SYSTEM_STATE_DAYS_BACK gets one
+    request; previously-fetched days are skipped to keep regular runs
+    short. Today is always re-queried in case the closing data updated.
     """
     today = datetime.now(timezone.utc).date()
-    start = today - timedelta(days=SYSTEM_STATE_DAYS_BACK)
-    desde = start.strftime('%d/%m/%Y')
-    hasta = today.strftime('%d/%m/%Y')
-    print(f'fetch_tgn: system_state range {desde} -> {hasta}')
+    today_iso = today.isoformat()
+    existing = _load_existing_fechas()
+
+    all_rows = []
+    headers = []
+    last_desde = last_hasta = ''
+    for n in range(SYSTEM_STATE_DAYS_BACK + 1):
+        day = today - timedelta(days=n)
+        iso = day.isoformat()
+        if iso != today_iso and iso in existing:
+            continue
+        day_str = day.strftime('%d/%m/%Y')
+        last_desde = last_hasta = day_str
+        rows, day_headers = _scrape_system_state_day(page, day_str)
+        if day_headers and not headers:
+            headers = day_headers
+        all_rows.extend(rows)
+
+    if not last_desde:
+        print('fetch_tgn: system_state — nothing to fetch (cache up to date)')
+        _save_system_state([], today.strftime('%d/%m/%Y'),
+                            today.strftime('%d/%m/%Y'), headers)
+        return
+    _save_system_state(all_rows, last_desde, last_hasta, headers)
+
+
+def _scrape_system_state_day(page, day_str):
+    """Run a single Estado del Sistema query for day_str (DD/MM/YYYY).
+    Returns (rows, headers); rows is at most one element."""
+    print(f'fetch_tgn: system_state day {day_str}')
 
     try:
         page.goto(BASE_URL + SYSTEM_STATE_PATH, wait_until='networkidle', timeout=30000)
     except Exception as e:
         print(f'fetch_tgn: failed to open system_state: {e}', file=sys.stderr)
-        return
+        return [], []
 
     # Wait for the page's JSF widgets to finish initialising — the
     # 'comunicación perdida' modal appears when a postback fires before
@@ -96,7 +130,21 @@ def scrape_system_state(page):
         page.wait_for_timeout(1000)
     except Exception as e:
         print(f'fetch_tgn: report button never showed up: {e}', file=sys.stderr)
-        return
+        return [], []
+
+    # Override the default fecha range with the single day we want.
+    for fid, value in [
+        ('formulario:report_fecha_desde_id_input', day_str),
+        ('formulario:report_fecha_hasta_id_input', day_str),
+    ]:
+        try:
+            page.fill(f'input[id="{fid}"]', value)
+            page.evaluate(
+                "id => document.getElementById(id).dispatchEvent(new Event('change', {bubbles:true}))",
+                fid,
+            )
+        except Exception as e:
+            print(f'fetch_tgn: could not set {fid}: {e}', file=sys.stderr)
 
     # The Gasoducto multi-select is required even though its label has
     # no asterisk — hitting 'Ver reporte' with nothing selected returns
@@ -115,7 +163,7 @@ def scrape_system_state(page):
         page.click('button[id="formulario:report_btnSearch_id"]')
     except Exception as e:
         print(f'fetch_tgn: click Ver reporte failed: {e}', file=sys.stderr)
-        return
+        return [], []
 
     # Wait for the result panel to actually populate. JSF replaces the
     # panelGrilla's inner content via XHR — we look for a real data
@@ -133,17 +181,7 @@ def scrape_system_state(page):
         )
     except Exception as e:
         print(f'fetch_tgn: panelGrilla never populated: {e}', file=sys.stderr)
-        # Dump the panelGrilla HTML to learn why.
-        try:
-            panel_html = page.eval_on_selector(
-                'div[id="formulario:panelGrilla"]',
-                'el => el.outerHTML.slice(0, 2000)',
-            )
-            print(f'  panelGrilla HTML head: {panel_html}')
-        except Exception:
-            pass
-        _save_system_state([], desde, hasta, [])
-        return
+        return [], []
 
     # Read the result table directly from panelGrilla so we never grab
     # the hidden 'comunicación perdida' message panel by accident.
@@ -161,14 +199,13 @@ def scrape_system_state(page):
     headers = rows[0] if rows else []
     print(f"fetch_tgn: system_state result table id={result.get('id')!r} "
           f"{len(rows)} rows x {len(headers)} cols")
-    print(f"  headers={headers}")
 
     data_rows = []
     for r in rows[1:]:
         record = {headers[i] if i < len(headers) else f'col_{i}': r[i]
                   for i in range(len(r))}
         data_rows.append(record)
-    _save_system_state(data_rows, desde, hasta, headers)
+    return data_rows, headers
 
 
 # Java toString returns e.g. 'Thu May 28 00:00:00 ART 2026' for the
