@@ -119,26 +119,53 @@ def run():
             print('--- DISCOVERY: iframes ---')
             for fr in page.frames:
                 print(f"  frame name={fr.name!r} url={fr.url!r}")
-            print('--- DISCOVERY: raw HTML head ---')
-            html = page.content()
-            print(html[:4000])
-            print(f'--- DISCOVERY: total HTML length={len(html)} ---')
-            # Probe common post-login paths to see which ones respond
-            # without redirecting back to login.
-            print('--- DISCOVERY: probing common paths ---')
+            # Inspect candidate data pages: dump tables, inputs and a
+            # truncated HTML so we can pick selectors for Phase 3.
             for path in [
-                'pages/home.xhtml', 'pages/main.xhtml', 'pages/menu.xhtml',
-                'pages/index.xhtml', 'pages/inicio.xhtml',
-                'pages/principal.xhtml', 'home.xhtml', 'main.xhtml',
+                'pages/reports/system_state/system-state-report.xhtml',
+                'pages/programacion/nominaciones/nominacion.xhtml',
+                'pages/programacion/confirmaciones/confirmacionGas.xhtml',
             ]:
+                print(f'--- DISCOVERY: navigating {path} ---')
                 try:
-                    resp = page.goto(BASE_URL + path, wait_until='domcontentloaded', timeout=10000)
-                    final = page.url
-                    status = resp.status if resp else 'no-response'
-                    redirected = 'login.xhtml' in final
-                    print(f"  {path}: status={status} final={final} redirected_to_login={redirected}")
+                    resp = page.goto(BASE_URL + path, wait_until='networkidle', timeout=30000)
+                    print(f'  status={resp.status if resp else "?"} url={page.url}')
+                    if 'login.xhtml' in page.url:
+                        print('  redirected to login — skipping')
+                        continue
+                    print(f'  title={page.title()!r}')
+                    tables = page.eval_on_selector_all(
+                        'table',
+                        """els => els.map(t => ({
+                            id: t.id,
+                            cls: t.className.slice(0,80),
+                            rows: t.rows.length,
+                            cols: t.rows[0] ? t.rows[0].cells.length : 0,
+                            firstHeader: t.rows[0]
+                                ? Array.from(t.rows[0].cells).map(c => (c.textContent||'').trim().slice(0,40))
+                                : []
+                        }))"""
+                    )
+                    print(f'  {len(tables)} table(s):')
+                    for t in tables[:15]:
+                        print(f"    id={t.get('id')!r} cls={t.get('cls')!r} {t.get('rows')}x{t.get('cols')}")
+                        if t.get('firstHeader'):
+                            print(f"      headers={t.get('firstHeader')}")
+                    inputs = page.eval_on_selector_all(
+                        'input:not([type="hidden"]):not([type="submit"]), select, label[for]',
+                        """els => els.map(e => ({
+                            tag: e.tagName.toLowerCase(),
+                            type: e.type || '',
+                            id: e.id,
+                            name: e.getAttribute('name'),
+                            label: (e.tagName === 'LABEL' ? e.textContent : e.getAttribute('aria-label') || e.placeholder || '').trim().slice(0,60)
+                        }))"""
+                    )
+                    print(f'  {len(inputs)} input(s)/label(s):')
+                    for i in inputs[:25]:
+                        print(f"    {i.get('tag')} type={i.get('type')!r} id={i.get('id')!r} label={i.get('label')!r}")
                 except Exception as e:
-                    print(f"  {path}: error {type(e).__name__}: {str(e)[:120]}")
+                    print(f'  error {type(e).__name__}: {str(e)[:200]}')
             print('--- DISCOVERY: end ---')
         finally:
             browser.close()
