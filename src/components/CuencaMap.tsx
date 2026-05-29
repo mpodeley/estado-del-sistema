@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { colors, radius, space } from '../theme'
 import type { ConcesionesCollection, ConcesionFeature, ProduccionMes } from '../hooks/useData'
 
@@ -11,6 +11,10 @@ const VIEW = {
   latMin: -40.5,
   latMax: -34.0,
 }
+
+const MIN_SCALE = 1
+const MAX_SCALE = 24
+const ZOOM_STEP = 1.25
 
 // EPSG:3857 Mercator. Same math as NetworkMap.tsx — kept local so this
 // component doesn't reach into NetworkMap's internals.
@@ -47,6 +51,10 @@ function operatorColor(op: string): string {
   return OPERATOR_COLORS[op] ?? FALLBACK
 }
 
+// 7-step sequential heatmap (cool → hot). Used for both density modes.
+const HEAT_PALETTE = ['#1e293b', '#3b82f6', '#06b6d4', '#10b981', '#fbbf24', '#f97316', '#ef4444']
+const NO_DATA = '#374151'
+
 function shortOperator(name: string): string {
   return name
     .replace(/\b(S\.?A\.?R?\.?L?\.?|SAU)\b\.?/gi, '')
@@ -63,6 +71,32 @@ function shortBlock(name: string): string {
     .join(' ')
 }
 
+// Polygon area in km² using a local equirectangular projection centred on the
+// polygon's mean latitude. Accurate to within ~0.5 % for a single concession;
+// good enough for ranking and a heatmap legend.
+function polygonAreaKm2(coords: number[][][][]): number {
+  const earthR = 6378.137 // km
+  let total = 0
+  for (const poly of coords) {
+    const ring = poly[0] ?? []
+    if (ring.length < 3) continue
+    const meanLat = ring.reduce((s, p) => s + p[1], 0) / ring.length
+    const cosLat = Math.cos((meanLat * Math.PI) / 180)
+    const pts = ring.map(([lon, lat]) => ({
+      x: ((lon * Math.PI) / 180) * earthR * cosLat,
+      y: ((lat * Math.PI) / 180) * earthR,
+    }))
+    let a = 0
+    for (let i = 0; i < pts.length - 1; i++) {
+      a += pts[i].x * pts[i + 1].y - pts[i + 1].x * pts[i].y
+    }
+    total += Math.abs(a) / 2
+  }
+  return total
+}
+
+type Mode = 'operador' | 'productividad' | 'acumulado'
+
 interface Props {
   concesiones: ConcesionesCollection
   produccion: ProduccionMes[]
@@ -71,31 +105,75 @@ interface Props {
 
 interface ProjectedFeature {
   feature: ConcesionFeature
-  // Each polygon's outer ring as projected SVG points.
   ringStrings: string[]
+  areaKm2: number
+  // Bucketed gas density values for fast lookup at render time.
+  // gasDailyMMm3PerKm2: latest-month gas in MMm³/d divided by area.
+  // gasTotalMMm3PerKm2: cumulative gas in MMm³ across all months.
+  gasDailyDensity: number
+  gasTotalDensity: number
 }
 
 export default function CuencaMap({ concesiones, produccion, latestMes }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null)
+  const [mode, setMode] = useState<Mode>('operador')
+  // View state: scale + pan offset (in viewBox units relative to base center).
+  const [view, setView] = useState({ scale: 1, panX: 0, panY: 0 })
+  const dragRef = useRef<{
+    startX: number
+    startY: number
+    startPanX: number
+    startPanY: number
+    moved: boolean
+  } | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const svgRef = useRef<SVGSVGElement | null>(null)
 
-  // Project the viewport bounds — used to compute viewBox and clip-friendly
-  // padding. The SVG y axis flips sign vs Mercator, hence the negation later.
-  const vb = useMemo(() => {
-    const tl = toMercator(VIEW.latMax, VIEW.lonMin) // top-left
-    const br = toMercator(VIEW.latMin, VIEW.lonMax) // bottom-right
+  // Base viewBox derived from the lat/lon window — never changes.
+  const baseVB = useMemo(() => {
+    const tl = toMercator(VIEW.latMax, VIEW.lonMin)
+    const br = toMercator(VIEW.latMin, VIEW.lonMax)
     const minX = tl.x
     const maxX = br.x
-    const minY = -tl.y // svg-y of latMax
-    const maxY = -br.y // svg-y of latMin
-    return { minX, maxX, minY, maxY, w: maxX - minX, h: maxY - minY }
+    const minY = -tl.y
+    const maxY = -br.y
+    const w = maxX - minX
+    const h = maxY - minY
+    return { minX, minY, w, h, cx: minX + w / 2, cy: minY + h / 2 }
   }, [])
+
+  // Project polygon rings + precompute area & densities once per dataset load.
+  // Latest-month density is recomputed when latestMes changes, but is cheap.
+  const prodByArea = useMemo(() => {
+    const m = new Map<string, { latestGas: number; latestPet: number; totalGas: number; pozos: number; empresas: string[] }>()
+    for (const r of produccion) {
+      const key = (r.area || '').trim().toUpperCase()
+      const slot = m.get(key) ?? {
+        latestGas: 0,
+        latestPet: 0,
+        totalGas: 0,
+        pozos: 0,
+        empresas: [] as string[],
+      }
+      slot.totalGas += r.prod_gas_mm3
+      if (r.mes === latestMes) {
+        slot.latestGas += r.prod_gas_mm3
+        slot.latestPet += r.prod_pet_m3
+        slot.pozos += r.pozos_activos
+        if (!slot.empresas.includes(r.empresa)) slot.empresas.push(r.empresa)
+      }
+      m.set(key, slot)
+    }
+    return m
+  }, [produccion, latestMes])
+
+  const daysInLatest = latestMes ? daysInMonth(latestMes) : 30
+  const monthsCovered = useMemo(() => new Set(produccion.map((r) => r.mes)).size, [produccion])
 
   const projected = useMemo<ProjectedFeature[]>(() => {
     return concesiones.features.map((f) => {
       const ringStrings: string[] = []
       for (const polygon of f.geometry.coordinates) {
-        // GeoJSON polygon[0] = outer ring; we ignore holes (rare on
-        // concession polygons, and pyshp doesn't tag winding direction).
         const ring = polygon[0] ?? []
         if (ring.length < 3) continue
         const pts = ring
@@ -106,32 +184,46 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
           .join(' ')
         ringStrings.push(pts)
       }
-      return { feature: f, ringStrings }
+      const areaKm2 = polygonAreaKm2(f.geometry.coordinates)
+      const prod = prodByArea.get((f.properties.nombre || '').trim().toUpperCase())
+      const dailyMMm3 = prod ? prod.latestGas / daysInLatest : 0
+      return {
+        feature: f,
+        ringStrings,
+        areaKm2,
+        gasDailyDensity: areaKm2 > 0 ? dailyMMm3 / areaKm2 : 0,
+        gasTotalDensity: areaKm2 > 0 && prod ? prod.totalGas / areaKm2 : 0,
+      }
     })
-  }, [concesiones])
+  }, [concesiones, prodByArea, daysInLatest])
 
-  // Index latest-month production by block name (uppercased & trimmed) so
-  // the hover tooltip can look up gas/petróleo/pozos without scanning.
-  const prodByArea = useMemo(() => {
-    const m = new Map<string, { gas: number; pet: number; pozos: number; empresas: string[] }>()
-    for (const r of produccion) {
-      if (r.mes !== latestMes) continue
-      const key = (r.area || '').trim().toUpperCase()
-      const slot = m.get(key) ?? { gas: 0, pet: 0, pozos: 0, empresas: [] }
-      slot.gas += r.prod_gas_mm3
-      slot.pet += r.prod_pet_m3
-      slot.pozos += r.pozos_activos
-      if (!slot.empresas.includes(r.empresa)) slot.empresas.push(r.empresa)
-      m.set(key, slot)
+  // Quantile thresholds for the heatmap (one per palette step).
+  const heatBins = useMemo(() => {
+    const valuesDaily = projected.map((p) => p.gasDailyDensity).filter((v) => v > 0).sort((a, b) => a - b)
+    const valuesTotal = projected.map((p) => p.gasTotalDensity).filter((v) => v > 0).sort((a, b) => a - b)
+    const quantiles = (arr: number[]): number[] => {
+      if (arr.length === 0) return []
+      const out: number[] = []
+      for (let i = 1; i < HEAT_PALETTE.length; i++) {
+        const idx = Math.floor((i * arr.length) / HEAT_PALETTE.length)
+        out.push(arr[Math.min(idx, arr.length - 1)])
+      }
+      return out
     }
-    return m
-  }, [produccion, latestMes])
+    return { daily: quantiles(valuesDaily), total: quantiles(valuesTotal) }
+  }, [projected])
+
+  function densityColor(value: number, bins: number[]): string {
+    if (value <= 0 || bins.length === 0) return NO_DATA
+    let idx = 0
+    while (idx < bins.length && value >= bins[idx]) idx++
+    return HEAT_PALETTE[idx] ?? HEAT_PALETTE[HEAT_PALETTE.length - 1]
+  }
 
   const matchedCount = useMemo(() => {
     let n = 0
     for (const p of projected) {
-      const k = (p.feature.properties.nombre || '').trim().toUpperCase()
-      if (prodByArea.has(k)) n++
+      if (prodByArea.has((p.feature.properties.nombre || '').trim().toUpperCase())) n++
     }
     return n
   }, [projected, prodByArea])
@@ -144,121 +236,381 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
 
   const hovered = projected.find((p) => p.feature.properties.id === hoverId)
   const hoveredProd = hovered ? prodByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase()) : null
-  const daysInLatest = latestMes ? daysInMonth(latestMes) : 30
 
-  const PAD = vb.w * 0.02
-  const viewBox = `${vb.minX - PAD} ${vb.minY - PAD} ${vb.w + 2 * PAD} ${vb.h + 2 * PAD}`
+  // ----- viewBox + interaction handlers -----
+  const visibleW = baseVB.w / view.scale
+  const visibleH = baseVB.h / view.scale
+  const visibleCx = baseVB.cx + view.panX
+  const visibleCy = baseVB.cy + view.panY
+  const PAD = baseVB.w * 0.02
+  const viewBox = `${visibleCx - visibleW / 2 - PAD} ${visibleCy - visibleH / 2 - PAD} ${visibleW + 2 * PAD} ${visibleH + 2 * PAD}`
+
+  function clampScale(s: number): number {
+    return Math.min(MAX_SCALE, Math.max(MIN_SCALE, s))
+  }
+
+  function zoomAtPoint(newScale: number, anchorFraction: { fx: number; fy: number }) {
+    const clamped = clampScale(newScale)
+    const newW = baseVB.w / clamped
+    const newH = baseVB.h / clamped
+    // Anchor: the point under (fx, fy) in viewBox units must stay there after zoom.
+    const anchorX = visibleCx - visibleW / 2 + anchorFraction.fx * visibleW
+    const anchorY = visibleCy - visibleH / 2 + anchorFraction.fy * visibleH
+    const newCx = anchorX - (anchorFraction.fx - 0.5) * newW
+    const newCy = anchorY - (anchorFraction.fy - 0.5) * newH
+    setView({ scale: clamped, panX: newCx - baseVB.cx, panY: newCy - baseVB.cy })
+  }
+
+  function mouseFractionFromEvent(e: { clientX: number; clientY: number }): { fx: number; fy: number } {
+    const svg = svgRef.current
+    if (!svg) return { fx: 0.5, fy: 0.5 }
+    const rect = svg.getBoundingClientRect()
+    return {
+      fx: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+      fy: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height)),
+    }
+  }
+
+  // Wheel zoom must be a non-passive listener so we can preventDefault and
+  // stop the page from scrolling. React's onWheel is passive by default.
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    const handler = (e: WheelEvent) => {
+      e.preventDefault()
+      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP
+      zoomAtPoint(view.scale * factor, mouseFractionFromEvent(e))
+    }
+    svg.addEventListener('wheel', handler, { passive: false })
+    return () => svg.removeEventListener('wheel', handler)
+  }, [view.scale, visibleW, visibleH, visibleCx, visibleCy])
+
+  function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+    if (e.button !== 0) return
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPanX: view.panX,
+      startPanY: view.panY,
+      moved: false,
+    }
+    setIsDragging(true)
+  }
+
+  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (!dragRef.current || !svgRef.current) return
+    const rect = svgRef.current.getBoundingClientRect()
+    const dxFrac = (e.clientX - dragRef.current.startX) / rect.width
+    const dyFrac = (e.clientY - dragRef.current.startY) / rect.height
+    if (Math.abs(dxFrac) + Math.abs(dyFrac) > 0.002) dragRef.current.moved = true
+    setView({
+      scale: view.scale,
+      panX: dragRef.current.startPanX - dxFrac * visibleW,
+      panY: dragRef.current.startPanY - dyFrac * visibleH,
+    })
+  }
+
+  function onMouseUp() {
+    dragRef.current = null
+    setIsDragging(false)
+  }
+
+  function resetView() {
+    setView({ scale: 1, panX: 0, panY: 0 })
+  }
+
+  function zoomBtn(delta: number) {
+    return () => zoomAtPoint(view.scale * delta, { fx: 0.5, fy: 0.5 })
+  }
+
+  // ----- mode-specific fill color -----
+  function fillFor(p: ProjectedFeature): string {
+    if (mode === 'operador') return operatorColor(p.feature.properties.operador)
+    if (mode === 'productividad') return densityColor(p.gasDailyDensity, heatBins.daily)
+    return densityColor(p.gasTotalDensity, heatBins.total)
+  }
 
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: space.sm, marginBottom: space.sm }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          flexWrap: 'wrap',
+          gap: space.sm,
+          marginBottom: space.sm,
+        }}
+      >
         <div style={{ color: colors.textMuted, fontSize: 12 }}>
-          {projected.length} concesiones — {matchedCount} con producción reportada en {formatMes(latestMes)}
+          {projected.length} concesiones — {matchedCount} con producción en {formatMes(latestMes)}
         </div>
-        <div style={{ display: 'flex', gap: space.sm, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          {operatorList.slice(0, 8).map(([op, n]) => (
-            <span
-              key={op}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-                color: colors.textDim,
-                fontSize: 11,
-              }}
-            >
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ color: colors.textDim, fontSize: 12, marginRight: 6 }}>colorear por:</span>
+          {(
+            [
+              { id: 'operador', label: 'Operador' },
+              { id: 'productividad', label: `Productividad (MMm³/d · km⁻²)` },
+              { id: 'acumulado', label: `Acumulado (MMm³ · km⁻²)` },
+            ] as const
+          ).map((m) => (
+            <button key={m.id} onClick={() => setMode(m.id)} style={modeBtn(mode === m.id)}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ position: 'relative' }}>
+        <svg
+          ref={svgRef}
+          viewBox={viewBox}
+          preserveAspectRatio="xMidYMid meet"
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          style={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: 520,
+            background: '#0b1220',
+            borderRadius: radius.md,
+            display: 'block',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none',
+          }}
+        >
+          {projected.map(({ feature, ringStrings, gasDailyDensity, gasTotalDensity }) => {
+            const op = feature.properties.operador
+            const fill = (() => {
+              if (mode === 'operador') return operatorColor(op)
+              if (mode === 'productividad') return densityColor(gasDailyDensity, heatBins.daily)
+              return densityColor(gasTotalDensity, heatBins.total)
+            })()
+            const isPlus = op.startsWith('PLUSPETROL')
+            const isHover = hoverId === feature.properties.id
+            const stroke = isHover ? '#f1f5f9' : isPlus ? '#10b981' : '#0b1220'
+            return (
+              <g
+                key={feature.properties.id || feature.properties.nombre}
+                onMouseEnter={() => !isDragging && setHoverId(feature.properties.id)}
+                onMouseLeave={() => setHoverId(null)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+              >
+                {ringStrings.map((pts, i) => (
+                  <polygon
+                    key={i}
+                    points={pts}
+                    fill={fill}
+                    fillOpacity={isHover ? 0.9 : mode === 'operador' ? 0.55 : 0.78}
+                    stroke={stroke}
+                    strokeWidth={isHover ? 2 : isPlus ? 1.5 : 0.4}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
+              </g>
+            )
+          })}
+        </svg>
+
+        {/* Zoom controls overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            top: space.sm,
+            right: space.sm,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+          }}
+        >
+          <button onClick={zoomBtn(ZOOM_STEP)} style={iconBtn} title="Acercar">＋</button>
+          <button onClick={zoomBtn(1 / ZOOM_STEP)} style={iconBtn} title="Alejar">－</button>
+          <button onClick={resetView} style={iconBtn} title="Reset">⟲</button>
+        </div>
+
+        {hovered && (
+          <div
+            style={{
+              position: 'absolute',
+              top: space.md,
+              left: space.md,
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
+              borderRadius: radius.md,
+              padding: `${space.sm}px ${space.md}px`,
+              color: colors.textSecondary,
+              fontSize: 12,
+              maxWidth: 280,
+              pointerEvents: 'none',
+            }}
+          >
+            <div style={{ fontWeight: 700, color: colors.textPrimary, fontSize: 13 }}>
+              {shortBlock(hovered.feature.properties.nombre)}
+            </div>
+            <div style={{ color: operatorColor(hovered.feature.properties.operador), fontSize: 12, marginTop: 2 }}>
+              {shortOperator(hovered.feature.properties.operador)}
+            </div>
+            {hoveredProd ? (
+              <div style={{ marginTop: space.sm, lineHeight: 1.6 }}>
+                <div>
+                  Gas: <strong>{(hoveredProd.latestGas / daysInLatest).toFixed(2)}</strong> MMm³/d
+                  <span style={{ color: colors.textDim }}> ({hoveredProd.latestGas.toFixed(0)} MMm³/mes)</span>
+                </div>
+                <div>
+                  Petróleo: <strong>{((hoveredProd.latestPet * 6.2898) / daysInLatest / 1000).toFixed(2)}</strong> kbbl/d
+                </div>
+                <div>Pozos activos: <strong>{hoveredProd.pozos}</strong></div>
+                <div style={{ color: colors.textDim, fontSize: 11, marginTop: 4 }}>
+                  Área: {hovered.areaKm2.toFixed(0)} km² · Productividad: {hovered.gasDailyDensity.toFixed(4)} MMm³/d·km⁻²
+                </div>
+                <div style={{ color: colors.textDim, fontSize: 11 }}>
+                  Acumulado {monthsCovered}m: {hovered.gasTotalDensity.toFixed(2)} MMm³·km⁻²
+                </div>
+                {hoveredProd.empresas.length > 1 && (
+                  <div style={{ color: colors.textDim, fontSize: 11, marginTop: 2 }}>
+                    Reportan: {hoveredProd.empresas.map(shortOperator).join(', ')}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ marginTop: space.sm, color: colors.textDim }}>
+                Sin producción reportada en {formatMes(latestMes)}.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Legend — adapts to mode */}
+      {mode === 'operador' ? (
+        <div
+          style={{
+            display: 'flex',
+            gap: space.sm,
+            flexWrap: 'wrap',
+            justifyContent: 'flex-start',
+            marginTop: space.sm,
+          }}
+        >
+          {operatorList.slice(0, 10).map(([op, n]) => (
+            <span key={op} style={legendChip}>
               <span style={{ width: 10, height: 10, borderRadius: 2, background: operatorColor(op) }} />
               {shortOperator(op)} <span style={{ color: colors.textDim }}>({n})</span>
             </span>
           ))}
         </div>
-      </div>
-
-      <svg
-        viewBox={viewBox}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ width: '100%', height: 'auto', maxHeight: 520, background: '#0b1220', borderRadius: radius.md, display: 'block' }}
-      >
-        {/* Concesiones — colored by operator. Pluspetrol gets a thicker
-            stroke so it's easy to spot. */}
-        {projected.map(({ feature, ringStrings }) => {
-          const op = feature.properties.operador
-          const color = operatorColor(op)
-          const isPlus = op.startsWith('PLUSPETROL')
-          const isHover = hoverId === feature.properties.id
-          const stroke = isHover ? '#f1f5f9' : isPlus ? '#10b981' : '#0b1220'
-          return (
-            <g
-              key={feature.properties.id || feature.properties.nombre}
-              onMouseEnter={() => setHoverId(feature.properties.id)}
-              onMouseLeave={() => setHoverId(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              {ringStrings.map((pts, i) => (
-                <polygon
-                  key={i}
-                  points={pts}
-                  fill={color}
-                  fillOpacity={isHover ? 0.85 : 0.55}
-                  stroke={stroke}
-                  // vectorEffect makes strokeWidth interpret as on-screen
-                  // pixels (not Mercator metres), so use single-digit values.
-                  strokeWidth={isHover ? 2 : isPlus ? 1.5 : 0.4}
-                  vectorEffect="non-scaling-stroke"
-                />
-              ))}
-            </g>
-          )
-        })}
-      </svg>
-
-      {hovered && (
-        <div
-          style={{
-            position: 'absolute',
-            top: space.md,
-            left: space.md,
-            background: colors.surface,
-            border: `1px solid ${colors.border}`,
-            borderRadius: radius.md,
-            padding: `${space.sm}px ${space.md}px`,
-            color: colors.textSecondary,
-            fontSize: 12,
-            maxWidth: 260,
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={{ fontWeight: 700, color: colors.textPrimary, fontSize: 13 }}>
-            {shortBlock(hovered.feature.properties.nombre)}
-          </div>
-          <div style={{ color: operatorColor(hovered.feature.properties.operador), fontSize: 12, marginTop: 2 }}>
-            {shortOperator(hovered.feature.properties.operador)}
-          </div>
-          {hoveredProd ? (
-            <div style={{ marginTop: space.sm, lineHeight: 1.6 }}>
-              <div>
-                Gas: <strong>{(hoveredProd.gas / daysInLatest).toFixed(2)}</strong> MMm³/d
-                <span style={{ color: colors.textDim }}> ({hoveredProd.gas.toFixed(0)} MMm³/mes)</span>
-              </div>
-              <div>
-                Petróleo: <strong>{((hoveredProd.pet * 6.2898) / daysInLatest / 1000).toFixed(2)}</strong> kbbl/d
-              </div>
-              <div>Pozos activos: <strong>{hoveredProd.pozos}</strong></div>
-              {hoveredProd.empresas.length > 1 && (
-                <div style={{ color: colors.textDim, fontSize: 11, marginTop: 2 }}>
-                  Reportan: {hoveredProd.empresas.map(shortOperator).join(', ')}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ marginTop: space.sm, color: colors.textDim }}>
-              Sin producción reportada en {formatMes(latestMes)}.
-            </div>
-          )}
-        </div>
+      ) : (
+        <HeatLegend
+          bins={mode === 'productividad' ? heatBins.daily : heatBins.total}
+          unit={mode === 'productividad' ? 'MMm³/d · km⁻²' : `MMm³ · km⁻² (${monthsCovered}m)`}
+        />
       )}
+
+      <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm, lineHeight: 1.5 }}>
+        Wheel para zoom, click + arrastrar para mover. Áreas calculadas con proyección equirectangular local
+        (precisión ~0.5 % para Neuquina).
+      </p>
     </div>
   )
+}
+
+function HeatLegend({ bins, unit }: { bins: number[]; unit: string }) {
+  if (bins.length === 0) return null
+  const labels = formatBins(bins)
+  return (
+    <div
+      style={{
+        display: 'flex',
+        gap: 1,
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginTop: space.sm,
+      }}
+    >
+      <span style={{ color: colors.textDim, fontSize: 11, marginRight: 6 }}>{unit}</span>
+      {HEAT_PALETTE.map((c, i) => (
+        <span
+          key={c}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            color: colors.textMuted,
+            fontSize: 11,
+            paddingRight: 6,
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-block',
+              width: 14,
+              height: 10,
+              background: c,
+              borderRadius: 2,
+            }}
+          />
+          {labels[i]}
+        </span>
+      ))}
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: colors.textMuted, fontSize: 11 }}>
+        <span style={{ display: 'inline-block', width: 14, height: 10, background: NO_DATA, borderRadius: 2 }} />
+        sin datos
+      </span>
+    </div>
+  )
+}
+
+function formatBins(bins: number[]): string[] {
+  // bins has HEAT_PALETTE.length - 1 thresholds; produce HEAT_PALETTE.length labels.
+  const labels: string[] = []
+  const fmt = (v: number): string => {
+    if (v === 0) return '0'
+    if (v < 0.001) return v.toExponential(1)
+    if (v < 1) return v.toFixed(3)
+    if (v < 10) return v.toFixed(2)
+    if (v < 100) return v.toFixed(1)
+    return v.toFixed(0)
+  }
+  labels.push(`< ${fmt(bins[0])}`)
+  for (let i = 1; i < bins.length; i++) labels.push(`${fmt(bins[i - 1])}+`)
+  labels.push(`≥ ${fmt(bins[bins.length - 1])}`)
+  return labels
+}
+
+const modeBtn = (active: boolean): React.CSSProperties => ({
+  background: active ? colors.border : 'transparent',
+  color: active ? colors.textPrimary : colors.textDim,
+  border: 'none',
+  borderRadius: radius.sm,
+  padding: '4px 10px',
+  cursor: 'pointer',
+  fontSize: 12,
+  fontWeight: 600,
+})
+
+const iconBtn: React.CSSProperties = {
+  background: colors.surface,
+  color: colors.textPrimary,
+  border: `1px solid ${colors.border}`,
+  borderRadius: radius.sm,
+  width: 28,
+  height: 28,
+  cursor: 'pointer',
+  fontSize: 14,
+  fontWeight: 700,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}
+
+const legendChip: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 4,
+  color: colors.textDim,
+  fontSize: 11,
 }
 
 function formatMes(mes: string | null): string {
