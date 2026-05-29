@@ -184,11 +184,11 @@ def _save_system_state(rows, desde, hasta, headers):
 
 
 def scrape_nominaciones(page):
-    """Nominaciones page expects a 'Día Operativo' date and required
-    'Gasoducto' + 'Cargador' selects. This first pass logs the form's
-    structure (select options for Gasoducto, button IDs) so we can pin
-    down the right defaults — then submits with the first available
-    options and reads the result.
+    """Nominaciones page: the form pre-fills 'Día Operativo' with the
+    next gas day and 'Gasoducto' with the user's default operator
+    (TGN). 'Cargador' is required and starts empty — we submit anyway
+    and report whatever the server returns; if it's a validation error
+    we save 0 rows so the dashboard knows to skip the section.
     """
     try:
         page.goto(BASE_URL + NOMINACIONES_PATH, wait_until='networkidle', timeout=30000)
@@ -196,12 +196,7 @@ def scrape_nominaciones(page):
         print(f'fetch_tgn: failed to open nominaciones: {e}', file=sys.stderr)
         return
 
-    # Dump the form's inputs + buttons so we can map IDs without manual
-    # exploration. Phase 3b is still in reconnaissance — remove this
-    # block once the scraper consistently extracts data.
     try:
-        # The filter panel is rendered as a JSF panelGrid, which comes
-        # out as a <table> not a <div>.
         page.wait_for_selector('[id="formulario:panelFiltro"]',
                                 state='visible', timeout=30000)
         page.wait_for_timeout(1500)
@@ -210,50 +205,112 @@ def scrape_nominaciones(page):
               file=sys.stderr)
         return
 
-    print('--- NOMINACIONES discovery ---')
-    inputs = page.eval_on_selector_all(
-        'input:not([type="hidden"]):not([type="submit"]), select',
-        """els => els.map(e => ({
-            tag: e.tagName.toLowerCase(),
-            type: e.type || '',
-            id: e.id,
-            name: e.getAttribute('name'),
-            value: e.value || '',
-            placeholder: e.placeholder || ''
-        }))"""
-    )
-    print(f'  {len(inputs)} input/select element(s):')
-    for i in inputs[:25]:
-        val = (i.get('value') or '')[:40]
-        ph = (i.get('placeholder') or '')[:30]
-        print(f"    {i.get('tag')} type={i.get('type')!r} id={i.get('id')!r} "
-              f"value={val!r} placeholder={ph!r}")
-
-    buttons = page.eval_on_selector_all(
-        'button',
-        """els => els.map(e => ({
-            id: e.id,
-            type: e.getAttribute('type'),
-            text: (e.textContent || '').trim().slice(0,40)
-        })).filter(b => b.text || b.id.includes('formulario:'))"""
-    )
-    print(f'  {len(buttons)} button(s) in form:')
-    for b in buttons[:20]:
-        print(f"    id={b.get('id')!r} text={b.get('text')!r}")
-
-    # Gasoducto select options (visible in the autocomplete dropdown).
+    # Snapshot the pre-filled values so we can record what was queried.
     try:
-        gasoducto_options = page.eval_on_selector_all(
-            'select[id="formulario:gasoducto_input"] option',
-            'els => els.map(e => ({value: e.value, text: e.textContent.trim()}))'
+        dia_operativo = page.eval_on_selector(
+            'input[id="formulario:diaOperativo_input"]', 'e => e.value'
         )
-        print(f'  Gasoducto options ({len(gasoducto_options)}):')
-        for o in gasoducto_options[:15]:
-            print(f"    value={o.get('value')!r} text={o.get('text')!r}")
-    except Exception as e:
-        print(f'  could not read gasoducto options: {e}')
+    except Exception:
+        dia_operativo = None
+    try:
+        gasoducto_focus = page.eval_on_selector(
+            'input[id="formulario:gasoducto_focus"]', 'e => e.value'
+        )
+    except Exception:
+        gasoducto_focus = None
+    print(f'fetch_tgn: nominaciones dia={dia_operativo!r} '
+          f'gasoducto={gasoducto_focus!r}')
 
-    print('--- NOMINACIONES discovery end ---')
+    try:
+        page.click('button[id="formulario:btnSearch"]')
+    except Exception as e:
+        print(f'fetch_tgn: click Buscar failed: {e}', file=sys.stderr)
+        return
+
+    # The result panel for nominaciones tends to be named differently
+    # per page — wait for any AJAX activity to settle then look for a
+    # data table that wasn't there before. Pulling every table whose
+    # ID isn't a known filter/header lets us cope with the page's
+    # naming choice without re-running discovery.
+    try:
+        page.wait_for_load_state('networkidle', timeout=45000)
+    except Exception:
+        pass
+
+    error_text = page.eval_on_selector_all(
+        '.ui-messages-error li, .ui-growl-message-error, '
+        '[id="formulario:panelFiltroMessage"] .ui-message-error',
+        'els => els.map(e => (e.textContent || "").trim()).filter(Boolean)',
+    )
+    if error_text:
+        print(f'fetch_tgn: nominaciones server error(s): {error_text[:3]}',
+              file=sys.stderr)
+        _save_nominaciones([], dia_operativo, gasoducto_focus, [], error_text)
+        return
+
+    tables = page.eval_on_selector_all(
+        'table',
+        """els => els.map(t => ({
+            id: t.id,
+            cls: t.className.slice(0,80),
+            rows: Array.from(t.rows).map(r =>
+                Array.from(r.cells).map(c => (c.textContent || '').trim())
+            )
+        }))""",
+    )
+    skip_id_prefixes = (
+        'headerForm:', 'formulario:panelFiltro', 'leadMenu',
+    )
+    candidates = []
+    for t in tables:
+        tid = t.get('id') or ''
+        cls = t.get('cls') or ''
+        rows = t.get('rows') or []
+        if any(tid.startswith(p) for p in skip_id_prefixes):
+            continue
+        if 'messageItem' in cls or 'ui-panelgrid' in cls and len(rows) < 3:
+            continue
+        if len(rows) < 2:
+            continue
+        candidates.append(t)
+    candidates.sort(key=lambda t: len(t.get('rows') or []), reverse=True)
+    if not candidates:
+        print('fetch_tgn: no result table found in nominaciones',
+              file=sys.stderr)
+        _save_nominaciones([], dia_operativo, gasoducto_focus, [], [])
+        return
+
+    best = candidates[0]
+    rows = best.get('rows') or []
+    headers = rows[0] if rows else []
+    print(f"fetch_tgn: nominaciones result table id={best.get('id')!r} "
+          f"{len(rows)} rows x {len(headers)} cols")
+    print(f"  headers={headers}")
+
+    data_rows = []
+    for r in rows[1:]:
+        record = {headers[i] if i < len(headers) else f'col_{i}': r[i]
+                  for i in range(len(r))}
+        data_rows.append(record)
+    _save_nominaciones(data_rows, dia_operativo, gasoducto_focus, headers, [])
+
+
+def _save_nominaciones(rows, dia, gasoducto, headers, errors):
+    out_path = os.path.join(OUT_DIR, 'tgn_nominaciones.json')
+    os.makedirs(OUT_DIR, exist_ok=True)
+    rows = [{k.replace('<br>', ' ').strip(): v for k, v in r.items()} for r in rows]
+    headers = [h.replace('<br>', ' ').strip() for h in headers]
+    write_json(
+        out_path,
+        rows,
+        source='TGN ABII — Nominaciones',
+        source_date=dia,
+        query={'dia_operativo': dia, 'gasoducto': gasoducto, 'cargador': None},
+        headers=headers,
+        errors=errors,
+    )
+    write_csv(json_to_csv_path(out_path), rows)
+    print(f'fetch_tgn: wrote {len(rows)} rows to tgn_nominaciones.json')
 
 
 def run():
