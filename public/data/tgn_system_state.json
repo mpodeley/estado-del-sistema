@@ -1,19 +1,14 @@
 {
-  "generated_at": "2026-05-29T12:46:35+00:00",
+  "generated_at": "2026-05-29T12:49:35+00:00",
   "source": "TGN ABII — Estado del Sistema",
   "source_date": "29/05/2026",
   "data": [
     {
-      "¡La comunicación con el servidor se ha perdido!": ""
-    },
-    {
-      "¡La comunicación con el servidor se ha perdido!": "Es posible que el servidor se encuentre temporalmente fuera de operación, o la red de acceso también tenga problemas de conectividad."
-    },
-    {
-      "¡La comunicación con el servidor se ha perdido!": ""
-    },
-    {
-      "¡La comunicación con el servidor se ha perdido!": "Por favor, intente acceder nuevamente a la aplicación ABII."
+      "Día <br>Operativo": "Thu May 28 00:00:00 ART 2026",
+      "Actual": "125617220",
+      "Equilibrio": "133000000",
+      "Desbalance del sistema": "7382780",
+      "Desbalance porcentual": "8.15"
     }
   ],
   "query": {
@@ -22,6 +17,10 @@
     "gasoducto": "TODOS"
   },
   "headers": [
-    "¡La comunicación con el servidor se ha perdido!"
+    "Día <br>Operativo",
+    "Actual",
+    "Equilibrio",
+    "Desbalance del sistema",
+    "Desbalance porcentual"
   ]
 }
