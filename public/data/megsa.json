@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-29T19:27:01+00:00",
+  "generated_at": "2026-05-29T20:21:42+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -12,11 +12,11 @@
         "units": "USD/MMbtu",
         "currentPrice": 3.28,
         "currentPeriod": "2026-05-29T00:00:00",
-        "previousPrice": 3.29,
+        "previousPrice": 3.3,
         "previousPeriod": null,
-        "nominalDifference": -0.01,
-        "percentageDifference": -0.3,
-        "lastUpdated": "2026-05-29T16:20:09.7940248",
+        "nominalDifference": -0.02,
+        "percentageDifference": -0.61,
+        "lastUpdated": "2026-05-29T17:20:11.610104",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -32,7 +32,7 @@
         "previousPeriod": null,
         "nominalDifference": -0.9,
         "percentageDifference": -1.92,
-        "lastUpdated": "2026-05-29T16:20:11.1492754",
+        "lastUpdated": "2026-05-29T17:20:11.9772252",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -48,7 +48,7 @@
         "previousPeriod": null,
         "nominalDifference": -2.21,
         "percentageDifference": -2.35,
-        "lastUpdated": "2026-05-29T16:20:09.3907059",
+        "lastUpdated": "2026-05-29T17:20:11.1122925",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 87.71,
+        "currentPrice": 87.94,
         "currentPeriod": "2026-05-29T00:00:00",
-        "previousPrice": 89.21,
+        "previousPrice": 89.35,
         "previousPeriod": null,
-        "nominalDifference": -1.5,
-        "percentageDifference": -1.68,
-        "lastUpdated": "2026-05-29T16:20:08.9716068",
+        "nominalDifference": -1.41,
+        "percentageDifference": -1.58,
+        "lastUpdated": "2026-05-29T17:20:10.590518",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -108,7 +108,7 @@
         "fechaUltimaModificacion": "2026-05-22T19:41:27"
       }
     ],
-    "fetched_at": "2026-05-29T19:27:01+00:00"
+    "fetched_at": "2026-05-29T20:21:42+00:00"
   },
   "errors": null
 }
