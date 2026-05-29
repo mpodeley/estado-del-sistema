@@ -11,10 +11,11 @@ import {
   Line,
   CartesianGrid,
 } from 'recharts'
-import { useProduccionNeuquina } from '../hooks/useData'
+import { useProduccionNeuquina, useConcesionesNeuquina } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import FreshnessBadge from './FreshnessBadge'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
+import CuencaMap from './CuencaMap'
 
 // Top-N selection thresholds — keep visualizations legible without truncating
 // the underlying table.
@@ -134,6 +135,7 @@ type SortKey = 'gas' | 'pet' | 'pozos' | 'gas_yoy'
 
 export default function ProduccionPage() {
   const state = useProduccionNeuquina()
+  const concesionesState = useConcesionesNeuquina()
   const [sortKey, setSortKey] = useState<SortKey>('gas')
 
   const rows = state.data ?? []
@@ -311,6 +313,21 @@ export default function ProduccionPage() {
         {kpis.map((k) => (
           <KpiTile key={k.label} k={k} />
         ))}
+      </div>
+
+      <div style={{ ...card, marginBottom: space.xl }}>
+        <h3 style={sectionTitle}>Mapa de concesiones — Cuenca Neuquina</h3>
+        {concesionesState.loading ? (
+          <ChartSkeleton height={400} />
+        ) : concesionesState.error || !concesionesState.data ? (
+          <div style={{ color: colors.textMuted, fontSize: 13 }}>
+            No se pudo cargar el mapa de concesiones
+            {concesionesState.error ? `: ${concesionesState.error.message}` : '.'} Corré{' '}
+            <code>scripts/fetch_concesiones_geojson.py</code> para generar el archivo.
+          </div>
+        ) : (
+          <CuencaMap concesiones={concesionesState.data} produccion={rows} latestMes={latestMes} />
+        )}
       </div>
 
       <div style={{ ...card, marginBottom: space.xl }}>

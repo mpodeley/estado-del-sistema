@@ -184,6 +184,41 @@ export interface ProduccionMes {
 }
 export const useProduccionNeuquina = () => useJson<ProduccionMes[]>('./data/produccion_neuquina.json')
 
+export interface ConcesionFeature {
+  type: 'Feature'
+  properties: {
+    id: string
+    nombre: string
+    operador: string
+    interesados: string
+    participacion: string
+    comentario: string
+  }
+  geometry: { type: 'MultiPolygon'; coordinates: number[][][][] }
+}
+export interface ConcesionesCollection {
+  type: 'FeatureCollection'
+  features: ConcesionFeature[]
+  crs?: unknown
+  metadata?: { source?: string; source_url?: string; filter?: string }
+}
+/** Concesiones GeoJSON: standard FeatureCollection, no envelope. Coordinates
+ *  in EPSG:4326 (raw lon, lat in degrees) — projection happens in CuencaMap. */
+export function useConcesionesNeuquina() {
+  const [state, setState] = useState<{
+    data: ConcesionesCollection | null
+    loading: boolean
+    error: Error | null
+  }>({ data: null, loading: true, error: null })
+  useEffect(() => {
+    fetch('./data/concesiones_neuquina.geojson', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d: ConcesionesCollection) => setState({ data: d, loading: false, error: null }))
+      .catch((e: Error) => setState({ data: null, loading: false, error: e }))
+  }, [])
+  return state
+}
+
 export interface TramoRow {
   fecha: string
   gas_andes_autorizacion: number | null
