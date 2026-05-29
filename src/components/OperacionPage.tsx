@@ -9,7 +9,6 @@ import {
   useEnargasING,
   useETGS,
   useSMNAlerts,
-  useCammesaWeekly,
   useMEGSA,
   useTramos,
   useCammesaPPO,
@@ -77,7 +76,6 @@ export default function OperacionPage() {
   const ingState = useEnargasING()
   const etgsState = useETGS()
   const smnState = useSMNAlerts()
-  const cammesaWeeklyState = useCammesaWeekly()
   const megsaState = useMEGSA()
   const tramosState = useTramos()
   const ppoState = useCammesaPPO()
@@ -126,11 +124,6 @@ export default function OperacionPage() {
   const comments = commentsState.data ?? { daily: [], weekly: [] }
   const regions = regionsState.data ?? []
   const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
-
-  const cammesaDays: { fecha?: string; usinas?: number | null }[] = []
-  for (const rep of (cammesaWeeklyState.data ?? []) as { days?: { fecha?: string; usinas?: number | null }[] }[]) {
-    for (const d of rep.days ?? []) cammesaDays.push(d)
-  }
 
   const freshness = [
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
@@ -253,7 +246,7 @@ export default function OperacionPage() {
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Despacho eléctrico — Combustibles</h3>
-          <FuelMixChart data={data} cammesaDays={cammesaDays} ppoRows={ppoState.data ?? []} allDates={visibleDates} />
+          <FuelMixChart data={data} ppoRows={ppoState.data ?? []} allDates={visibleDates} />
         </div>
       </ChartGroup>
 
@@ -284,7 +277,6 @@ export default function OperacionPage() {
           <DemandChart
             data={valid}
             forecast={demandFc?.forecast ?? []}
-            cammesaDays={cammesaDays}
             exportacionesBaseline={demandFc?.regression.baseline_exportaciones ?? undefined}
             allDates={visibleDates}
             yDomain={demandY}

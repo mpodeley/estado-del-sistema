@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
-"""Parse CAMMESA weekly projection PDF into structured data."""
+"""Parse CAMMESA weekly dispatch outlook PDF.
 
+Extracts the two-week 'Balance Semanal' table from page 7 of
+PrevisionDespachoEnergetico_*.pdf — GWh + MWmed by source (demanda,
+exportación, térmico, hidráulico, nuclear, renovable, importación)
+plus fuel forecasts (gas, FO, GO, carbón).
+
+The PDF uses rotated labels and a layout pdfplumber decodes with
+mangled accents ('T�rmico'), so this parser identifies rows by
+position within the extracted table rather than by label match.
+"""
+
+import glob
 import os
 import re
 import sys
-import glob
+from datetime import datetime
+
 import pdfplumber
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -13,197 +25,229 @@ from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw')
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 
-REQUIRED_FIELDS = {'demanda_total', 'temperatura', 'prioritaria'}
-
-MONTHS = {'ene': 1, 'feb': 2, 'mar': 3, 'abr': 4, 'may': 5, 'jun': 6,
-           'jul': 7, 'ago': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dic': 12}
+# Order of the energy-source rows on page 7. Each row reports GWh + MWmed.
+ENERGY_FIELDS = [
+    'demanda', 'exportacion', 'termico', 'hidraulico',
+    'nuclear', 'renovable', 'importacion',
+]
+# Then four fuel rows. Each reports a single weekly figure.
+FUEL_FIELDS = ['gas_mm3_dia', 'fo_miles_ton', 'go_miles_m3', 'carbon_miles_ton']
 
 
 def parse_number(s):
-    if not s:
+    """CAMMESA prints integers without thousand separators (e.g. '2967')
+    and decimals with either '.' or ',' (e.g. '35.0', '700,08'). Treat
+    both as decimal separators."""
+    if s is None:
         return None
-    s = s.strip().replace(',', '.')
+    cleaned = str(s).strip().replace(',', '.')
+    if not cleaned:
+        return None
     try:
-        return round(float(s), 2)
+        return float(cleaned)
     except ValueError:
         return None
 
 
-def parse_cammesa_pdf(path):
-    """Extract weekly projection data from CAMMESA PDF."""
-    with pdfplumber.open(path) as pdf:
-        text = pdf.pages[0].extract_text()
+def parse_report_date(page1_text):
+    """Extract the report date from page 1's footer 'DD/MM/YY' stamp."""
+    m = re.search(r'(\d{1,2})/(\d{1,2})/(\d{2,4})', page1_text or '')
+    if not m:
+        return None
+    d, mo, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    if y < 100:
+        y += 2000
+    try:
+        return f"{y:04d}-{mo:02d}-{d:02d}"
+    except ValueError:
+        return None
 
-    lines = text.split('\n')
-    data = {'source': os.path.basename(path), 'days': []}
 
-    # Parse the column header dates
-    # Pattern: "jue 09 - abr REAL vie 10 - abr sáb 11 - abr dom 12 - abr lun 13 - abr"
-    header_line = None
-    for line in lines:
-        if 'REAL' in line and ('lun' in line or 'mar' in line or 'mié' in line or 'jue' in line or 'vie' in line):
-            header_line = line
-            break
+def parse_date_range(s):
+    """'11/5/2026 - 17/5/2026' -> ('2026-05-11', '2026-05-17')."""
+    m = re.search(r'(\d{1,2})/(\d{1,2})/(\d{4})\s*-\s*(\d{1,2})/(\d{1,2})/(\d{4})', s or '')
+    if not m:
+        return None, None
+    sd = f"{int(m.group(3)):04d}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+    ed = f"{int(m.group(6)):04d}-{int(m.group(5)):02d}-{int(m.group(4)):02d}"
+    return sd, ed
 
-    day_dates = []
-    if header_line:
-        # Extract day-month pairs
-        day_pattern = r'(?:lun|mar|mi[eé]|jue|vie|s[aá]b|dom)\s+(\d{1,2})\s*-\s*(\w+)'
-        for m in re.finditer(day_pattern, header_line):
-            day = int(m.group(1))
-            mon_str = m.group(2).lower()[:3]
-            mon = MONTHS.get(mon_str, 0)
-            day_dates.append((day, mon))
 
-    # Parse key rows - each row has label followed by numbers
-    def extract_row(label_pattern):
-        for line in lines:
-            m = re.match(label_pattern + r'\s+([\d,.]+(?:\s+[\d,.]+)*)', line)
-            if m:
-                nums = re.findall(r'[\d,.]+', m.group(1) if hasattr(m, 'group') else line[m.end():])
-                return [parse_number(n) for n in nums]
-            # Try simpler: find the label then grab numbers after it
-            if re.search(label_pattern, line):
-                nums = re.findall(r'[\d,.]+', line)
-                # Skip the first number if it's part of the label
-                return [parse_number(n) for n in nums[-len(day_dates):]] if day_dates else [parse_number(n) for n in nums]
+def find_first(rows, predicate):
+    for i, row in enumerate(rows):
+        if predicate(row):
+            return i
+    return -1
+
+
+def row_cells(row):
+    return [c if c is not None else '' for c in row]
+
+
+def week_from_tables(tables):
+    """Map page-7 tables into [week_current, week_next]. Each table is a
+    list of rows; first table holds the current week (5 columns: label,
+    units, GWh, MWmed) and the second holds the next week (just GWh +
+    MWmed, no labels).
+
+    Returns a list of dicts with the extracted fields, or [] if the
+    page layout doesn't match.
+    """
+    if len(tables) < 2:
         return []
 
-    # Extract temperature row
-    for line in lines:
-        if 'Temperatura Media' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['temperatura'] = [parse_number(n) for n in nums]
-            break
+    t1, t2 = tables[0], tables[1]
 
-    # Extract demand total
-    for line in lines:
-        if 'DEMANDA TOTAL' in line and 'MMm' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['demanda_total'] = [parse_number(n) for n in nums]
-            break
+    # On t1 we anchor by finding the row with "Semana NN" so we don't
+    # depend on the rotated header column.
+    week1_num, week2_num = None, None
+    week1_range, week2_range = '', ''
 
-    # Extract prioritaria
-    for line in lines:
-        if 'Demanda Prioritaria' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['prioritaria'] = [parse_number(n) for n in nums]
-            break
+    for row in t1:
+        cells = row_cells(row)
+        joined = ' '.join(cells)
+        if 'Semana' in joined or 'semana' in joined:
+            # Last cell holds the number.
+            for c in reversed(cells):
+                if c and re.fullmatch(r'\d{1,2}', str(c).strip()):
+                    week1_num = str(c).strip()
+                    break
+        if '/' in joined and '-' in joined and not week1_range:
+            week1_range = joined
 
-    # Extract industria
-    for line in lines:
-        if 'Industria' in line and 'P3' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            # Filter out the "3" from P3
-            data['industria'] = [parse_number(n) for n in nums if n != '3']
-            break
+    for row in t2:
+        cells = row_cells(row)
+        joined = ' '.join(cells)
+        if 'Semana' in joined or 'semana' in joined:
+            for c in cells:
+                if c and re.fullmatch(r'\d{1,2}', str(c).strip()):
+                    week2_num = str(c).strip()
+                    break
+        if '/' in joined and '-' in joined and not week2_range:
+            week2_range = joined
 
-    # Extract usinas
-    for line in lines:
-        if 'Usinas dentro' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['usinas'] = [parse_number(n) for n in nums]
-            break
+    sd1, ed1 = parse_date_range(week1_range)
+    sd2, ed2 = parse_date_range(week2_range)
 
-    # Extract total injections
-    for line in lines:
-        if 'INYECCIONES' in line and 'TGN' in line and 'TGS' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['inyecciones'] = [parse_number(n) for n in nums]
-            break
+    # Numeric rows: pull every row from t1 whose last 2 cells parse as
+    # numbers (energy block) plus every row whose 4th cell parses but
+    # 5th does not (fuel block). Same for t2 but on cells 0/1.
+    def numeric_rows_t1(table):
+        energy, fuel = [], []
+        for row in table:
+            cells = row_cells(row)
+            if len(cells) < 5:
+                continue
+            gwh = parse_number(cells[-2])
+            mw = parse_number(cells[-1])
+            if gwh is not None and mw is not None:
+                energy.append((gwh, mw))
+                continue
+            val = parse_number(cells[-2])
+            if val is not None and not mw:
+                fuel.append(val)
+        return energy, fuel
 
-    # Extract STOCK
-    for line in lines:
-        if 'STOCK' in line and 'Min' in line:
-            nums = re.findall(r'[\d,.]+', line)
-            data['stock'] = [parse_number(n) for n in nums]
-            # Extract min/max
-            m = re.search(r'Min:\s*([\d,.]+).*Max:\s*([\d,.]+)', line)
-            if m:
-                data['stock_min'] = parse_number(m.group(1))
-                data['stock_max'] = parse_number(m.group(2))
-            break
+    def numeric_rows_t2(table):
+        energy, fuel = [], []
+        for row in table:
+            cells = row_cells(row)
+            if len(cells) < 2:
+                continue
+            gwh = parse_number(cells[0])
+            mw = parse_number(cells[1]) if len(cells) > 1 else None
+            if gwh is not None and mw is not None:
+                energy.append((gwh, mw))
+                continue
+            if gwh is not None and mw is None:
+                fuel.append(gwh)
+        return energy, fuel
 
-    # Derive year from filename (PS_YYYYMMDD.pdf).
-    year = None
-    m = re.search(r'PS_(\d{4})\d{4}', os.path.basename(path))
-    if m:
-        year = int(m.group(1))
+    e1, f1 = numeric_rows_t1(t1)
+    e2, f2 = numeric_rows_t2(t2)
 
-    # Build day-by-day structure, emit ISO fecha when year is inferable.
-    for i, (day, mon) in enumerate(day_dates):
-        entry = {'dia': day, 'mes': mon}
-        if year:
-            # Handle year rollover for December -> January forecasts.
-            y = year
-            entry['fecha'] = f"{y:04d}-{mon:02d}-{day:02d}"
-        for key in ['temperatura', 'demanda_total', 'prioritaria', 'industria', 'usinas', 'inyecciones', 'stock']:
-            vals = data.get(key, [])
-            entry[key] = vals[i] if i < len(vals) else None
-        data['days'].append(entry)
+    def build_week(num, sd, ed, energy, fuel):
+        out = {'week_num': num, 'start_date': sd, 'end_date': ed}
+        for i, name in enumerate(ENERGY_FIELDS):
+            gwh, mw = energy[i] if i < len(energy) else (None, None)
+            out[f'{name}_gwh'] = gwh
+            out[f'{name}_mwmed'] = mw
+        for i, name in enumerate(FUEL_FIELDS):
+            out[name] = fuel[i] if i < len(fuel) else None
+        return out
 
-    return data
+    weeks = []
+    if e1:
+        weeks.append(build_week(week1_num, sd1, ed1, e1, f1))
+    if e2:
+        weeks.append(build_week(week2_num, sd2, ed2, e2, f2))
+    return weeks
+
+
+def parse_cammesa_pdf(path):
+    with pdfplumber.open(path) as pdf:
+        page1_text = pdf.pages[0].extract_text() or ''
+        # Page 7 in CAMMESA's layout — guard for shorter PDFs by trying
+        # the surrounding pages too.
+        candidate_pages = [6, 5, 7]
+        tables = []
+        for idx in candidate_pages:
+            if idx >= len(pdf.pages):
+                continue
+            t = pdf.pages[idx].extract_tables() or []
+            text = pdf.pages[idx].extract_text() or ''
+            if 'Semana' in text and 'Gwh' in text:
+                tables = t
+                break
+
+    weeks = week_from_tables(tables)
+    return {
+        'report_date': parse_report_date(page1_text),
+        'report_filename': os.path.basename(path),
+        'weeks': weeks,
+    }
+
+
+def latest_pdf():
+    """Pick the most recently dated PrevisionDespachoEnergetico_*.pdf
+    in raw/. Sort by filename — the YYYYMMDD timestamp embedded by
+    fetch_cammesa.py makes lexical order match chronological."""
+    pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'PrevisionDespachoEnergetico_*.pdf')))
+    return pdfs[-1] if pdfs else None
 
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
-    pdfs = sorted(glob.glob(os.path.join(RAW_DIR, 'PS_*.pdf')))
-    if not pdfs:
-        print("No CAMMESA PDFs found")
+    pdf = latest_pdf()
+    if not pdf:
+        print("No PrevisionDespachoEnergetico_*.pdf found in raw/")
         return
 
-    results = []
-    issues = []
-    for p in pdfs:
-        try:
-            with open(p, 'rb') as fh:
-                if fh.read(5) != b'%PDF-':
-                    issues.append(f"{os.path.basename(p)}: not a valid PDF (skipped)")
-                    continue
-            d = parse_cammesa_pdf(p)
-            missing = REQUIRED_FIELDS - d.keys()
-            if missing:
-                issues.append(f"{os.path.basename(p)}: missing {sorted(missing)}")
-            print(f"Parsed {os.path.basename(p)}: {len(d['days'])} days")
-            for day in d['days']:
-                print(f"  Dia {day['dia']}/{day['mes']}: T={day.get('temperatura')}, Dem={day.get('demanda_total')}")
-            results.append(d)
-        except Exception as e:
-            issues.append(f"{os.path.basename(p)}: exception {e}")
-            print(f"Error parsing {p}: {e}", file=sys.stderr)
+    try:
+        with open(pdf, 'rb') as fh:
+            if fh.read(5) != b'%PDF-':
+                print(f"{os.path.basename(pdf)}: not a valid PDF", file=sys.stderr)
+                return
+        payload = parse_cammesa_pdf(pdf)
+    except Exception as e:
+        print(f"Error parsing {pdf}: {e}", file=sys.stderr)
+        return
 
-    if issues:
-        print("WARN: CAMMESA parse issues:", file=sys.stderr)
-        for msg in issues:
-            print(f"  {msg}", file=sys.stderr)
+    if not payload['weeks']:
+        print(f"WARN: no weekly rows extracted from {os.path.basename(pdf)}", file=sys.stderr)
 
-    weekly_path = os.path.join(OUT_DIR, 'cammesa_weekly.json')
-    write_json(
-        weekly_path,
-        results,
-        source='CAMMESA weekly PS_* PDFs',
-        issues=issues,
-    )
-    # Flatten to one row per (source, day) so the CSV is auditable day-by-day.
-    weekly_flat = []
-    for rep in results:
-        source = rep.get('source')
-        for day in rep.get('days', []):
-            weekly_flat.append({
-                'source': source,
-                'fecha': day.get('fecha'),
-                'dia': day.get('dia'),
-                'mes': day.get('mes'),
-                'temperatura': day.get('temperatura'),
-                'demanda_total': day.get('demanda_total'),
-                'prioritaria': day.get('prioritaria'),
-                'industria': day.get('industria'),
-                'usinas': day.get('usinas'),
-                'inyecciones': day.get('inyecciones'),
-                'stock': day.get('stock'),
-            })
-    write_csv(json_to_csv_path(weekly_path), weekly_flat)
-    print(f"cammesa_weekly.json: {len(results)} reports")
+    out_path = os.path.join(OUT_DIR, 'cammesa_weekly.json')
+    write_json(out_path, payload, source='CAMMESA — Previsión Despacho Energético')
+
+    # CSV: one row per week with every field flattened, for the audit
+    # download on the Fuentes page.
+    flat = []
+    for w in payload['weeks']:
+        row = {'report_date': payload['report_date']}
+        row.update(w)
+        flat.append(row)
+    write_csv(json_to_csv_path(out_path), flat)
+    print(f"cammesa_weekly.json: {len(payload['weeks'])} weeks (report {payload['report_date']})")
 
 
 if __name__ == '__main__':

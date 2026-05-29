@@ -79,7 +79,37 @@ export const useEnargasRDS = () => useJson<EnargasRDSRow[]>('./data/enargas.json
 export const useEnargasING = () => useJson<EnargasINGRow[]>('./data/enargas_ing.json')
 export const useETGS = () => useJson<ETGSRow[]>('./data/etgs.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
-export const useCammesaWeekly = () => useJson<unknown[]>('./data/cammesa_weekly.json')
+export interface CammesaWeek {
+  week_num: string | null
+  start_date: string | null
+  end_date: string | null
+  demanda_gwh: number | null
+  demanda_mwmed: number | null
+  exportacion_gwh: number | null
+  exportacion_mwmed: number | null
+  termico_gwh: number | null
+  termico_mwmed: number | null
+  hidraulico_gwh: number | null
+  hidraulico_mwmed: number | null
+  nuclear_gwh: number | null
+  nuclear_mwmed: number | null
+  renovable_gwh: number | null
+  renovable_mwmed: number | null
+  importacion_gwh: number | null
+  importacion_mwmed: number | null
+  gas_mm3_dia: number | null
+  fo_miles_ton: number | null
+  go_miles_m3: number | null
+  carbon_miles_ton: number | null
+}
+
+export interface CammesaWeeklyPayload {
+  report_date: string | null
+  report_filename: string | null
+  weeks: CammesaWeek[]
+}
+
+export const useCammesaWeekly = () => useJson<CammesaWeeklyPayload>('./data/cammesa_weekly.json')
 export interface CammesaPPORow {
   fecha: string
   gas_mmm3: number | null
@@ -139,6 +169,20 @@ export interface MEGSAPayload {
 }
 
 export const useMEGSA = () => useJson<MEGSAPayload>('./data/megsa.json')
+
+export interface ProduccionMes {
+  mes: string                  // YYYY-MM
+  area: string                 // areapermisoconcesion (bloque / concesión)
+  empresa: string
+  cuenca: string
+  provincia: string
+  prod_gas_mm3: number         // MMm³ (= million m³) acumulado del mes
+  prod_pet_m3: number          // m³
+  prod_agua_m3: number         // m³
+  pozos_activos: number        // wells with prod_gas>0 or prod_pet>0 in the month
+  pozos_no_conv: number        // wells where tipo_de_recurso != CONVENCIONAL
+}
+export const useProduccionNeuquina = () => useJson<ProduccionMes[]>('./data/produccion_neuquina.json')
 
 export interface TramoRow {
   fecha: string

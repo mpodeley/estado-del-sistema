@@ -4,15 +4,9 @@ import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
 const fmt = (d: string) => d.slice(5)
 
-interface CammesaWeeklyDay {
-  fecha?: string
-  usinas?: number | null
-}
-
 interface Props {
   data: DailyRow[]
   forecast?: DemandForecastDay[]
-  cammesaDays?: CammesaWeeklyDay[]
   exportacionesBaseline?: number
   allDates?: string[]
   yDomain?: [number, number]
@@ -42,16 +36,10 @@ function sumNotNull(...vals: (number | null | undefined)[]): number | null {
 export default function DemandChart({
   data,
   forecast = [],
-  cammesaDays = [],
   exportacionesBaseline,
   allDates,
   yDomain,
 }: Props) {
-  const cammesaUsinasByDate = new Map<string, number>()
-  for (const d of cammesaDays) {
-    if (d.fecha && typeof d.usinas === 'number') cammesaUsinasByDate.set(d.fecha, d.usinas)
-  }
-
   // HISTORICAL: "otros" = Excel demanda_total minus the 4 known sectors.
   // Bridges the gap (GNC + combustible) so the stack height equals the
   // reported total, matching the forecast stack which shows them explicitly.
@@ -91,7 +79,7 @@ export default function DemandChart({
       otros: null as number | null,
       prioritaria_est: f.prioritaria_est,
       industria_est: f.industria_est ?? null,
-      usinas_est: cammesaUsinasByDate.get(f.fecha) ?? f.usinas_est,
+      usinas_est: f.usinas_est,
       exportaciones_est: f.exportaciones_est ?? exportacionesBaseline ?? null,
       otros_est: sumNotNull(f.gnc_est, f.combustible_est),
     }))
