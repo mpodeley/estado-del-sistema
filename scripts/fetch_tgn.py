@@ -370,9 +370,11 @@ def run():
 
             # Phase 3a — Estado del Sistema report.
             scrape_system_state(page)
-            # Phase 3b — Nominaciones (still in discovery; logs the
-            # form's structure when no rows are extracted).
-            scrape_nominaciones(page)
+            # Phase 3b — Nominaciones: scraper exists below but the
+            # 'Cargador' field is required and PrimeFaces cancels the
+            # postback client-side when it's empty. Re-enable once we
+            # know which Cargador value is valid for this account.
+            # scrape_nominaciones(page)
 
             # Phase 2 reconnaissance — keep behind a flag while Phase 3
             # scrapers are still being added. Set TGN_DISCOVER=1 to run
