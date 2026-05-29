@@ -1,0 +1,49 @@
+name: Update TGN data
+
+on:
+  schedule:
+    # Every 6 hours UTC ~= 9 PM / 3 AM / 9 AM / 3 PM Argentina (UTC-3).
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: playwright install --with-deps chromium
+
+      - name: Fetch TGN
+        timeout-minutes: 10
+        env:
+          TGN_USER: ${{ secrets.TGN_USER }}
+          TGN_PASSWORD: ${{ secrets.TGN_PASSWORD }}
+        run: python scripts/fetch_tgn.py
+
+      - name: Commit TGN JSONs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/tgn_*.json public/data/tgn_*.csv 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "No TGN changes to commit"
+          else
+            git commit -m "TGN auto-update $(date -u +%Y-%m-%dT%H:%MZ)"
+            # Keep up with the main workflow's commits to data files.
+            git pull --rebase origin master || git rebase --abort
+            git push
+          fi

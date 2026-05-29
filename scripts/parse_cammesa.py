@@ -73,134 +73,128 @@ def parse_date_range(s):
     return sd, ed
 
 
-def find_first(rows, predicate):
-    for i, row in enumerate(rows):
-        if predicate(row):
-            return i
-    return -1
+# Each label is matched as a case-sensitive prefix against the line —
+# accents come back mangled from pdfplumber so we anchor on ASCII-safe
+# substrings. Order mirrors how the rows appear on the PDF page.
+ENERGY_LABELS = [
+    ('demanda', 'Demanda'),
+    ('exportacion', 'Exportaci'),
+    ('termico', 'rmico'),       # "Térmico" / "T�rmico"
+    ('hidraulico', 'ulico'),    # "Hidráulico" / "Hidr�ulico"
+    ('nuclear', 'Nuclear'),
+    ('renovable', 'Renovable'),
+    ('importacion', 'Importaci'),
+]
+FUEL_LABELS = [
+    ('gas_mm3_dia', 'Gas '),
+    ('fo_miles_ton', 'FO '),
+    ('go_miles_m3', 'GO '),
+    ('carbon_miles_ton', 'Carb'),
+]
+
+NUMBER_RE = re.compile(r'-?\d+(?:[.,]\d+)?')
 
 
-def row_cells(row):
-    return [c if c is not None else '' for c in row]
+def extract_numbers(line, drop_leading=0):
+    """Return every numeric token in *line* (after skipping the first
+    *drop_leading* tokens, which may be embedded in a unit string)."""
+    return [parse_number(m.group(0)) for m in NUMBER_RE.finditer(line)][drop_leading:]
 
 
-def week_from_tables(tables):
-    """Map page-7 tables into [week_current, week_next]. Each table is a
-    list of rows; first table holds the current week (5 columns: label,
-    units, GWh, MWmed) and the second holds the next week (just GWh +
-    MWmed, no labels).
+def find_line(lines, needle):
+    for line in lines:
+        if needle in line:
+            return line
+    return None
 
-    Returns a list of dicts with the extracted fields, or [] if the
-    page layout doesn't match.
+
+def parse_week_block(text):
+    """Page-7 layout (text mode): the same line that holds 'Demanda'
+    holds four numbers — gwh+mwmed for week N then gwh+mwmed for week
+    N+1. Fuel rows put two single values (one per week) at the end.
     """
-    if len(tables) < 2:
+    lines = (text or '').split('\n')
+
+    # Week numbers: "Semana 20 Semana 21" or "Semana 20\nSemana 21".
+    nums = []
+    for line in lines:
+        for m in re.finditer(r'Semana\s+(\d{1,2})', line):
+            nums.append(m.group(1))
+            if len(nums) == 2:
+                break
+        if len(nums) == 2:
+            break
+
+    # Date ranges on the next informative line.
+    ranges = []
+    for line in lines:
+        for m in re.finditer(
+            r'(\d{1,2})/(\d{1,2})/(\d{4})\s*-\s*(\d{1,2})/(\d{1,2})/(\d{4})',
+            line,
+        ):
+            sd = f"{int(m.group(3)):04d}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+            ed = f"{int(m.group(6)):04d}-{int(m.group(5)):02d}-{int(m.group(4)):02d}"
+            ranges.append((sd, ed))
+            if len(ranges) == 2:
+                break
+        if len(ranges) == 2:
+            break
+
+    if len(nums) < 2 or len(ranges) < 2:
         return []
 
-    t1, t2 = tables[0], tables[1]
+    week1 = {
+        'week_num': nums[0], 'start_date': ranges[0][0], 'end_date': ranges[0][1],
+    }
+    week2 = {
+        'week_num': nums[1], 'start_date': ranges[1][0], 'end_date': ranges[1][1],
+    }
 
-    # On t1 we anchor by finding the row with "Semana NN" so we don't
-    # depend on the rotated header column.
-    week1_num, week2_num = None, None
-    week1_range, week2_range = '', ''
+    # Energy rows: expect 4 numbers (gwh1, mw1, gwh2, mw2).
+    for key, needle in ENERGY_LABELS:
+        line = find_line(lines, needle)
+        nums_in_line = extract_numbers(line) if line else []
+        if len(nums_in_line) >= 4:
+            g1, m1, g2, m2 = nums_in_line[:4]
+        else:
+            g1 = m1 = g2 = m2 = None
+        week1[f'{key}_gwh'] = g1
+        week1[f'{key}_mwmed'] = m1
+        week2[f'{key}_gwh'] = g2
+        week2[f'{key}_mwmed'] = m2
 
-    for row in t1:
-        cells = row_cells(row)
-        joined = ' '.join(cells)
-        if 'Semana' in joined or 'semana' in joined:
-            # Last cell holds the number.
-            for c in reversed(cells):
-                if c and re.fullmatch(r'\d{1,2}', str(c).strip()):
-                    week1_num = str(c).strip()
-                    break
-        if '/' in joined and '-' in joined and not week1_range:
-            week1_range = joined
+    # Fuel rows: 'Gas Mm3/día 31.0 35.0' — the unit string contains
+    # the digit '3' which we have to ignore; take the LAST two numbers.
+    for key, needle in FUEL_LABELS:
+        line = find_line(lines, needle)
+        nums_in_line = extract_numbers(line) if line else []
+        if len(nums_in_line) >= 2:
+            v1, v2 = nums_in_line[-2], nums_in_line[-1]
+        else:
+            v1 = v2 = None
+        week1[key] = v1
+        week2[key] = v2
 
-    for row in t2:
-        cells = row_cells(row)
-        joined = ' '.join(cells)
-        if 'Semana' in joined or 'semana' in joined:
-            for c in cells:
-                if c and re.fullmatch(r'\d{1,2}', str(c).strip()):
-                    week2_num = str(c).strip()
-                    break
-        if '/' in joined and '-' in joined and not week2_range:
-            week2_range = joined
-
-    sd1, ed1 = parse_date_range(week1_range)
-    sd2, ed2 = parse_date_range(week2_range)
-
-    # Numeric rows: pull every row from t1 whose last 2 cells parse as
-    # numbers (energy block) plus every row whose 4th cell parses but
-    # 5th does not (fuel block). Same for t2 but on cells 0/1.
-    def numeric_rows_t1(table):
-        energy, fuel = [], []
-        for row in table:
-            cells = row_cells(row)
-            if len(cells) < 5:
-                continue
-            gwh = parse_number(cells[-2])
-            mw = parse_number(cells[-1])
-            if gwh is not None and mw is not None:
-                energy.append((gwh, mw))
-                continue
-            val = parse_number(cells[-2])
-            if val is not None and not mw:
-                fuel.append(val)
-        return energy, fuel
-
-    def numeric_rows_t2(table):
-        energy, fuel = [], []
-        for row in table:
-            cells = row_cells(row)
-            if len(cells) < 2:
-                continue
-            gwh = parse_number(cells[0])
-            mw = parse_number(cells[1]) if len(cells) > 1 else None
-            if gwh is not None and mw is not None:
-                energy.append((gwh, mw))
-                continue
-            if gwh is not None and mw is None:
-                fuel.append(gwh)
-        return energy, fuel
-
-    e1, f1 = numeric_rows_t1(t1)
-    e2, f2 = numeric_rows_t2(t2)
-
-    def build_week(num, sd, ed, energy, fuel):
-        out = {'week_num': num, 'start_date': sd, 'end_date': ed}
-        for i, name in enumerate(ENERGY_FIELDS):
-            gwh, mw = energy[i] if i < len(energy) else (None, None)
-            out[f'{name}_gwh'] = gwh
-            out[f'{name}_mwmed'] = mw
-        for i, name in enumerate(FUEL_FIELDS):
-            out[name] = fuel[i] if i < len(fuel) else None
-        return out
-
-    weeks = []
-    if e1:
-        weeks.append(build_week(week1_num, sd1, ed1, e1, f1))
-    if e2:
-        weeks.append(build_week(week2_num, sd2, ed2, e2, f2))
-    return weeks
+    return [week1, week2]
 
 
 def parse_cammesa_pdf(path):
+    """Open the PDF and find the page that looks like the weekly
+    outlook (contains 'Semana' and 'Gwh' and 'Demanda'). Extract
+    everything from the page's plain text — table extraction is too
+    sensitive to layout drift."""
     with pdfplumber.open(path) as pdf:
         page1_text = pdf.pages[0].extract_text() or ''
-        # Page 7 in CAMMESA's layout — guard for shorter PDFs by trying
-        # the surrounding pages too.
-        candidate_pages = [6, 5, 7]
-        tables = []
-        for idx in candidate_pages:
-            if idx >= len(pdf.pages):
-                continue
-            t = pdf.pages[idx].extract_tables() or []
-            text = pdf.pages[idx].extract_text() or ''
-            if 'Semana' in text and 'Gwh' in text:
-                tables = t
+        target_text = ''
+        # CAMMESA puts it on page 7 in current layouts; scan the whole
+        # PDF as a safety net.
+        for page in pdf.pages:
+            text = page.extract_text() or ''
+            if 'Semana' in text and ('Gwh' in text or 'GWh' in text) and 'Demanda' in text:
+                target_text = text
                 break
 
-    weeks = week_from_tables(tables)
+    weeks = parse_week_block(target_text)
     return {
         'report_date': parse_report_date(page1_text),
         'report_filename': os.path.basename(path),
