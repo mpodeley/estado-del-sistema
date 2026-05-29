@@ -102,7 +102,7 @@ function polygonAreaKm2(coords: number[][][][]): number {
   return total
 }
 
-type Mode = 'operador' | 'gas_prod' | 'pet_prod' | 'gas_acum'
+type Mode = 'operador' | 'gas_prod' | 'pet_prod' | 'gas_acum' | 'pet_acum'
 
 const M3_PER_BBL = 6.2898   // industry conversion: 1 m³ ≈ 6.2898 bbl
 
@@ -122,12 +122,14 @@ interface ProjectedFeature {
   ringStrings: string[]
   areaKm2: number
   // Densities computed once per render in the units shown in the UI:
-  //   gasDailyDensity → mil m³/d · km⁻²  (= dam³/d/km²)
+  //   gasDailyDensity → mil m³/d · km⁻²   (= dam³/d/km²)
   //   petDailyDensity → bbl/d · km⁻²
-  //   gasTotalDensity → MMm³ · km⁻²       (lifetime, when historico available)
+  //   gasTotalDensity → MMm³ · km⁻²        (lifetime, when historico available)
+  //   petTotalDensity → MMbbl · km⁻²       (lifetime, when historico available)
   gasDailyDensity: number
   petDailyDensity: number
   gasTotalDensity: number
+  petTotalDensity: number
 }
 
 export default function CuencaMap({ concesiones, produccion, historico, latestMes }: Props) {
@@ -186,14 +188,15 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
   const daysInLatest = latestMes ? daysInMonth(latestMes) : 30
   const monthsCoveredRecent = useMemo(() => new Set(produccion.map((r) => r.mes)).size, [produccion])
 
-  // Lifetime cumulative gas per block (preferring historico file when present).
+  // Lifetime cumulative gas+oil per block (preferring historico file when present).
   const totalByArea = useMemo(() => {
-    const m = new Map<string, { gas: number; primer: string | null; ultimo: string | null; meses: number }>()
+    const m = new Map<string, { gas: number; pet: number; primer: string | null; ultimo: string | null; meses: number }>()
     if (historico && historico.length > 0) {
       for (const r of historico) {
         const key = (r.area || '').trim().toUpperCase()
-        const slot = m.get(key) ?? { gas: 0, primer: null, ultimo: null, meses: 0 }
+        const slot = m.get(key) ?? { gas: 0, pet: 0, primer: null, ultimo: null, meses: 0 }
         slot.gas += r.gas_acumulado_mm3
+        slot.pet += r.pet_acumulado_m3
         slot.meses = Math.max(slot.meses, r.meses_activos)
         if (!slot.primer || (r.primer_mes && r.primer_mes < slot.primer)) slot.primer = r.primer_mes
         if (!slot.ultimo || (r.ultimo_mes && r.ultimo_mes > slot.ultimo)) slot.ultimo = r.ultimo_mes
@@ -202,8 +205,9 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     } else {
       for (const r of produccion) {
         const key = (r.area || '').trim().toUpperCase()
-        const slot = m.get(key) ?? { gas: 0, primer: null, ultimo: null, meses: 0 }
+        const slot = m.get(key) ?? { gas: 0, pet: 0, primer: null, ultimo: null, meses: 0 }
         slot.gas += r.prod_gas_mm3
+        slot.pet += r.prod_pet_m3
         if (!slot.primer || r.mes < slot.primer) slot.primer = r.mes
         if (!slot.ultimo || r.mes > slot.ultimo) slot.ultimo = r.mes
         slot.meses += 1
@@ -245,7 +249,11 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       // density scale than fractions of MMm³.
       const dailyGasDam3 = prod ? (prod.latestGas / daysInLatest) * 1000 : 0
       const dailyPetBbl = prod ? (prod.latestPet * M3_PER_BBL) / daysInLatest : 0
-      const totalGas = totalByArea.get(nombreKey)?.gas ?? 0
+      const totals = totalByArea.get(nombreKey)
+      const totalGas = totals?.gas ?? 0
+      // Oil cumulative: m³ → MMbbl (millions of barrels). Loma Campana lifetime
+      // is roughly 30 MMbbl after a few years of Vaca Muerta — easy to read.
+      const totalPetMMbbl = totals ? (totals.pet * M3_PER_BBL) / 1_000_000 : 0
       return {
         feature: f,
         ringStrings,
@@ -253,6 +261,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
         gasDailyDensity: areaKm2 > 0 ? dailyGasDam3 / areaKm2 : 0,
         petDailyDensity: areaKm2 > 0 ? dailyPetBbl / areaKm2 : 0,
         gasTotalDensity: areaKm2 > 0 ? totalGas / areaKm2 : 0,
+        petTotalDensity: areaKm2 > 0 ? totalPetMMbbl / areaKm2 : 0,
       }
     })
   }, [concesiones, prodByArea, totalByArea, daysInLatest])
@@ -274,6 +283,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       gas_prod: quantiles(projected.map((p) => p.gasDailyDensity)),
       pet_prod: quantiles(projected.map((p) => p.petDailyDensity)),
       gas_acum: quantiles(projected.map((p) => p.gasTotalDensity)),
+      pet_acum: quantiles(projected.map((p) => p.petTotalDensity)),
     }
   }, [projected])
 
@@ -392,12 +402,14 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     if (mode === 'gas_prod') return p.gasDailyDensity
     if (mode === 'pet_prod') return p.petDailyDensity
     if (mode === 'gas_acum') return p.gasTotalDensity
+    if (mode === 'pet_acum') return p.petTotalDensity
     return 0
   }
   function binsForMode(): number[] {
     if (mode === 'gas_prod') return heatBins.gas_prod
     if (mode === 'pet_prod') return heatBins.pet_prod
     if (mode === 'gas_acum') return heatBins.gas_acum
+    if (mode === 'pet_acum') return heatBins.pet_acum
     return []
   }
   function fillFor(p: ProjectedFeature): string {
@@ -432,6 +444,12 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
                 label: historicoRango
                   ? `Acumulado gas ${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
                   : 'Acumulado gas',
+              },
+              {
+                id: 'pet_acum',
+                label: historicoRango
+                  ? `Acumulado petróleo ${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
+                  : 'Acumulado petróleo',
               },
             ] as const
           ).map((m) => (
@@ -547,7 +565,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
                   Gas: {hovered.gasDailyDensity.toFixed(2)} mil m³/d·km⁻² · Petróleo: {hovered.petDailyDensity.toFixed(0)} bbl/d·km⁻²
                 </div>
                 <div style={{ color: colors.textDim, fontSize: 11 }}>
-                  Acumulado {historico && historico.length > 0 ? '(histórico)' : `(${monthsCoveredRecent}m)`}: {hovered.gasTotalDensity.toFixed(2)} MMm³·km⁻²
+                  Acumulado {historico && historico.length > 0 ? '(histórico)' : `(${monthsCoveredRecent}m)`}: gas {hovered.gasTotalDensity.toFixed(2)} MMm³·km⁻² · petróleo {hovered.petTotalDensity.toFixed(2)} MMbbl·km⁻²
                   {totalByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase())?.primer && (
                     <span> · desde {totalByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase())!.primer}</span>
                   )}
@@ -588,15 +606,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       ) : (
         <HeatLegend
           bins={binsForMode()}
-          unit={
-            mode === 'gas_prod'
-              ? 'mil m³/d · km⁻²'
-              : mode === 'pet_prod'
-              ? 'bbl/d · km⁻²'
-              : historicoRango
-              ? `MMm³ · km⁻² (${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)})`
-              : `MMm³ · km⁻² (${monthsCoveredRecent}m)`
-          }
+          unit={unitForMode(mode, historicoRango, monthsCoveredRecent)}
         />
       )}
 
@@ -606,6 +616,21 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       </p>
     </div>
   )
+}
+
+function unitForMode(
+  mode: Mode,
+  historicoRango: { primer: string; ultimo: string } | null,
+  monthsCoveredRecent: number,
+): string {
+  if (mode === 'gas_prod') return 'mil m³/d · km⁻²'
+  if (mode === 'pet_prod') return 'bbl/d · km⁻²'
+  const rango = historicoRango
+    ? `${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
+    : `${monthsCoveredRecent}m`
+  if (mode === 'gas_acum') return `MMm³ · km⁻² (${rango})`
+  if (mode === 'pet_acum') return `MMbbl · km⁻² (${rango})`
+  return ''
 }
 
 function HeatLegend({ bins, unit }: { bins: number[]; unit: string }) {
