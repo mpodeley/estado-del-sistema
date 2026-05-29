@@ -12,6 +12,7 @@ import {
   useSMNAlerts,
   useMEGSA,
   useProduccionNeuquina,
+  usePlanesDesarrollo,
 } from '../hooks/useData'
 import { CATALOG, DatasetEntry, DatasetKind, FreshnessKey } from '../data/datasetCatalog'
 import { REPO_ROOT, REPO_BRANCH, githubFileUrl } from '../utils/github'
@@ -187,6 +188,7 @@ export default function FuentesPage() {
     smn: useSMNAlerts(),
     megsa: useMEGSA(),
     capiv: useProduccionNeuquina(),
+    planesDesarrollo: usePlanesDesarrollo(),
   }
 
   return (

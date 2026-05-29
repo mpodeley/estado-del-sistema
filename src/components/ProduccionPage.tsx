@@ -11,11 +11,12 @@ import {
   Line,
   CartesianGrid,
 } from 'recharts'
-import { useProduccionNeuquina, useConcesionesNeuquina } from '../hooks/useData'
+import { useProduccionNeuquina, useConcesionesNeuquina, usePlanesDesarrollo } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import FreshnessBadge from './FreshnessBadge'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 import CuencaMap from './CuencaMap'
+import PlanesDesarrolloTimeline from './PlanesDesarrolloTimeline'
 
 // Top-N selection thresholds — keep visualizations legible without truncating
 // the underlying table.
@@ -136,6 +137,7 @@ type SortKey = 'gas' | 'pet' | 'pozos' | 'gas_yoy'
 export default function ProduccionPage() {
   const state = useProduccionNeuquina()
   const concesionesState = useConcesionesNeuquina()
+  const planesState = usePlanesDesarrollo()
   const [sortKey, setSortKey] = useState<SortKey>('gas')
 
   const rows = state.data ?? []
@@ -475,6 +477,20 @@ export default function ProduccionPage() {
             datos.energia.gob.ar — Capítulo IV
           </a>.
         </p>
+      </div>
+
+      <div style={{ ...card, marginTop: space.xl }}>
+        <h3 style={sectionTitle}>Planes de desarrollo anunciados</h3>
+        {planesState.loading ? (
+          <SkeletonBlock height={120} />
+        ) : planesState.error || !planesState.data ? (
+          <div style={{ color: colors.textMuted, fontSize: 13 }}>
+            No se pudo cargar planes_desarrollo.json
+            {planesState.error ? `: ${planesState.error.message}` : '.'}
+          </div>
+        ) : (
+          <PlanesDesarrolloTimeline planes={planesState.data} />
+        )}
       </div>
     </>
   )

@@ -184,6 +184,19 @@ export interface ProduccionMes {
 }
 export const useProduccionNeuquina = () => useJson<ProduccionMes[]>('./data/produccion_neuquina.json')
 
+export interface PlanDesarrollo {
+  id: string
+  operador: string
+  titulo: string
+  fecha_anuncio: string                  // YYYY or YYYY-MM
+  horizonte: string | null               // e.g. "2024-2028"
+  monto_usd_millones: number | null
+  categoria: 'estrategia' | 'upstream' | 'midstream' | 'infraestructura' | 'M&A' | 'desinversión' | string
+  comentario: string
+  fuente_url: string
+}
+export const usePlanesDesarrollo = () => useJson<PlanDesarrollo[]>('./data/planes_desarrollo.json')
+
 export interface ConcesionFeature {
   type: 'Feature'
   properties: {

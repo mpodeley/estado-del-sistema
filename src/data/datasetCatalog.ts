@@ -43,6 +43,7 @@ export type FreshnessKey =
   | 'smn'
   | 'megsa'
   | 'capiv'
+  | 'planesDesarrollo'
 
 export const CATALOG: DatasetEntry[] = [
   {
@@ -297,6 +298,33 @@ export const CATALOG: DatasetEntry[] = [
         purpose: 'Stremea los CSV anuales de CKAN, filtra cuenca=NEUQUINA, agrega por bloque+operador+mes y upserta por mes.',
       },
     ],
+  },
+  {
+    id: 'concesiones_neuquina',
+    name: 'Secretaría de Energía — Polígonos de concesiones (Cuenca Neuquina)',
+    shortDescription:
+      'Shapefile nacional de concesiones de explotación hidrocarburífera filtrado por bounding box a Cuenca Neuquina. 160 polígonos con nombre, código, operador e interesados. One-shot — se refresca a mano cuando SE publica una nueva versión (cambios de geometría son raros).',
+    kind: 'auto',
+    frequency: 'One-shot (refresh manual)',
+    sourceUrl: 'https://datos.energia.gob.ar/dataset/produccion-hidrocarburos-concesiones-de-explotacion',
+    jsonPath: './data/concesiones_neuquina.geojson',
+    scripts: [
+      {
+        file: 'scripts/fetch_concesiones_geojson.py',
+        purpose: 'Descarga el SHP, lo convierte a GeoJSON y filtra por bbox Neuquina con pyshp.',
+      },
+    ],
+  },
+  {
+    id: 'planes_desarrollo',
+    name: 'Planes de desarrollo Neuquina (curación manual)',
+    shortDescription:
+      'Anuncios públicos curados a mano de planes de inversión upstream y midstream relevantes para Cuenca Neuquina: YPF Plan 4x4, Vista 2026-28, Tecpetrol, Pluspetrol-Exxon, VMOS, GNL Argentina, etc. Cada entrada incluye link a la fuente.',
+    kind: 'manual',
+    frequency: 'Manual',
+    jsonPath: './data/planes_desarrollo.json',
+    freshnessKey: 'planesDesarrollo',
+    scripts: [],
   },
   {
     id: 'daily',
