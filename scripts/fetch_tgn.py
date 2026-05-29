@@ -27,6 +27,9 @@ STATE_PATH = os.path.join(RAW_DIR, 'tgn_state.json')
 
 BASE_URL = os.environ.get('TGN_BASE_URL', 'https://abii.tgn.com.ar/')
 LOGIN_PATH = 'pages/login.xhtml'
+# A path that requires auth — used both as a probe (to detect whether
+# the session is still valid) and as the landing page after login.
+PROBE_PATH = 'pages/home.xhtml'
 
 
 def env_credentials():
@@ -38,20 +41,11 @@ def env_credentials():
 def login(page, user, pw):
     """Drive the JSF login form. The form id is `loginFormId` and the
     inputs are `loginFormId:username` and `loginFormId:password`."""
-    page.goto(BASE_URL + LOGIN_PATH, wait_until='domcontentloaded')
     page.fill('input[id="loginFormId:username"]', user)
     page.fill('input[id="loginFormId:password"]', pw)
-    # Submit by clicking the labelled login button. PrimeFaces wires it
-    # through AJAX postback so we wait for the navigation to settle.
     page.click('button[id^="loginFormId:"][type="submit"], '
                'input[id^="loginFormId:"][type="submit"]')
     page.wait_for_load_state('networkidle')
-
-
-def session_is_valid(page):
-    """Heuristic: a session is valid if the current URL is no longer on
-    the login page."""
-    return 'login.xhtml' not in (page.url or '')
 
 
 def run():
@@ -75,15 +69,21 @@ def run():
         page = context.new_page()
 
         try:
-            page.goto(BASE_URL, wait_until='domcontentloaded')
-            if not session_is_valid(page):
-                print('fetch_tgn: session missing or expired, logging in')
+            # Probe a protected path. If it redirects to the login form
+            # the session is missing/expired and we authenticate inline;
+            # the form action posts to the same URL and lands us back on
+            # the protected page on success.
+            page.goto(BASE_URL + PROBE_PATH, wait_until='domcontentloaded')
+            if 'login.xhtml' in page.url:
+                print(f'fetch_tgn: session missing, logging in (probe={page.url})')
                 login(page, user, pw)
-                if not session_is_valid(page):
-                    print('fetch_tgn: login appears to have failed '
+                if 'login.xhtml' in page.url:
+                    print('fetch_tgn: login failed — still on login page '
                           f'(url={page.url})', file=sys.stderr)
                     return 1
                 context.storage_state(path=STATE_PATH)
+            else:
+                print(f'fetch_tgn: existing session is valid (probe url={page.url})')
 
             print(f'fetch_tgn: logged in, landing url={page.url}')
             print(f'fetch_tgn: timestamp={datetime.now(timezone.utc).isoformat()}')
