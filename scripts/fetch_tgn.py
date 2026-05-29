@@ -221,30 +221,45 @@ def scrape_nominaciones(page):
     print(f'fetch_tgn: nominaciones dia={dia_operativo!r} '
           f'gasoducto={gasoducto_focus!r}')
 
+    # Snapshot table IDs *before* the postback to detect what changed.
+    before_ids = page.eval_on_selector_all(
+        'table', 'els => els.map(t => t.id)',
+    )
     try:
         page.click('button[id="formulario:btnSearch"]')
     except Exception as e:
         print(f'fetch_tgn: click Buscar failed: {e}', file=sys.stderr)
         return
-
-    # The result panel for nominaciones tends to be named differently
-    # per page — wait for any AJAX activity to settle then look for a
-    # data table that wasn't there before. Pulling every table whose
-    # ID isn't a known filter/header lets us cope with the page's
-    # naming choice without re-running discovery.
     try:
         page.wait_for_load_state('networkidle', timeout=45000)
     except Exception:
         pass
 
-    error_text = page.eval_on_selector_all(
-        '.ui-messages-error li, .ui-growl-message-error, '
-        '[id="formulario:panelFiltroMessage"] .ui-message-error',
-        'els => els.map(e => (e.textContent || "").trim()).filter(Boolean)',
+    # Anything that surfaced after the click is either the result, an
+    # inline validation message, or a growl. Cast a wide net so we see
+    # whatever appeared.
+    after_ids = page.eval_on_selector_all(
+        'table', 'els => els.map(t => t.id)',
     )
+    new_ids = [i for i in after_ids if i not in before_ids]
+    print(f'fetch_tgn: post-submit DOM delta — new table ids: {new_ids[:10]}')
+
+    all_messages = page.eval_on_selector_all(
+        '.ui-message, .ui-messages li, .ui-growl-message, '
+        '.ui-fileupload-content .ui-messages, span.ui-message-error-detail',
+        """els => els.map(e => ({
+            cls: e.className.slice(0,80),
+            text: (e.textContent || '').trim().slice(0,200)
+        })).filter(m => m.text)""",
+    )
+    if all_messages:
+        print(f'fetch_tgn: nominaciones server messages:')
+        for m in all_messages[:8]:
+            print(f"  cls={m.get('cls')!r} text={m.get('text')!r}")
+
+    error_text = [m.get('text') for m in all_messages
+                  if 'error' in (m.get('cls') or '').lower()]
     if error_text:
-        print(f'fetch_tgn: nominaciones server error(s): {error_text[:3]}',
-              file=sys.stderr)
         _save_nominaciones([], dia_operativo, gasoducto_focus, [], error_text)
         return
 
