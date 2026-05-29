@@ -119,6 +119,26 @@ def run():
             print('--- DISCOVERY: iframes ---')
             for fr in page.frames:
                 print(f"  frame name={fr.name!r} url={fr.url!r}")
+            print('--- DISCOVERY: raw HTML head ---')
+            html = page.content()
+            print(html[:4000])
+            print(f'--- DISCOVERY: total HTML length={len(html)} ---')
+            # Probe common post-login paths to see which ones respond
+            # without redirecting back to login.
+            print('--- DISCOVERY: probing common paths ---')
+            for path in [
+                'pages/home.xhtml', 'pages/main.xhtml', 'pages/menu.xhtml',
+                'pages/index.xhtml', 'pages/inicio.xhtml',
+                'pages/principal.xhtml', 'home.xhtml', 'main.xhtml',
+            ]:
+                try:
+                    resp = page.goto(BASE_URL + path, wait_until='domcontentloaded', timeout=10000)
+                    final = page.url
+                    status = resp.status if resp else 'no-response'
+                    redirected = 'login.xhtml' in final
+                    print(f"  {path}: status={status} final={final} redirected_to_login={redirected}")
+                except Exception as e:
+                    print(f"  {path}: error {type(e).__name__}: {str(e)[:120]}")
             print('--- DISCOVERY: end ---')
         finally:
             browser.close()
