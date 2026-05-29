@@ -11,7 +11,7 @@ import {
   Line,
   CartesianGrid,
 } from 'recharts'
-import { useProduccionNeuquina, useConcesionesNeuquina, usePlanesDesarrollo } from '../hooks/useData'
+import { useProduccionNeuquina, useProduccionHistorico, useConcesionesNeuquina, usePlanesDesarrollo } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import FreshnessBadge from './FreshnessBadge'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
@@ -136,6 +136,7 @@ type SortKey = 'gas' | 'pet' | 'pozos' | 'gas_yoy'
 
 export default function ProduccionPage() {
   const state = useProduccionNeuquina()
+  const historicoState = useProduccionHistorico()
   const concesionesState = useConcesionesNeuquina()
   const planesState = usePlanesDesarrollo()
   const [sortKey, setSortKey] = useState<SortKey>('gas')
@@ -328,7 +329,12 @@ export default function ProduccionPage() {
             <code>scripts/fetch_concesiones_geojson.py</code> para generar el archivo.
           </div>
         ) : (
-          <CuencaMap concesiones={concesionesState.data} produccion={rows} latestMes={latestMes} />
+          <CuencaMap
+            concesiones={concesionesState.data}
+            produccion={rows}
+            historico={historicoState.data}
+            latestMes={latestMes}
+          />
         )}
       </div>
 

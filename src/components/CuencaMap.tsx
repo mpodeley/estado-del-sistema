@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { colors, radius, space } from '../theme'
-import type { ConcesionesCollection, ConcesionFeature, ProduccionMes } from '../hooks/useData'
+import type {
+  ConcesionesCollection,
+  ConcesionFeature,
+  ProduccionMes,
+  ProduccionHistoricoRow,
+} from '../hooks/useData'
 
 // Cuenca Neuquina viewport (lon/lat). Tight crop around the productive area —
 // includes the dry margin to the west so the visible polygon shapes have
@@ -51,9 +56,11 @@ function operatorColor(op: string): string {
   return OPERATOR_COLORS[op] ?? FALLBACK
 }
 
-// 7-step sequential heatmap (cool → hot). Used for both density modes.
-const HEAT_PALETTE = ['#1e293b', '#3b82f6', '#06b6d4', '#10b981', '#fbbf24', '#f97316', '#ef4444']
-const NO_DATA = '#374151'
+// 7-step monochromatic heatmap (single warm hue: dark brown → amber). Reads
+// well on the dark dashboard background and avoids the "rainbow" confusion
+// the multi-hue palette was causing.
+const HEAT_PALETTE = ['#451a03', '#7c2d12', '#9a3412', '#c2410c', '#ea580c', '#f97316', '#fbbf24']
+const NO_DATA = '#334155'
 
 function shortOperator(name: string): string {
   return name
@@ -95,11 +102,18 @@ function polygonAreaKm2(coords: number[][][][]): number {
   return total
 }
 
-type Mode = 'operador' | 'productividad' | 'acumulado'
+type Mode = 'operador' | 'gas_prod' | 'pet_prod' | 'gas_acum'
+
+const M3_PER_BBL = 6.2898   // industry conversion: 1 m³ ≈ 6.2898 bbl
 
 interface Props {
   concesiones: ConcesionesCollection
   produccion: ProduccionMes[]
+  /** Optional lifetime cumulative per (area, empresa). When provided, the
+   *  "Acumulado" mode uses this — covers Cap IV history since 2006. When
+   *  absent, the mode falls back to summing the months present in
+   *  `produccion` (typically just the last 2 years). */
+  historico?: ProduccionHistoricoRow[] | null
   latestMes: string | null
 }
 
@@ -107,14 +121,16 @@ interface ProjectedFeature {
   feature: ConcesionFeature
   ringStrings: string[]
   areaKm2: number
-  // Bucketed gas density values for fast lookup at render time.
-  // gasDailyMMm3PerKm2: latest-month gas in MMm³/d divided by area.
-  // gasTotalMMm3PerKm2: cumulative gas in MMm³ across all months.
+  // Densities computed once per render in the units shown in the UI:
+  //   gasDailyDensity → mil m³/d · km⁻²  (= dam³/d/km²)
+  //   petDailyDensity → bbl/d · km⁻²
+  //   gasTotalDensity → MMm³ · km⁻²       (lifetime, when historico available)
   gasDailyDensity: number
+  petDailyDensity: number
   gasTotalDensity: number
 }
 
-export default function CuencaMap({ concesiones, produccion, latestMes }: Props) {
+export default function CuencaMap({ concesiones, produccion, historico, latestMes }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null)
   const [mode, setMode] = useState<Mode>('operador')
   // View state: scale + pan offset (in viewBox units relative to base center).
@@ -168,7 +184,45 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
   }, [produccion, latestMes])
 
   const daysInLatest = latestMes ? daysInMonth(latestMes) : 30
-  const monthsCovered = useMemo(() => new Set(produccion.map((r) => r.mes)).size, [produccion])
+  const monthsCoveredRecent = useMemo(() => new Set(produccion.map((r) => r.mes)).size, [produccion])
+
+  // Lifetime cumulative gas per block (preferring historico file when present).
+  const totalByArea = useMemo(() => {
+    const m = new Map<string, { gas: number; primer: string | null; ultimo: string | null; meses: number }>()
+    if (historico && historico.length > 0) {
+      for (const r of historico) {
+        const key = (r.area || '').trim().toUpperCase()
+        const slot = m.get(key) ?? { gas: 0, primer: null, ultimo: null, meses: 0 }
+        slot.gas += r.gas_acumulado_mm3
+        slot.meses = Math.max(slot.meses, r.meses_activos)
+        if (!slot.primer || (r.primer_mes && r.primer_mes < slot.primer)) slot.primer = r.primer_mes
+        if (!slot.ultimo || (r.ultimo_mes && r.ultimo_mes > slot.ultimo)) slot.ultimo = r.ultimo_mes
+        m.set(key, slot)
+      }
+    } else {
+      for (const r of produccion) {
+        const key = (r.area || '').trim().toUpperCase()
+        const slot = m.get(key) ?? { gas: 0, primer: null, ultimo: null, meses: 0 }
+        slot.gas += r.prod_gas_mm3
+        if (!slot.primer || r.mes < slot.primer) slot.primer = r.mes
+        if (!slot.ultimo || r.mes > slot.ultimo) slot.ultimo = r.mes
+        slot.meses += 1
+        m.set(key, slot)
+      }
+    }
+    return m
+  }, [historico, produccion])
+
+  const historicoRango = useMemo(() => {
+    if (!historico || historico.length === 0) return null
+    let primer: string | null = null
+    let ultimo: string | null = null
+    for (const r of historico) {
+      if (r.primer_mes && (!primer || r.primer_mes < primer)) primer = r.primer_mes
+      if (r.ultimo_mes && (!ultimo || r.ultimo_mes > ultimo)) ultimo = r.ultimo_mes
+    }
+    return primer && ultimo ? { primer, ultimo } : null
+  }, [historico])
 
   const projected = useMemo<ProjectedFeature[]>(() => {
     return concesiones.features.map((f) => {
@@ -185,32 +239,42 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
         ringStrings.push(pts)
       }
       const areaKm2 = polygonAreaKm2(f.geometry.coordinates)
-      const prod = prodByArea.get((f.properties.nombre || '').trim().toUpperCase())
-      const dailyMMm3 = prod ? prod.latestGas / daysInLatest : 0
+      const nombreKey = (f.properties.nombre || '').trim().toUpperCase()
+      const prod = prodByArea.get(nombreKey)
+      // dailyGasDam3 = MMm³ × 1000 → dam³ (= mil m³). Easier to read at the
+      // density scale than fractions of MMm³.
+      const dailyGasDam3 = prod ? (prod.latestGas / daysInLatest) * 1000 : 0
+      const dailyPetBbl = prod ? (prod.latestPet * M3_PER_BBL) / daysInLatest : 0
+      const totalGas = totalByArea.get(nombreKey)?.gas ?? 0
       return {
         feature: f,
         ringStrings,
         areaKm2,
-        gasDailyDensity: areaKm2 > 0 ? dailyMMm3 / areaKm2 : 0,
-        gasTotalDensity: areaKm2 > 0 && prod ? prod.totalGas / areaKm2 : 0,
+        gasDailyDensity: areaKm2 > 0 ? dailyGasDam3 / areaKm2 : 0,
+        petDailyDensity: areaKm2 > 0 ? dailyPetBbl / areaKm2 : 0,
+        gasTotalDensity: areaKm2 > 0 ? totalGas / areaKm2 : 0,
       }
     })
-  }, [concesiones, prodByArea, daysInLatest])
+  }, [concesiones, prodByArea, totalByArea, daysInLatest])
 
-  // Quantile thresholds for the heatmap (one per palette step).
+  // Quantile thresholds for the heatmap (one per palette step) — one set per
+  // density mode so each gets its own legible scale.
   const heatBins = useMemo(() => {
-    const valuesDaily = projected.map((p) => p.gasDailyDensity).filter((v) => v > 0).sort((a, b) => a - b)
-    const valuesTotal = projected.map((p) => p.gasTotalDensity).filter((v) => v > 0).sort((a, b) => a - b)
     const quantiles = (arr: number[]): number[] => {
-      if (arr.length === 0) return []
+      const sorted = arr.filter((v) => v > 0).sort((a, b) => a - b)
+      if (sorted.length === 0) return []
       const out: number[] = []
       for (let i = 1; i < HEAT_PALETTE.length; i++) {
-        const idx = Math.floor((i * arr.length) / HEAT_PALETTE.length)
-        out.push(arr[Math.min(idx, arr.length - 1)])
+        const idx = Math.floor((i * sorted.length) / HEAT_PALETTE.length)
+        out.push(sorted[Math.min(idx, sorted.length - 1)])
       }
       return out
     }
-    return { daily: quantiles(valuesDaily), total: quantiles(valuesTotal) }
+    return {
+      gas_prod: quantiles(projected.map((p) => p.gasDailyDensity)),
+      pet_prod: quantiles(projected.map((p) => p.petDailyDensity)),
+      gas_acum: quantiles(projected.map((p) => p.gasTotalDensity)),
+    }
   }, [projected])
 
   function densityColor(value: number, bins: number[]): string {
@@ -324,10 +388,21 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
   }
 
   // ----- mode-specific fill color -----
+  function valueForMode(p: ProjectedFeature): number {
+    if (mode === 'gas_prod') return p.gasDailyDensity
+    if (mode === 'pet_prod') return p.petDailyDensity
+    if (mode === 'gas_acum') return p.gasTotalDensity
+    return 0
+  }
+  function binsForMode(): number[] {
+    if (mode === 'gas_prod') return heatBins.gas_prod
+    if (mode === 'pet_prod') return heatBins.pet_prod
+    if (mode === 'gas_acum') return heatBins.gas_acum
+    return []
+  }
   function fillFor(p: ProjectedFeature): string {
     if (mode === 'operador') return operatorColor(p.feature.properties.operador)
-    if (mode === 'productividad') return densityColor(p.gasDailyDensity, heatBins.daily)
-    return densityColor(p.gasTotalDensity, heatBins.total)
+    return densityColor(valueForMode(p), binsForMode())
   }
 
   return (
@@ -350,8 +425,14 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
           {(
             [
               { id: 'operador', label: 'Operador' },
-              { id: 'productividad', label: `Productividad (MMm³/d · km⁻²)` },
-              { id: 'acumulado', label: `Acumulado (MMm³ · km⁻²)` },
+              { id: 'gas_prod', label: 'Productividad gas' },
+              { id: 'pet_prod', label: 'Productividad petróleo' },
+              {
+                id: 'gas_acum',
+                label: historicoRango
+                  ? `Acumulado gas ${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
+                  : 'Acumulado gas',
+              },
             ] as const
           ).map((m) => (
             <button key={m.id} onClick={() => setMode(m.id)} style={modeBtn(mode === m.id)}>
@@ -381,13 +462,10 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
             userSelect: 'none',
           }}
         >
-          {projected.map(({ feature, ringStrings, gasDailyDensity, gasTotalDensity }) => {
+          {projected.map((p) => {
+            const { feature, ringStrings } = p
             const op = feature.properties.operador
-            const fill = (() => {
-              if (mode === 'operador') return operatorColor(op)
-              if (mode === 'productividad') return densityColor(gasDailyDensity, heatBins.daily)
-              return densityColor(gasTotalDensity, heatBins.total)
-            })()
+            const fill = fillFor(p)
             const isPlus = op.startsWith('PLUSPETROL')
             const isHover = hoverId === feature.properties.id
             const stroke = isHover ? '#f1f5f9' : isPlus ? '#10b981' : '#0b1220'
@@ -463,10 +541,16 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
                 </div>
                 <div>Pozos activos: <strong>{hoveredProd.pozos}</strong></div>
                 <div style={{ color: colors.textDim, fontSize: 11, marginTop: 4 }}>
-                  Área: {hovered.areaKm2.toFixed(0)} km² · Productividad: {hovered.gasDailyDensity.toFixed(4)} MMm³/d·km⁻²
+                  Área: {hovered.areaKm2.toFixed(0)} km²
                 </div>
                 <div style={{ color: colors.textDim, fontSize: 11 }}>
-                  Acumulado {monthsCovered}m: {hovered.gasTotalDensity.toFixed(2)} MMm³·km⁻²
+                  Gas: {hovered.gasDailyDensity.toFixed(2)} mil m³/d·km⁻² · Petróleo: {hovered.petDailyDensity.toFixed(0)} bbl/d·km⁻²
+                </div>
+                <div style={{ color: colors.textDim, fontSize: 11 }}>
+                  Acumulado {historico && historico.length > 0 ? '(histórico)' : `(${monthsCoveredRecent}m)`}: {hovered.gasTotalDensity.toFixed(2)} MMm³·km⁻²
+                  {totalByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase())?.primer && (
+                    <span> · desde {totalByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase())!.primer}</span>
+                  )}
                 </div>
                 {hoveredProd.empresas.length > 1 && (
                   <div style={{ color: colors.textDim, fontSize: 11, marginTop: 2 }}>
@@ -503,8 +587,16 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
         </div>
       ) : (
         <HeatLegend
-          bins={mode === 'productividad' ? heatBins.daily : heatBins.total}
-          unit={mode === 'productividad' ? 'MMm³/d · km⁻²' : `MMm³ · km⁻² (${monthsCovered}m)`}
+          bins={binsForMode()}
+          unit={
+            mode === 'gas_prod'
+              ? 'mil m³/d · km⁻²'
+              : mode === 'pet_prod'
+              ? 'bbl/d · km⁻²'
+              : historicoRango
+              ? `MMm³ · km⁻² (${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)})`
+              : `MMm³ · km⁻² (${monthsCoveredRecent}m)`
+          }
         />
       )}
 

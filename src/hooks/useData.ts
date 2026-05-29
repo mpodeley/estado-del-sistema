@@ -184,6 +184,19 @@ export interface ProduccionMes {
 }
 export const useProduccionNeuquina = () => useJson<ProduccionMes[]>('./data/produccion_neuquina.json')
 
+export interface ProduccionHistoricoRow {
+  area: string
+  empresa: string
+  gas_acumulado_mm3: number             // MMm³ desde el primer registro disponible
+  pet_acumulado_m3: number
+  agua_acumulada_m3: number
+  primer_mes: string | null             // YYYY-MM
+  ultimo_mes: string | null
+  meses_activos: number
+  anios_cubiertos: number[]
+}
+export const useProduccionHistorico = () => useJson<ProduccionHistoricoRow[]>('./data/produccion_neuquina_historico.json')
+
 export interface PlanDesarrollo {
   id: string
   operador: string
