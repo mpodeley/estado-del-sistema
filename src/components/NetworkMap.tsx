@@ -191,14 +191,13 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
   )
   const { svgRef, viewBox, scale, isDragging, handlers, zoomIn, zoomOut, reset } = useMapPanZoom(baseVB)
 
-  // Stroke/font scale tuned for the SVG being rendered around 560 px wide —
-  // viewBox units are Mercator metres, so multipliers look weirdly large.
-  // Divide by the zoom scale so strokes and labels keep a constant size on
-  // screen as the user zooms in.
-  const strokeBase = Math.min(width, height) * 0.015
-  const fontScale = Math.min(width, height) * 0.18
-  const sStroke = strokeBase / scale
-  const sFont = fontScale / scale
+  // Size everything (bubbles, strokes, labels) in *screen pixels* rather than
+  // Mercator units, so a max bubble size and min text size are meaningful. The
+  // SVG renders at ~DISPLAY_W px wide with a uniform fit, so a screen size of
+  // `n` px ≈ `n * width / DISPLAY_W` viewBox units. Dividing by the zoom scale
+  // keeps elements a constant size on screen as the user zooms.
+  const DISPLAY_W = 560
+  const px = (n: number) => (n * width) / (scale * DISPLAY_W)
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
@@ -236,14 +235,14 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         volMMm3Day: v / 1000 / 30,
         tgnMMm3Day: s.tgn / 1000 / 30,
         tgsMMm3Day: s.tgs / 1000 / 30,
-        // Smaller than before (was 4 + 18*sqrt, capped here so bubbles don't
-        // swallow pipelines/labels at default zoom).
-        r: Math.min(strokeBase * (3 + 9 * Math.sqrt(v / max)), strokeBase * 12),
+        // Radius in screen px (converted to viewBox units at render time).
+        // Hard cap so the biggest cuenca never swallows the map.
+        radiusPx: Math.min(8 + 14 * Math.sqrt(v / max), 22),
         x,
         y,
       }
     })
-  }, [monthly, strokeBase])
+  }, [monthly])
 
   // ----- distribuidora bubbles from GED (authoritative monthly consumption) -----
   const distBubbles = useMemo(() => {
@@ -271,10 +270,11 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         y,
         gedDam3Month: v,
         gedMMm3Day: perDay,
-        r: Math.min(strokeBase * (2 + 7 * Math.sqrt(v / max)), strokeBase * 9),
+        // Radius in screen px (converted at render time); capped.
+        radiusPx: Math.min(6 + 10 * Math.sqrt(v / max), 16),
       }
     })
-  }, [distribuidoras, monthly, strokeBase])
+  }, [distribuidoras, monthly])
 
   const nodesById = useMemo(
     () => Object.fromEntries(network.nodes.map((n) => [n.nodeId, n])),
@@ -315,7 +315,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               points={poly.map((v) => `${v.x},${-v.y}`).join(' ')}
               fill="#1e293b"
               stroke="#334155"
-              strokeWidth={sStroke * 0.7}
+              strokeWidth={px(0.7)}
             />
           ))}
 
@@ -339,7 +339,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     fillOpacity={isHover ? 0.35 : 0.15}
                     stroke={color}
                     strokeOpacity={isHover ? 0.8 : 0.35}
-                    strokeWidth={sStroke * (isHover ? 0.6 : 0.25)}
+                    strokeWidth={px(isHover ? 0.8 : 0.4)}
                   />
                 ))}
               </g>
@@ -354,7 +354,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             const operator: Operator = OPERATOR_BY_GASODUCTO[e.gasoducto] ?? 'Otro'
             const color = hasStress ? utilizationColor(util) : OPERATOR_COLORS[operator]
             const caudal = Math.abs(e.latest_caudal ?? 0)
-            const w = sStroke * (0.8 + 3.0 * (caudal / maxCaudal))
+            const w = px(1.3 + 5.0 * (caudal / maxCaudal))
             const isHover = hover?.edgeId === e.edgeId
             const isDim = hover && !isHover
             return (
@@ -379,7 +379,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   x2={e.xDestino}
                   y2={-e.yDestino}
                   stroke="transparent"
-                  strokeWidth={Math.max(w * 3, sStroke * 2)}
+                  strokeWidth={Math.max(w * 3, px(8))}
                 />
               </g>
             )
@@ -392,19 +392,19 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               : role === 'sink_proxy' ? '#60a5fa'
               : role === 'inactive' ? '#475569'
               : '#94a3b8'
-            const r = (role === 'source_proxy' ? sStroke * 1.6 : role === 'sink_proxy' ? sStroke * 1.3 : sStroke * 0.9)
+            const r = px(role === 'source_proxy' ? 3 : role === 'sink_proxy' ? 2.4 : 1.6)
             const labeled = ALWAYS_LABELED.has(n.nombre)
             return (
               <g key={n.nodeId}>
-                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={sStroke * 0.3} />
+                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={px(0.5)} />
                 {labeled && (
                   <text
-                    x={n.x + sStroke * 2.2}
-                    y={-n.y + sFont * 0.3}
-                    fontSize={sFont * 0.95}
+                    x={n.x + px(4)}
+                    y={-n.y + px(3.5)}
+                    fontSize={px(11)}
                     fill={colors.textSecondary}
                     stroke="#0b1220"
-                    strokeWidth={sFont * 0.15}
+                    strokeWidth={px(1.4)}
                     paintOrder="stroke"
                     fontWeight={500}
                   >
@@ -420,7 +420,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               always shown to orient; volume + split only on hover. */}
           {cuencaData.map((c) => {
             const isHover = hoverCuenca === c.id
-            const rr = c.r / scale
+            const rr = px(c.radiusPx)
             const cy = -c.y
             const op = isHover ? 0.6 : 0.32
             const isSplit = c.tgn > 0 && c.tgs > 0
@@ -440,14 +440,14 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                       fill={OPERATOR_COLORS.TGS}
                       fillOpacity={op}
                       stroke="#0b1220"
-                      strokeWidth={sStroke * 0.4}
+                      strokeWidth={px(0.6)}
                     />
                     <path
                       d={pieWedgePath(c.x, cy, rr, tgsEnd, -Math.PI / 2 + 2 * Math.PI)}
                       fill={OPERATOR_COLORS.TGN}
                       fillOpacity={op}
                       stroke="#0b1220"
-                      strokeWidth={sStroke * 0.4}
+                      strokeWidth={px(0.6)}
                     />
                   </>
                 ) : (
@@ -458,17 +458,17 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     fill={c.tgs > 0 ? OPERATOR_COLORS.TGS : OPERATOR_COLORS.TGN}
                     fillOpacity={op}
                     stroke="#0b1220"
-                    strokeWidth={sStroke * 0.4}
+                    strokeWidth={px(0.6)}
                   />
                 )}
                 <text
                   x={c.x}
-                  y={cy - rr - sFont * 0.35}
-                  fontSize={sFont * 1.3}
+                  y={cy - rr - px(4)}
+                  fontSize={px(13)}
                   fill={colors.textPrimary}
                   textAnchor="middle"
                   stroke="#0b1220"
-                  strokeWidth={sFont * 0.16}
+                  strokeWidth={px(1.6)}
                   paintOrder="stroke"
                   fontWeight={700}
                 >
@@ -478,12 +478,12 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   <>
                     <text
                       x={c.x}
-                      y={cy + sFont * 0.45}
-                      fontSize={sFont * 0.95}
+                      y={cy + rr + px(11)}
+                      fontSize={px(12)}
                       fill={colors.textPrimary}
                       textAnchor="middle"
                       stroke="#0b1220"
-                      strokeWidth={sFont * 0.15}
+                      strokeWidth={px(1.5)}
                       paintOrder="stroke"
                       fontWeight={700}
                     >
@@ -492,12 +492,12 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     {isSplit && (
                       <text
                         x={c.x}
-                        y={cy + sFont * 1.5}
-                        fontSize={sFont * 0.8}
+                        y={cy + rr + px(22)}
+                        fontSize={px(10)}
                         fill={colors.textSecondary}
                         textAnchor="middle"
                         stroke="#0b1220"
-                        strokeWidth={sFont * 0.12}
+                        strokeWidth={px(1.2)}
                         paintOrder="stroke"
                         fontWeight={600}
                       >
@@ -515,7 +515,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           {distBubbles.map((b) => {
             const color = DIST_COLORS[b.id] ?? '#475569'
             const isHover = hoverDist === b.id
-            const rr = b.r / scale
+            const rr = px(b.radiusPx)
             return (
               <g
                 key={b.id}
@@ -530,18 +530,18 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   fill={color}
                   fillOpacity={isHover ? 0.75 : 0.5}
                   stroke={color}
-                  strokeWidth={sStroke * 0.4}
+                  strokeWidth={px(0.6)}
                 />
                 {isHover && (
                   <>
                     <text
                       x={b.x}
-                      y={-b.y - sFont * 0.2}
-                      fontSize={sFont * 0.95}
+                      y={-b.y - rr - px(3)}
+                      fontSize={px(11)}
                       fill={colors.textPrimary}
                       textAnchor="middle"
                       stroke="#0b1220"
-                      strokeWidth={sFont * 0.15}
+                      strokeWidth={px(1.4)}
                       paintOrder="stroke"
                       fontWeight={700}
                     >
@@ -549,12 +549,12 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     </text>
                     <text
                       x={b.x}
-                      y={-b.y + sFont * 0.7}
-                      fontSize={sFont * 0.75}
+                      y={-b.y + rr + px(10)}
+                      fontSize={px(9.5)}
                       fill={colors.textSecondary}
                       textAnchor="middle"
                       stroke="#0b1220"
-                      strokeWidth={sFont * 0.12}
+                      strokeWidth={px(1.2)}
                       paintOrder="stroke"
                       fontWeight={600}
                     >
