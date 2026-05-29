@@ -19,10 +19,14 @@ added in Phase 2 once we've mapped the portal's pages and selectors.
 
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 RAW_DIR = os.path.join(ROOT, 'raw')
+OUT_DIR = os.path.join(ROOT, 'public', 'data')
 STATE_PATH = os.path.join(RAW_DIR, 'tgn_state.json')
 
 BASE_URL = os.environ.get('TGN_BASE_URL', 'https://abii.tgn.com.ar/')
@@ -30,6 +34,8 @@ LOGIN_PATH = 'pages/login.xhtml'
 # A path that requires auth — used both as a probe (to detect whether
 # the session is still valid) and as the landing page after login.
 PROBE_PATH = 'pages/home.xhtml'
+
+SYSTEM_STATE_PATH = 'pages/reports/system_state/system-state-report.xhtml'
 
 
 def env_credentials():
@@ -46,6 +52,110 @@ def login(page, user, pw):
     page.click('button[id^="loginFormId:"][type="submit"], '
                'input[id^="loginFormId:"][type="submit"]')
     page.wait_for_load_state('networkidle')
+
+
+def scrape_system_state(page):
+    """Open the Estado del Sistema report with ayer→hoy as the date
+    range and 'all gasoductos' as the selection, then extract the
+    resulting table into tgn_system_state.json.
+
+    The page is server-rendered JSF. Filters live on a fixed-id form
+    'formulario:'; date pickers use PrimeFaces calendar widgets and
+    the gasoducto multi-select is a checkbox-style widget. We submit
+    by clicking the 'Ver reporte' button and wait for the AJAX
+    postback to settle before reading the result table.
+    """
+    today = datetime.now(timezone.utc).date()
+    yesterday = today - timedelta(days=1)
+    desde = yesterday.strftime('%d/%m/%Y')
+    hasta = today.strftime('%d/%m/%Y')
+    print(f'fetch_tgn: system_state range {desde} -> {hasta}')
+
+    try:
+        page.goto(BASE_URL + SYSTEM_STATE_PATH, wait_until='networkidle', timeout=30000)
+    except Exception as e:
+        print(f'fetch_tgn: failed to open system_state: {e}', file=sys.stderr)
+        return
+
+    # PrimeFaces calendar: the visible input has id ..._input. Fill it
+    # directly and dispatch a change event so the framework picks it up.
+    for fid, value in [
+        ('formulario:report_fecha_desde_id_input', desde),
+        ('formulario:report_fecha_hasta_id_input', hasta),
+    ]:
+        try:
+            page.fill(f'input[id="{fid}"]', value)
+            page.evaluate(
+                "id => document.getElementById(id).dispatchEvent(new Event('change', {bubbles:true}))",
+                fid,
+            )
+        except Exception as e:
+            print(f'fetch_tgn: could not set {fid}: {e}', file=sys.stderr)
+
+    # Click the 'Ver reporte' button. Look it up by visible label so we
+    # don't depend on JSF-generated j_idt IDs.
+    try:
+        page.get_by_role('button', name='Ver reporte').click()
+        page.wait_for_load_state('networkidle')
+    except Exception as e:
+        print(f'fetch_tgn: failed to click Ver reporte: {e}', file=sys.stderr)
+        return
+
+    # The result lives in a table under the form. Dump every data table
+    # on the page and pick the one with the most rows that doesn't
+    # match the known filter/header panel ids.
+    tables = page.eval_on_selector_all(
+        'table',
+        """els => els.map(t => ({
+            id: t.id,
+            cls: t.className.slice(0,80),
+            rows: Array.from(t.rows).map(r =>
+                Array.from(r.cells).map(c => (c.textContent || '').trim())
+            )
+        }))""",
+    )
+    # Skip filter/header/footer tables.
+    skip_id_prefixes = ('headerForm:', 'formulario:panelFiltro',
+                        'formulario:report_panelFiltro')
+    candidates = [
+        t for t in tables
+        if not any((t.get('id') or '').startswith(p) for p in skip_id_prefixes)
+        and len(t.get('rows') or []) >= 2
+    ]
+    candidates.sort(key=lambda t: len(t.get('rows') or []), reverse=True)
+    if not candidates:
+        print('fetch_tgn: no result table found in system_state', file=sys.stderr)
+        _save_system_state([], desde, hasta, [])
+        return
+
+    best = candidates[0]
+    rows = best.get('rows') or []
+    headers = rows[0] if rows else []
+    print(f"fetch_tgn: system_state result table id={best.get('id')!r} "
+          f"{len(rows)} rows x {len(headers)} cols")
+    print(f"  headers={headers}")
+
+    data_rows = []
+    for r in rows[1:]:
+        record = {headers[i] if i < len(headers) else f'col_{i}': r[i]
+                  for i in range(len(r))}
+        data_rows.append(record)
+    _save_system_state(data_rows, desde, hasta, headers)
+
+
+def _save_system_state(rows, desde, hasta, headers):
+    out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
+    os.makedirs(OUT_DIR, exist_ok=True)
+    write_json(
+        out_path,
+        rows,
+        source='TGN ABII — Estado del Sistema',
+        source_date=hasta,
+        query={'desde': desde, 'hasta': hasta, 'gasoducto': 'TODOS'},
+        headers=headers,
+    )
+    write_csv(json_to_csv_path(out_path), rows)
+    print(f'fetch_tgn: wrote {len(rows)} rows to tgn_system_state.json')
 
 
 def run():
@@ -87,9 +197,15 @@ def run():
 
             print(f'fetch_tgn: logged in, landing url={page.url}')
             print(f'fetch_tgn: timestamp={datetime.now(timezone.utc).isoformat()}')
-            # Phase 2 reconnaissance — dump the page's nav structure to
-            # stdout so we can map sections without manual exploration.
-            # Remove once the section scrapers are in place.
+
+            # Phase 3a — Estado del Sistema report.
+            scrape_system_state(page)
+
+            # Phase 2 reconnaissance — keep behind a flag while Phase 3
+            # scrapers are still being added. Set TGN_DISCOVER=1 to run
+            # the discovery dump again.
+            if os.environ.get('TGN_DISCOVER') != '1':
+                return 0
             print('--- DISCOVERY: page title ---')
             print(page.title())
             print('--- DISCOVERY: anchors (href, text) ---')
