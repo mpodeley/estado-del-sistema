@@ -121,6 +121,10 @@ def main():
     # Keep the PPO fetcher to a short window on daily runs; backfills are
     # done manually via `fetch_cammesa_ppo.py --days N --force`.
     errors += run('fetch_cammesa_ppo.py')
+    # Cap IV (Secretaría de Energía) — monthly upstream production by block.
+    # Streams current + previous year CSVs and skips download if Last-Modified
+    # hasn't changed, so daily runs are cheap.
+    errors += run('fetch_capiv.py')
 
     # Phase 2: Parse all sources
     errors += run('parse_base_excel.py')

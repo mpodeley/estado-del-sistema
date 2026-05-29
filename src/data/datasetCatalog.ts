@@ -42,6 +42,7 @@ export type FreshnessKey =
   | 'cammesaPPO'
   | 'smn'
   | 'megsa'
+  | 'capiv'
 
 export const CATALOG: DatasetEntry[] = [
   {
@@ -276,6 +277,24 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/fetch_megsa.py',
         purpose: 'Consulta /api/hidrocarburos, /api/dolar y /api/rondas/publicadas.',
+      },
+    ],
+  },
+  {
+    id: 'capiv',
+    name: 'Secretaría de Energía — Producción upstream (Capítulo IV)',
+    shortDescription:
+      'Producción mensual gas/petróleo por pozo (Capítulo IV) que reportan las operadoras. El fetcher stremea los CSVs anuales de datos.energia.gob.ar, filtra a Cuenca Neuquina y agrega por (mes, bloque, operador) para mantener el JSON liviano. Publicación con ~60 días de lag estructural.',
+    kind: 'auto',
+    frequency: 'Mensual',
+    sourceUrl: 'https://datos.energia.gob.ar/dataset/produccion-de-petroleo-y-gas-por-pozo',
+    jsonPath: './data/produccion_neuquina.json',
+    csvPath: './data/produccion_neuquina.csv',
+    freshnessKey: 'capiv',
+    scripts: [
+      {
+        file: 'scripts/fetch_capiv.py',
+        purpose: 'Stremea los CSV anuales de CKAN, filtra cuenca=NEUQUINA, agrega por bloque+operador+mes y upserta por mes.',
       },
     ],
   },

@@ -11,6 +11,7 @@ import {
   useCammesaPPO,
   useSMNAlerts,
   useMEGSA,
+  useProduccionNeuquina,
 } from '../hooks/useData'
 import { CATALOG, DatasetEntry, DatasetKind, FreshnessKey } from '../data/datasetCatalog'
 import { REPO_ROOT, REPO_BRANCH, githubFileUrl } from '../utils/github'
@@ -185,6 +186,7 @@ export default function FuentesPage() {
     cammesaPPO: useCammesaPPO(),
     smn: useSMNAlerts(),
     megsa: useMEGSA(),
+    capiv: useProduccionNeuquina(),
   }
 
   return (

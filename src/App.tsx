@@ -4,13 +4,14 @@ import ErrorBoundary from './components/ErrorBoundary'
 import OperacionPage from './components/OperacionPage'
 import MapaPage from './components/MapaPage'
 import HistoricoPage from './components/HistoricoPage'
+import ProduccionPage from './components/ProduccionPage'
 import FuentesPage from './components/FuentesPage'
 import StatusPage from './components/StatusPage'
 import GuidePage from './components/GuidePage'
 
-type Page = 'operacion' | 'mapa' | 'historico' | 'guia' | 'fuentes' | 'status'
+type Page = 'operacion' | 'mapa' | 'historico' | 'produccion' | 'guia' | 'fuentes' | 'status'
 
-const VALID_PAGES: readonly Page[] = ['operacion', 'mapa', 'historico', 'guia', 'fuentes', 'status']
+const VALID_PAGES: readonly Page[] = ['operacion', 'mapa', 'historico', 'produccion', 'guia', 'fuentes', 'status']
 
 // Read ?tab=... from URL on first render so links like ?tab=mapa land directly
 // on that page. Also keep the query string in sync as the user navigates so the
@@ -50,6 +51,7 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
     { id: 'operacion', label: 'Operación' },
     { id: 'mapa', label: 'Mapa' },
     { id: 'historico', label: 'Histórico' },
+    { id: 'produccion', label: 'Producción' },
     { id: 'guia', label: 'Guía' },
     { id: 'fuentes', label: 'Fuentes' },
     { id: 'status', label: 'Estado' },
@@ -101,6 +103,7 @@ export default function App() {
         {page === 'operacion' && <OperacionPage />}
         {page === 'mapa' && <MapaPage />}
         {page === 'historico' && <HistoricoPage />}
+        {page === 'produccion' && <ProduccionPage />}
         {page === 'guia' && <GuidePage />}
         {page === 'fuentes' && <FuentesPage />}
         {page === 'status' && <StatusPage />}
