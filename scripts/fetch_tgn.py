@@ -36,6 +36,7 @@ LOGIN_PATH = 'pages/login.xhtml'
 PROBE_PATH = 'pages/home.xhtml'
 
 SYSTEM_STATE_PATH = 'pages/reports/system_state/system-state-report.xhtml'
+NOMINACIONES_PATH = 'pages/programacion/nominaciones/nominacion.xhtml'
 
 
 def env_credentials():
@@ -166,6 +167,10 @@ def scrape_system_state(page):
 def _save_system_state(rows, desde, hasta, headers):
     out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
     os.makedirs(OUT_DIR, exist_ok=True)
+    # Strip the literal '<br>' that pdfplumber-style textContent leaves
+    # in header keys ('Día <br>Operativo').
+    rows = [{k.replace('<br>', ' ').strip(): v for k, v in r.items()} for r in rows]
+    headers = [h.replace('<br>', ' ').strip() for h in headers]
     write_json(
         out_path,
         rows,
@@ -176,6 +181,75 @@ def _save_system_state(rows, desde, hasta, headers):
     )
     write_csv(json_to_csv_path(out_path), rows)
     print(f'fetch_tgn: wrote {len(rows)} rows to tgn_system_state.json')
+
+
+def scrape_nominaciones(page):
+    """Nominaciones page expects a 'Día Operativo' date and required
+    'Gasoducto' + 'Cargador' selects. This first pass logs the form's
+    structure (select options for Gasoducto, button IDs) so we can pin
+    down the right defaults — then submits with the first available
+    options and reads the result.
+    """
+    try:
+        page.goto(BASE_URL + NOMINACIONES_PATH, wait_until='networkidle', timeout=30000)
+    except Exception as e:
+        print(f'fetch_tgn: failed to open nominaciones: {e}', file=sys.stderr)
+        return
+
+    # Dump the form's inputs + buttons so we can map IDs without manual
+    # exploration. Phase 3b is still in reconnaissance — remove this
+    # block once the scraper consistently extracts data.
+    try:
+        page.wait_for_selector('div[id="formulario:panelFiltro"]',
+                                state='visible', timeout=15000)
+        page.wait_for_timeout(1000)
+    except Exception as e:
+        print(f'fetch_tgn: nominaciones filter panel never showed: {e}',
+              file=sys.stderr)
+        return
+
+    print('--- NOMINACIONES discovery ---')
+    inputs = page.eval_on_selector_all(
+        'input:not([type="hidden"]):not([type="submit"]), select',
+        """els => els.map(e => ({
+            tag: e.tagName.toLowerCase(),
+            type: e.type || '',
+            id: e.id,
+            name: e.getAttribute('name'),
+            value: e.value || '',
+            placeholder: e.placeholder || ''
+        }))"""
+    )
+    print(f'  {len(inputs)} input/select element(s):')
+    for i in inputs[:25]:
+        print(f"    {i.get('tag')} type={i.get('type')!r} id={i.get('id')!r} "
+              f"value={i.get('value')!r[:40]} placeholder={i.get('placeholder')!r[:30]}")
+
+    buttons = page.eval_on_selector_all(
+        'button',
+        """els => els.map(e => ({
+            id: e.id,
+            type: e.getAttribute('type'),
+            text: (e.textContent || '').trim().slice(0,40)
+        })).filter(b => b.text || b.id.includes('formulario:'))"""
+    )
+    print(f'  {len(buttons)} button(s) in form:')
+    for b in buttons[:20]:
+        print(f"    id={b.get('id')!r} text={b.get('text')!r}")
+
+    # Gasoducto select options (visible in the autocomplete dropdown).
+    try:
+        gasoducto_options = page.eval_on_selector_all(
+            'select[id="formulario:gasoducto_input"] option',
+            'els => els.map(e => ({value: e.value, text: e.textContent.trim()}))'
+        )
+        print(f'  Gasoducto options ({len(gasoducto_options)}):')
+        for o in gasoducto_options[:15]:
+            print(f"    value={o.get('value')!r} text={o.get('text')!r}")
+    except Exception as e:
+        print(f'  could not read gasoducto options: {e}')
+
+    print('--- NOMINACIONES discovery end ---')
 
 
 def run():
@@ -220,6 +294,9 @@ def run():
 
             # Phase 3a — Estado del Sistema report.
             scrape_system_state(page)
+            # Phase 3b — Nominaciones (still in discovery; logs the
+            # form's structure when no rows are extracted).
+            scrape_nominaciones(page)
 
             # Phase 2 reconnaissance — keep behind a flag while Phase 3
             # scrapers are still being added. Set TGN_DISCOVER=1 to run
