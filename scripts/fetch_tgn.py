@@ -222,8 +222,10 @@ def scrape_nominaciones(page):
     )
     print(f'  {len(inputs)} input/select element(s):')
     for i in inputs[:25]:
+        val = (i.get('value') or '')[:40]
+        ph = (i.get('placeholder') or '')[:30]
         print(f"    {i.get('tag')} type={i.get('type')!r} id={i.get('id')!r} "
-              f"value={i.get('value')!r[:40]} placeholder={i.get('placeholder')!r[:30]}")
+              f"value={val!r} placeholder={ph!r}")
 
     buttons = page.eval_on_selector_all(
         'button',
