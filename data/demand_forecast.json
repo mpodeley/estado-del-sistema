@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-29T14:03:28+00:00",
+  "generated_at": "2026-05-29T14:18:48+00:00",
   "source": "ENARGAS RDS regression (temp + day-of-week)",
   "source_date": "2026-05-29",
   "data": {
@@ -9,9 +9,9 @@
         "temp_prom": 12.8,
         "temp_max": 13.2,
         "temp_min": 12.5,
-        "prioritaria_est": 50.0,
-        "usinas_est": 30.1,
-        "industria_est": 33.6,
+        "prioritaria_est": 50.2,
+        "usinas_est": 30.0,
+        "industria_est": 33.5,
         "gnc_est": 5.9,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
@@ -48,78 +48,78 @@
         "temp_prom": 11.6,
         "temp_max": 12.7,
         "temp_min": 10.6,
-        "prioritaria_est": 52.2,
+        "prioritaria_est": 52.3,
         "usinas_est": 29.2,
         "industria_est": 33.6,
         "gnc_est": 5.5,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 131.5
+        "demanda_total_est": 131.6
       },
       {
         "fecha": "2026-06-02",
         "temp_prom": 12.0,
         "temp_max": 13.9,
         "temp_min": 10.1,
-        "prioritaria_est": 52.8,
+        "prioritaria_est": 52.9,
         "usinas_est": 29.9,
         "industria_est": 33.5,
         "gnc_est": 5.5,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 132.7
+        "demanda_total_est": 132.8
       },
       {
         "fecha": "2026-06-03",
         "temp_prom": 14.1,
         "temp_max": 15.7,
         "temp_min": 12.6,
-        "prioritaria_est": 49.3,
+        "prioritaria_est": 49.4,
         "usinas_est": 32.4,
         "industria_est": 34.0,
         "gnc_est": 5.5,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 132.2
+        "demanda_total_est": 132.3
       },
       {
         "fecha": "2026-06-04",
         "temp_prom": 14.6,
         "temp_max": 16.1,
         "temp_min": 13.1,
-        "prioritaria_est": 47.9,
+        "prioritaria_est": 48.0,
         "usinas_est": 32.7,
         "industria_est": 34.1,
         "gnc_est": 5.6,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 131.3
+        "demanda_total_est": 131.4
       },
       {
         "fecha": "2026-06-05",
         "temp_prom": 16.1,
         "temp_max": 17.4,
         "temp_min": 14.8,
-        "prioritaria_est": 40.8,
+        "prioritaria_est": 41.1,
         "usinas_est": 34.2,
         "industria_est": 34.1,
         "gnc_est": 5.8,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 125.9
+        "demanda_total_est": 126.2
       },
       {
         "fecha": "2026-06-06",
         "temp_prom": 14.5,
         "temp_max": 16.0,
         "temp_min": 13.0,
-        "prioritaria_est": 44.7,
-        "usinas_est": 29.6,
+        "prioritaria_est": 44.8,
+        "usinas_est": 29.7,
         "industria_est": 33.1,
         "gnc_est": 5.6,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 124.0
+        "demanda_total_est": 124.2
       },
       {
         "fecha": "2026-06-07",
@@ -139,26 +139,26 @@
         "temp_prom": 8.8,
         "temp_max": 10.5,
         "temp_min": 7.2,
-        "prioritaria_est": 68.4,
+        "prioritaria_est": 68.5,
         "usinas_est": 25.7,
         "industria_est": 33.1,
         "gnc_est": 5.5,
         "combustible_est": 3.9,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 143.8
+        "demanda_total_est": 143.9
       },
       {
         "fecha": "2026-06-09",
         "temp_prom": 9.7,
         "temp_max": 12.9,
         "temp_min": 6.5,
-        "prioritaria_est": 70.7,
+        "prioritaria_est": 70.8,
         "usinas_est": 27.0,
         "industria_est": 33.1,
         "gnc_est": 5.6,
         "combustible_est": 3.9,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 147.5
+        "demanda_total_est": 147.6
       },
       {
         "fecha": "2026-06-10",
@@ -166,29 +166,29 @@
         "temp_max": 12.6,
         "temp_min": 6.8,
         "prioritaria_est": 71.6,
-        "usinas_est": 26.8,
+        "usinas_est": 26.9,
         "industria_est": 33.3,
         "gnc_est": 5.6,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 148.3
+        "demanda_total_est": 148.4
       },
       {
         "fecha": "2026-06-11",
         "temp_prom": 11.6,
         "temp_max": 13.1,
         "temp_min": 10.2,
-        "prioritaria_est": 70.7,
+        "prioritaria_est": 70.8,
         "usinas_est": 29.0,
         "industria_est": 33.6,
         "gnc_est": 5.6,
         "combustible_est": 3.8,
         "exportaciones_est": 7.2,
-        "demanda_total_est": 149.9
+        "demanda_total_est": 150.0
       }
     ],
     "regression": {
-      "n_points": 757,
+      "n_points": 758,
       "features": [
         "temp_BA",
         "day_of_week"
@@ -198,37 +198,37 @@
       "baseline_exportaciones": 7.2,
       "prioritaria": {
         "label": "Prioritaria",
-        "slope": 5.519,
-        "intercept": 20.9,
+        "slope": 5.52,
+        "intercept": 21.0,
         "r2": 0.879,
-        "r2_temp_only": 0.87,
-        "n_points": 757,
+        "r2_temp_only": 0.869,
+        "n_points": 758,
         "dow_offsets": {
-          "0": 0.15,
-          "1": 1.43,
-          "2": 1.87,
-          "3": 1.63,
-          "4": 1.24,
-          "5": -1.85,
-          "6": -4.48
+          "0": 0.13,
+          "1": 1.4,
+          "2": 1.85,
+          "3": 1.6,
+          "4": 1.38,
+          "5": -1.88,
+          "6": -4.51
         },
-        "mean_abs_residual": 6.61,
+        "mean_abs_residual": 6.63,
         "x_feature": "HDD(18°C · media 10 ciudades)"
       },
       "usinas": {
         "label": "Usinas (CAMMESA)",
-        "slope": 1.257,
+        "slope": 1.258,
         "intercept": 13.3,
         "r2": 0.538,
         "r2_temp_only": 0.502,
-        "n_points": 752,
+        "n_points": 753,
         "dow_offsets": {
-          "0": 1.34,
+          "0": 1.35,
           "1": 1.51,
-          "2": 1.35,
+          "2": 1.36,
           "3": 1.07,
-          "4": 0.69,
-          "5": -1.88,
+          "4": 0.64,
+          "5": -1.87,
           "6": -4.02
         },
         "mean_abs_residual": 5.84,
@@ -240,13 +240,13 @@
         "intercept": 31.3,
         "r2": 0.186,
         "r2_temp_only": 0.15,
-        "n_points": 752,
+        "n_points": 753,
         "dow_offsets": {
           "0": 0.33,
           "1": 0.23,
           "2": 0.4,
           "3": 0.38,
-          "4": 0.13,
+          "4": 0.12,
           "5": -0.63,
           "6": -0.83
         },
@@ -259,7 +259,7 @@
         "intercept": 5.6,
         "r2": 0.573,
         "r2_temp_only": 0.013,
-        "n_points": 752,
+        "n_points": 753,
         "dow_offsets": {
           "0": -0.0,
           "1": 0.02,
@@ -278,13 +278,13 @@
         "intercept": 4.0,
         "r2": 0.044,
         "r2_temp_only": 0.043,
-        "n_points": 752,
+        "n_points": 753,
         "dow_offsets": {
-          "0": 0.0,
+          "0": -0.0,
           "1": 0.01,
           "2": -0.02,
           "3": 0.01,
-          "4": 0.01,
+          "4": 0.02,
           "5": -0.01,
           "6": -0.01
         },
