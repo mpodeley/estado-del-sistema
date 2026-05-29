@@ -200,9 +200,11 @@ def scrape_nominaciones(page):
     # exploration. Phase 3b is still in reconnaissance — remove this
     # block once the scraper consistently extracts data.
     try:
-        page.wait_for_selector('div[id="formulario:panelFiltro"]',
-                                state='visible', timeout=15000)
-        page.wait_for_timeout(1000)
+        # The filter panel is rendered as a JSF panelGrid, which comes
+        # out as a <table> not a <div>.
+        page.wait_for_selector('[id="formulario:panelFiltro"]',
+                                state='visible', timeout=30000)
+        page.wait_for_timeout(1500)
     except Exception as e:
         print(f'fetch_tgn: nominaciones filter panel never showed: {e}',
               file=sys.stderr)
