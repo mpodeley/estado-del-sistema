@@ -87,9 +87,39 @@ def run():
 
             print(f'fetch_tgn: logged in, landing url={page.url}')
             print(f'fetch_tgn: timestamp={datetime.now(timezone.utc).isoformat()}')
-            # TODO Phase 2: navigate to each section and extract tables
-            # into public/data/tgn_*.json. For now we just confirm the
-            # session works and persist it for the next run.
+            # Phase 2 reconnaissance — dump the page's nav structure to
+            # stdout so we can map sections without manual exploration.
+            # Remove once the section scrapers are in place.
+            print('--- DISCOVERY: page title ---')
+            print(page.title())
+            print('--- DISCOVERY: anchors (href, text) ---')
+            anchors = page.eval_on_selector_all(
+                'a',
+                """els => els.map(e => ({
+                    href: e.getAttribute('href'),
+                    text: (e.textContent || '').trim().slice(0, 100)
+                })).filter(a => a.text || (a.href && a.href !== '#'))"""
+            )
+            for a in anchors[:120]:
+                print(f"  href={a.get('href')!r}  text={a.get('text')!r}")
+            print(f'--- DISCOVERY: {len(anchors)} anchors total ---')
+            print('--- DISCOVERY: menu items (li, span with onclick/role) ---')
+            menu_items = page.eval_on_selector_all(
+                'li[role="menuitem"], li.ui-menuitem, span[onclick], div[onclick]',
+                """els => els.map(e => ({
+                    tag: e.tagName.toLowerCase(),
+                    id: e.id,
+                    text: (e.textContent || '').trim().slice(0, 100),
+                    onclick: (e.getAttribute('onclick') || '').slice(0, 200)
+                })).filter(x => x.text)"""
+            )
+            for m in menu_items[:80]:
+                print(f"  {m.get('tag')} id={m.get('id')!r} text={m.get('text')!r}")
+            print(f'--- DISCOVERY: {len(menu_items)} menu items ---')
+            print('--- DISCOVERY: iframes ---')
+            for fr in page.frames:
+                print(f"  frame name={fr.name!r} url={fr.url!r}")
+            print('--- DISCOVERY: end ---')
         finally:
             browser.close()
 
