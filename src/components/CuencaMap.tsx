@@ -148,7 +148,6 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
 
   const PAD = vb.w * 0.02
   const viewBox = `${vb.minX - PAD} ${vb.minY - PAD} ${vb.w + 2 * PAD} ${vb.h + 2 * PAD}`
-  const strokeBase = Math.min(vb.w, vb.h) * 0.001
 
   return (
     <div style={{ position: 'relative' }}>
@@ -202,7 +201,9 @@ export default function CuencaMap({ concesiones, produccion, latestMes }: Props)
                   fill={color}
                   fillOpacity={isHover ? 0.85 : 0.55}
                   stroke={stroke}
-                  strokeWidth={strokeBase * (isHover ? 320 : isPlus ? 240 : 80)}
+                  // vectorEffect makes strokeWidth interpret as on-screen
+                  // pixels (not Mercator metres), so use single-digit values.
+                  strokeWidth={isHover ? 2 : isPlus ? 1.5 : 0.4}
                   vectorEffect="non-scaling-stroke"
                 />
               ))}
