@@ -77,46 +77,55 @@ def scrape_system_state(page):
         print(f'fetch_tgn: failed to open system_state: {e}', file=sys.stderr)
         return
 
-    # PrimeFaces calendar: the visible input has id ..._input. Fill it
-    # directly and dispatch a change event so the framework picks it up.
-    for fid, value in [
-        ('formulario:report_fecha_desde_id_input', desde),
-        ('formulario:report_fecha_hasta_id_input', hasta),
-    ]:
-        try:
-            page.fill(f'input[id="{fid}"]', value)
-            page.evaluate(
-                "id => document.getElementById(id).dispatchEvent(new Event('change', {bubbles:true}))",
-                fid,
-            )
-        except Exception as e:
-            print(f'fetch_tgn: could not set {fid}: {e}', file=sys.stderr)
-
-    # Inspect what buttons/submits actually live in the form so we can
-    # pick the right element for 'Ver reporte'.
-    buttons = page.eval_on_selector_all(
-        'button, input[type="submit"], a.ui-button, span.ui-button',
-        """els => els.map(e => ({
-            tag: e.tagName.toLowerCase(),
-            id: e.id,
-            type: e.getAttribute('type'),
-            value: e.getAttribute('value'),
-            text: (e.textContent || '').trim().slice(0,60),
-            onclick: (e.getAttribute('onclick') || '').slice(0,140)
-        }))"""
-    )
-    print(f'fetch_tgn: {len(buttons)} clickable element(s) in page:')
-    for b in buttons[:25]:
-        print(f"  {b.get('tag')} id={b.get('id')!r} type={b.get('type')!r} "
-              f"text={b.get('text')!r} onclick={b.get('onclick')!r}")
-
-    # Click the 'Ver reporte' button. Look it up by visible label so we
-    # don't depend on JSF-generated j_idt IDs.
+    # Wait for the page's JSF widgets to finish initialising — the
+    # 'comunicación perdida' modal appears when a postback fires before
+    # PrimeFaces is fully wired up.
     try:
-        page.get_by_role('button', name='Ver reporte').click()
+        page.wait_for_selector(
+            'button[id="formulario:report_btnSearch_id"]',
+            state='visible', timeout=15000,
+        )
+        page.wait_for_timeout(1000)
+    except Exception as e:
+        print(f'fetch_tgn: report button never showed up: {e}', file=sys.stderr)
+        return
+
+    # The Gasoducto multi-select is required even though its label has
+    # no asterisk — hitting 'Ver reporte' with nothing selected returns
+    # an error via the JSF growl that surfaces as 'comunicación perdida'
+    # because the server response wipes the postback target. Click the
+    # 'Seleccionar Todos' button first to populate the field.
+    try:
+        page.click('button[id="formulario:report3_btnSelectAllOperators"]')
         page.wait_for_load_state('networkidle')
     except Exception as e:
-        print(f'fetch_tgn: failed to click Ver reporte: {e}', file=sys.stderr)
+        print(f'fetch_tgn: could not select all operators: {e}', file=sys.stderr)
+
+    # Submit the report. Use the explicit JSF ID rather than role-based
+    # lookup so we don't hit a different button with the same label.
+    try:
+        page.click('button[id="formulario:report_btnSearch_id"]')
+        # PrimeFaces shows a spinner; wait for the grilla panel to be
+        # repopulated rather than networkidle (postback can keep alive
+        # connections open).
+        page.wait_for_selector(
+            'div[id="formulario:panelGrilla"] table',
+            state='attached', timeout=30000,
+        )
+        page.wait_for_load_state('networkidle')
+    except Exception as e:
+        print(f'fetch_tgn: failed to run report: {e}', file=sys.stderr)
+        return
+
+    # Detect the 'communication lost' modal and bail with no rows.
+    error_visible = page.eval_on_selector_all(
+        'div.ui-messages-error, .ui-growl-message-error',
+        'els => els.map(e => (e.textContent || "").trim()).filter(Boolean)',
+    )
+    if error_visible:
+        print(f'fetch_tgn: server reported error(s): {error_visible[:3]}',
+              file=sys.stderr)
+        _save_system_state([], desde, hasta, [])
         return
 
     # The result lives in a table under the form. Dump every data table
