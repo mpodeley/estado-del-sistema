@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { colors, sectionTitle, space } from '../theme'
+import { colors, iconBtn, radius, sectionTitle, space } from '../theme'
+import { useMapPanZoom } from '../hooks/useMapPanZoom'
 import type {
   GasNetwork,
   GasRoute,
@@ -9,6 +10,7 @@ import type {
   EnargasMonthly,
   GedRow,
 } from '../hooks/useData'
+import type { EnargasRDSRow } from '../types'
 
 const NEUTRAL = '#64748b'
 
@@ -114,6 +116,8 @@ interface Props {
   tramos: TramoRow[]
   distribuidoras?: DistribuidorasCollection | null
   monthly?: EnargasMonthly | null
+  /** Latest ENARGAS RDS row — feeds the national consumption/supply donuts. */
+  rds?: EnargasRDSRow | null
 }
 
 const DIST_COLORS: Record<string, string> = {
@@ -157,7 +161,18 @@ function polyCentroid(multi: number[][][][]): { x: number; y: number } {
   return { x: sx / best.length, y: sy / best.length }
 }
 
-export default function NetworkMap({ network, outline, tramos, distribuidoras, monthly }: Props) {
+/** Filled pie wedge from angle a0 to a1 (radians, 0 = +x, clockwise in SVG's
+ *  y-down space). Used for the on-map cuenca TGN/TGS split and the panel donuts. */
+function pieWedgePath(cx: number, cy: number, r: number, a0: number, a1: number): string {
+  const x0 = cx + r * Math.cos(a0)
+  const y0 = cy + r * Math.sin(a0)
+  const x1 = cx + r * Math.cos(a1)
+  const y1 = cy + r * Math.sin(a1)
+  const large = a1 - a0 > Math.PI ? 1 : 0
+  return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`
+}
+
+export default function NetworkMap({ network, outline, tramos, distribuidoras, monthly, rds }: Props) {
   const [hover, setHover] = useState<GasRoute | null>(null)
   const [hoverDist, setHoverDist] = useState<string | null>(null)
   const [hoverCuenca, setHoverCuenca] = useState<string | null>(null)
@@ -167,13 +182,23 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
   const { minX, maxX, minY, maxY } = outline.bounds
   const width = maxX - minX
   const height = maxY - minY
-  const PAD = width * 0.02
-  const viewBox = `${minX - PAD} ${-maxY - PAD} ${width + 2 * PAD} ${height + 2 * PAD}`
+
+  // Base viewBox in screen space (y negated, matching the per-point `-y` flips
+  // below). The pan/zoom hook turns this into a live viewBox.
+  const baseVB = useMemo(
+    () => ({ minX, minY: -maxY, w: width, h: height, cx: minX + width / 2, cy: -maxY + height / 2 }),
+    [minX, maxY, width, height],
+  )
+  const { svgRef, viewBox, scale, isDragging, handlers, zoomIn, zoomOut, reset } = useMapPanZoom(baseVB)
 
   // Stroke/font scale tuned for the SVG being rendered around 560 px wide —
   // viewBox units are Mercator metres, so multipliers look weirdly large.
+  // Divide by the zoom scale so strokes and labels keep a constant size on
+  // screen as the user zooms in.
   const strokeBase = Math.min(width, height) * 0.015
-  const fontScale = Math.min(width, height) * 0.24
+  const fontScale = Math.min(width, height) * 0.18
+  const sStroke = strokeBase / scale
+  const sFont = fontScale / scale
 
   // ----- edge width scaling -----
   const maxCaudal = useMemo(() => {
@@ -185,25 +210,35 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
     return m || 1
   }, [network])
 
-  // ----- cuenca bubbles -----
+  // ----- cuenca bubbles (supply, split by transportista where available) -----
   const cuencaData = useMemo(() => {
     const latest = monthly?.gas_recibido?.cuenca?.[monthly.gas_recibido.cuenca.length - 1]
     if (!latest) return []
-    const vol = {
-      neuquina: (latest.tgn_neuquina ?? 0) + (latest.tgs_neuquina ?? 0),
-      noroeste: latest.tgn_noroeste ?? 0,
-      san_jorge: latest.tgs_san_jorge ?? 0,
-      austral: latest.tgs_austral ?? 0,
+    // tgn/tgs components per cuenca. Only Neuquina is multi-transportista; the
+    // others are single, so they render as a solid circle (not a broken donut).
+    const split: Record<string, { tgn: number; tgs: number }> = {
+      neuquina: { tgn: latest.tgn_neuquina ?? 0, tgs: latest.tgs_neuquina ?? 0 },
+      noroeste: { tgn: latest.tgn_noroeste ?? 0, tgs: 0 },
+      san_jorge: { tgn: 0, tgs: latest.tgs_san_jorge ?? 0 },
+      austral: { tgn: 0, tgs: latest.tgs_austral ?? 0 },
     }
-    const max = Math.max(1, ...Object.values(vol))
+    const totals = Object.values(split).map((s) => s.tgn + s.tgs)
+    const max = Math.max(1, ...totals)
     return CUENCAS.map((c) => {
-      const v = vol[c.id as keyof typeof vol] ?? 0
+      const s = split[c.id] ?? { tgn: 0, tgs: 0 }
+      const v = s.tgn + s.tgs
       const { x, y } = toMercator(c.lat, c.lon)
       return {
         ...c,
+        tgn: s.tgn,
+        tgs: s.tgs,
         volDam3Month: v,
         volMMm3Day: v / 1000 / 30,
-        r: strokeBase * (4 + 18 * Math.sqrt(v / max)),
+        tgnMMm3Day: s.tgn / 1000 / 30,
+        tgsMMm3Day: s.tgs / 1000 / 30,
+        // Smaller than before (was 4 + 18*sqrt, capped here so bubbles don't
+        // swallow pipelines/labels at default zoom).
+        r: Math.min(strokeBase * (3 + 9 * Math.sqrt(v / max)), strokeBase * 12),
         x,
         y,
       }
@@ -236,7 +271,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         y,
         gedDam3Month: v,
         gedMMm3Day: perDay,
-        r: strokeBase * (3 + 15 * Math.sqrt(v / max)),
+        r: Math.min(strokeBase * (2 + 7 * Math.sqrt(v / max)), strokeBase * 9),
       }
     })
   }, [distribuidoras, monthly, strokeBase])
@@ -259,9 +294,19 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
       </h3>
       <div style={{ position: 'relative', maxWidth: 560, margin: '0 auto' }}>
         <svg
+          ref={svgRef}
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
-          style={{ width: '100%', height: 'auto', background: '#0b1220', borderRadius: 8, display: 'block' }}
+          {...handlers}
+          style={{
+            width: '100%',
+            height: 'auto',
+            background: '#0b1220',
+            borderRadius: 8,
+            display: 'block',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none',
+          }}
         >
           {/* Argentina outline */}
           {outline.polygons.map((poly, i) => (
@@ -270,7 +315,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               points={poly.map((v) => `${v.x},${-v.y}`).join(' ')}
               fill="#1e293b"
               stroke="#334155"
-              strokeWidth={strokeBase * 0.7}
+              strokeWidth={sStroke * 0.7}
             />
           ))}
 
@@ -282,8 +327,9 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             return (
               <g
                 key={id}
-                onMouseEnter={() => setHoverDist(id)}
+                onMouseEnter={() => !isDragging && setHoverDist(id)}
                 onMouseLeave={() => setHoverDist(null)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
               >
                 {f.geometry.coordinates.map((polygon, pi) => (
                   <polygon
@@ -293,7 +339,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     fillOpacity={isHover ? 0.35 : 0.15}
                     stroke={color}
                     strokeOpacity={isHover ? 0.8 : 0.35}
-                    strokeWidth={strokeBase * (isHover ? 0.6 : 0.25)}
+                    strokeWidth={sStroke * (isHover ? 0.6 : 0.25)}
                   />
                 ))}
               </g>
@@ -308,14 +354,15 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             const operator: Operator = OPERATOR_BY_GASODUCTO[e.gasoducto] ?? 'Otro'
             const color = hasStress ? utilizationColor(util) : OPERATOR_COLORS[operator]
             const caudal = Math.abs(e.latest_caudal ?? 0)
-            const w = strokeBase * (0.8 + 3.0 * (caudal / maxCaudal))
+            const w = sStroke * (0.8 + 3.0 * (caudal / maxCaudal))
             const isHover = hover?.edgeId === e.edgeId
             const isDim = hover && !isHover
             return (
               <g
                 key={e.edgeId}
-                onMouseEnter={() => setHover(e)}
+                onMouseEnter={() => !isDragging && setHover(e)}
                 onMouseLeave={() => setHover(null)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
               >
                 <line
                   x1={e.xOrigen}
@@ -332,7 +379,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   x2={e.xDestino}
                   y2={-e.yDestino}
                   stroke="transparent"
-                  strokeWidth={Math.max(w * 3, strokeBase * 2)}
+                  strokeWidth={Math.max(w * 3, sStroke * 2)}
                 />
               </g>
             )
@@ -345,19 +392,19 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
               : role === 'sink_proxy' ? '#60a5fa'
               : role === 'inactive' ? '#475569'
               : '#94a3b8'
-            const r = role === 'source_proxy' ? strokeBase * 1.6 : role === 'sink_proxy' ? strokeBase * 1.3 : strokeBase * 0.9
+            const r = (role === 'source_proxy' ? sStroke * 1.6 : role === 'sink_proxy' ? sStroke * 1.3 : sStroke * 0.9)
             const labeled = ALWAYS_LABELED.has(n.nombre)
             return (
               <g key={n.nodeId}>
-                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={strokeBase * 0.3} />
+                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={sStroke * 0.3} />
                 {labeled && (
                   <text
-                    x={n.x + strokeBase * 2.2}
-                    y={-n.y + fontScale * 0.3}
-                    fontSize={fontScale * 0.95}
+                    x={n.x + sStroke * 2.2}
+                    y={-n.y + sFont * 0.3}
+                    fontSize={sFont * 0.95}
                     fill={colors.textSecondary}
                     stroke="#0b1220"
-                    strokeWidth={fontScale * 0.15}
+                    strokeWidth={sFont * 0.15}
                     paintOrder="stroke"
                     fontWeight={500}
                   >
@@ -368,79 +415,133 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             )
           })}
 
-          {/* Cuenca bubbles (supply) */}
-          {cuencaData.map((c) => (
-            <g
-              key={c.id}
-              onMouseEnter={() => setHoverCuenca(c.id)}
-              onMouseLeave={() => setHoverCuenca(null)}
-            >
-              <circle
-                cx={c.x}
-                cy={-c.y}
-                r={c.r}
-                fill="#34d399"
-                fillOpacity={hoverCuenca === c.id ? 0.55 : 0.3}
-                stroke="#34d399"
-                strokeWidth={strokeBase * 0.6}
-              />
-              <text
-                x={c.x}
-                y={-c.y - c.r - fontScale * 0.35}
-                fontSize={fontScale * 1.4}
-                fill={colors.textPrimary}
-                textAnchor="middle"
-                stroke="#0b1220"
-                strokeWidth={fontScale * 0.18}
-                paintOrder="stroke"
-                fontWeight={700}
+          {/* Cuenca bubbles (supply). Neuquina splits TGN/TGS as a pie; the
+              single-transportista cuencas render as a solid circle. Name is
+              always shown to orient; volume + split only on hover. */}
+          {cuencaData.map((c) => {
+            const isHover = hoverCuenca === c.id
+            const rr = c.r / scale
+            const cy = -c.y
+            const op = isHover ? 0.6 : 0.32
+            const isSplit = c.tgn > 0 && c.tgs > 0
+            const total = c.tgn + c.tgs || 1
+            const tgsEnd = -Math.PI / 2 + 2 * Math.PI * (c.tgs / total)
+            return (
+              <g
+                key={c.id}
+                onMouseEnter={() => !isDragging && setHoverCuenca(c.id)}
+                onMouseLeave={() => setHoverCuenca(null)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
               >
-                {c.label.replace('Cuenca ', '')}
-              </text>
-              <text
-                x={c.x}
-                y={-c.y + fontScale * 0.45}
-                fontSize={fontScale * 0.95}
-                fill={colors.textSecondary}
-                textAnchor="middle"
-                stroke="#0b1220"
-                strokeWidth={fontScale * 0.15}
-                paintOrder="stroke"
-                fontWeight={600}
-              >
-                {c.volMMm3Day.toFixed(0)} MMm³/d
-              </text>
-            </g>
-          ))}
+                {isSplit ? (
+                  <>
+                    <path
+                      d={pieWedgePath(c.x, cy, rr, -Math.PI / 2, tgsEnd)}
+                      fill={OPERATOR_COLORS.TGS}
+                      fillOpacity={op}
+                      stroke="#0b1220"
+                      strokeWidth={sStroke * 0.4}
+                    />
+                    <path
+                      d={pieWedgePath(c.x, cy, rr, tgsEnd, -Math.PI / 2 + 2 * Math.PI)}
+                      fill={OPERATOR_COLORS.TGN}
+                      fillOpacity={op}
+                      stroke="#0b1220"
+                      strokeWidth={sStroke * 0.4}
+                    />
+                  </>
+                ) : (
+                  <circle
+                    cx={c.x}
+                    cy={cy}
+                    r={rr}
+                    fill={c.tgs > 0 ? OPERATOR_COLORS.TGS : OPERATOR_COLORS.TGN}
+                    fillOpacity={op}
+                    stroke="#0b1220"
+                    strokeWidth={sStroke * 0.4}
+                  />
+                )}
+                <text
+                  x={c.x}
+                  y={cy - rr - sFont * 0.35}
+                  fontSize={sFont * 1.3}
+                  fill={colors.textPrimary}
+                  textAnchor="middle"
+                  stroke="#0b1220"
+                  strokeWidth={sFont * 0.16}
+                  paintOrder="stroke"
+                  fontWeight={700}
+                >
+                  {c.label.replace('Cuenca ', '')}
+                </text>
+                {isHover && (
+                  <>
+                    <text
+                      x={c.x}
+                      y={cy + sFont * 0.45}
+                      fontSize={sFont * 0.95}
+                      fill={colors.textPrimary}
+                      textAnchor="middle"
+                      stroke="#0b1220"
+                      strokeWidth={sFont * 0.15}
+                      paintOrder="stroke"
+                      fontWeight={700}
+                    >
+                      {c.volMMm3Day.toFixed(0)} MMm³/d
+                    </text>
+                    {isSplit && (
+                      <text
+                        x={c.x}
+                        y={cy + sFont * 1.5}
+                        fontSize={sFont * 0.8}
+                        fill={colors.textSecondary}
+                        textAnchor="middle"
+                        stroke="#0b1220"
+                        strokeWidth={sFont * 0.12}
+                        paintOrder="stroke"
+                        fontWeight={600}
+                      >
+                        TGN {c.tgnMMm3Day.toFixed(0)} · TGS {c.tgsMMm3Day.toFixed(0)}
+                      </text>
+                    )}
+                  </>
+                )}
+              </g>
+            )
+          })}
 
-          {/* Distribuidora bubbles (demand) */}
+          {/* Distribuidora bubbles (demand). Labels only on hover — the region
+              fill already identifies each zone, so permanent labels just clutter. */}
           {distBubbles.map((b) => {
             const color = DIST_COLORS[b.id] ?? '#475569'
+            const isHover = hoverDist === b.id
+            const rr = b.r / scale
             return (
               <g
                 key={b.id}
-                onMouseEnter={() => setHoverDist(b.id)}
+                onMouseEnter={() => !isDragging && setHoverDist(b.id)}
                 onMouseLeave={() => setHoverDist(null)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
               >
                 <circle
                   cx={b.x}
                   cy={-b.y}
-                  r={b.r}
+                  r={rr}
                   fill={color}
-                  fillOpacity={hoverDist === b.id ? 0.75 : 0.5}
+                  fillOpacity={isHover ? 0.75 : 0.5}
                   stroke={color}
-                  strokeWidth={strokeBase * 0.4}
+                  strokeWidth={sStroke * 0.4}
                 />
-                {(hoverDist === b.id || b.gedDam3Month > 100000) && (
+                {isHover && (
                   <>
                     <text
                       x={b.x}
-                      y={-b.y - fontScale * 0.2}
-                      fontSize={fontScale * 0.95}
+                      y={-b.y - sFont * 0.2}
+                      fontSize={sFont * 0.95}
                       fill={colors.textPrimary}
                       textAnchor="middle"
                       stroke="#0b1220"
-                      strokeWidth={fontScale * 0.15}
+                      strokeWidth={sFont * 0.15}
                       paintOrder="stroke"
                       fontWeight={700}
                     >
@@ -448,12 +549,12 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     </text>
                     <text
                       x={b.x}
-                      y={-b.y + fontScale * 0.7}
-                      fontSize={fontScale * 0.75}
+                      y={-b.y + sFont * 0.7}
+                      fontSize={sFont * 0.75}
                       fill={colors.textSecondary}
                       textAnchor="middle"
                       stroke="#0b1220"
-                      strokeWidth={fontScale * 0.12}
+                      strokeWidth={sFont * 0.12}
                       paintOrder="stroke"
                       fontWeight={600}
                     >
@@ -465,6 +566,22 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             )
           })}
         </svg>
+
+        {/* Zoom controls overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            top: space.sm,
+            left: space.sm,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+          }}
+        >
+          <button onClick={zoomIn} style={iconBtn} title="Acercar">＋</button>
+          <button onClick={zoomOut} style={iconBtn} title="Alejar">－</button>
+          <button onClick={reset} style={iconBtn} title="Reset">⟲</button>
+        </div>
 
         {/* Hover panel */}
         {hover && (
@@ -512,6 +629,10 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         )}
       </div>
 
+      {/* National mix donuts — the only level at which the segment / supply
+          split exists. Helps read the system composition at a glance. */}
+      <NationalMixPanel rds={rds} />
+
       {/* Legends */}
       <div style={{ marginTop: space.sm, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: space.md, fontSize: 11, color: colors.textDim }}>
         <div>
@@ -533,11 +654,13 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         </div>
       </div>
       <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm }}>
-        Líneas coloreadas por operador; donde el Excel trae capacidad + corte (CCO, Neuba I/II, Gas
-        Andes) el color pasa a reflejar el stress (verde→rojo). Grosor = caudal relativo del snapshot
-        GCIE. Burbujas verdes sobre cuencas = volumen mensual inyectado ({formatVolDate(monthly)}).
+        Rueda para zoom, arrastrar para mover, ⟲ para resetear. Líneas coloreadas por operador; donde
+        el Excel trae capacidad + corte (CCO, Neuba I/II, Gas Andes) el color pasa a reflejar el stress
+        (verde→rojo). Grosor = caudal relativo del snapshot GCIE. Burbujas sobre cuencas = volumen
+        mensual inyectado ({formatVolDate(monthly)}), partido TGN/TGS donde aplica (Neuquina).
         Burbujas coloreadas sobre zonas de distribuidoras = <strong>gas efectivamente entregado
-        </strong> (ENARGAS GED, {formatGedDate(monthly)}).
+        </strong> (ENARGAS GED, {formatGedDate(monthly)}). Pasá el cursor sobre una burbuja para ver
+        el detalle.
       </p>
     </div>
   )
@@ -569,5 +692,133 @@ function Pill({ color, label }: { color: string; label: string }) {
       <span style={{ width: 14, height: 3, background: color, borderRadius: 2 }} />
       {label}
     </span>
+  )
+}
+
+interface DonutSeg { label: string; value: number; color: string }
+
+/** Compact hand-rolled donut + legend. National-level only — the segment /
+ *  supply split doesn't exist per zone in the data. */
+function Donut({ title, unit, segments }: { title: string; unit: string; segments: DonutSeg[] }) {
+  const total = segments.reduce((s, x) => s + x.value, 0)
+  if (total <= 0) return null
+  const R = 38
+  const rInner = 23
+  const cx = 44
+  const cy = 44
+  let a = -Math.PI / 2
+  const wedges = segments.map((s) => {
+    const a0 = a
+    a += (s.value / total) * 2 * Math.PI
+    return { ...s, a0, a1: a }
+  })
+  const single = segments.length === 1
+  return (
+    <div>
+      <div style={{ color: colors.textMuted, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+        {title}
+      </div>
+      <div style={{ display: 'flex', gap: space.md, alignItems: 'center' }}>
+        <svg width={88} height={88} viewBox="0 0 88 88" style={{ flexShrink: 0 }}>
+          {single ? (
+            <circle cx={cx} cy={cy} r={R} fill={segments[0].color} fillOpacity={0.85} />
+          ) : (
+            wedges.map((w) => (
+              <path
+                key={w.label}
+                d={pieWedgePath(cx, cy, R, w.a0, w.a1)}
+                fill={w.color}
+                fillOpacity={0.85}
+                stroke={colors.surfaceAlt}
+                strokeWidth={1}
+              />
+            ))
+          )}
+          <circle cx={cx} cy={cy} r={rInner} fill={colors.surfaceAlt} />
+          <text x={cx} y={cy - 1} textAnchor="middle" fontSize={15} fontWeight={700} fill={colors.textPrimary}>
+            {total.toFixed(0)}
+          </text>
+          <text x={cx} y={cy + 12} textAnchor="middle" fontSize={8} fill={colors.textDim}>
+            {unit}
+          </text>
+        </svg>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {segments.map((s) => (
+            <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: colors.textSecondary }}>
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: s.color, flexShrink: 0 }} />
+              <span style={{ minWidth: 108 }}>{s.label}</span>
+              <span style={{ color: colors.textPrimary, fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                {s.value.toFixed(1)}
+              </span>
+              <span style={{ color: colors.textDim }}>({((s.value / total) * 100).toFixed(0)}%)</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function NationalMixPanel({ rds }: { rds?: EnargasRDSRow | null }) {
+  if (!rds || !rds.fecha) return null
+
+  const cons = rds.consumos ?? {}
+  const consumoSegs: DonutSeg[] = [
+    { label: 'Prioritaria', value: cons.prioritaria?.programa ?? 0, color: colors.accent.blue },
+    { label: 'Usinas (CAMMESA)', value: cons.cammesa?.programa ?? 0, color: colors.accent.orange },
+    { label: 'Industria', value: cons.industria?.programa ?? 0, color: colors.accent.green },
+    { label: 'GNC', value: cons.gnc?.programa ?? 0, color: colors.accent.purple },
+    { label: 'Combustible', value: cons.combustible?.programa ?? 0, color: colors.accent.gray },
+  ].filter((s) => s.value > 0)
+
+  // Supply origin, derived exactly like SystemFlowPanel: local production is the
+  // residue of the flow identity (demand + Δlinepack − imports).
+  const imps = rds.importaciones ?? {}
+  const bolivia = imps.bolivia?.programa ?? 0
+  const chile = imps.chile?.programa ?? 0
+  const escobar = imps.escobar?.programa ?? 0
+  const bahia = imps.bahia_blanca?.programa ?? 0
+  const importsTotal = bolivia + chile + escobar + bahia
+  const exps = rds.exportaciones ?? {}
+  const exportsTotal = (exps.tgn?.vol_exportar ?? 0) + (exps.tgs?.vol_exportar ?? 0)
+  const consSum =
+    (cons.prioritaria?.programa ?? 0) +
+    (cons.cammesa?.programa ?? 0) +
+    (cons.industria?.programa ?? 0) +
+    (cons.gnc?.programa ?? 0) +
+    (cons.combustible?.programa ?? 0)
+  const demandTotal = (rds.consumo_total_estimado ?? consSum) + exportsTotal
+  const deltaLP = rds.linepack_delta ?? 0
+  const local = Math.max(0, demandTotal + deltaLP - importsTotal)
+  const supplySegs: DonutSeg[] = [
+    { label: 'Producción local', value: local, color: colors.accent.green },
+    { label: 'Bolivia', value: bolivia, color: colors.accent.red },
+    { label: 'GNL Escobar', value: escobar, color: colors.accent.purple },
+    { label: 'GNL Bahía Blanca', value: bahia, color: '#06b6d4' },
+    { label: 'Chile (interc.)', value: chile, color: colors.accent.orange },
+  ].filter((s) => s.value > 0)
+
+  if (consumoSegs.length === 0 && supplySegs.length === 0) return null
+
+  return (
+    <div
+      style={{
+        marginTop: space.md,
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: space.xl,
+        alignItems: 'flex-start',
+        background: colors.surfaceAlt,
+        border: `1px solid ${colors.border}`,
+        borderRadius: radius.md,
+        padding: space.md,
+      }}
+    >
+      <Donut title="Inyección por origen" unit="MMm³/d" segments={supplySegs} />
+      <Donut title="Consumo por segmento" unit="MMm³/d" segments={consumoSegs} />
+      <div style={{ marginLeft: 'auto', alignSelf: 'flex-end', color: colors.textDim, fontSize: 10 }}>
+        ENARGAS RDS · {rds.fecha} · nacional
+      </div>
+    </div>
   )
 }

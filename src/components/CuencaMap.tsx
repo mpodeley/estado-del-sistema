@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { colors, radius, space } from '../theme'
+import { useMemo, useState } from 'react'
+import { colors, iconBtn, radius, space } from '../theme'
+import { useMapPanZoom } from '../hooks/useMapPanZoom'
 import type {
   ConcesionesCollection,
   ConcesionFeature,
@@ -16,10 +17,6 @@ const VIEW = {
   latMin: -40.5,
   latMax: -34.0,
 }
-
-const MIN_SCALE = 1
-const MAX_SCALE = 24
-const ZOOM_STEP = 1.25
 
 // EPSG:3857 Mercator. Same math as NetworkMap.tsx — kept local so this
 // component doesn't reach into NetworkMap's internals.
@@ -135,19 +132,9 @@ interface ProjectedFeature {
 export default function CuencaMap({ concesiones, produccion, historico, latestMes }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null)
   const [mode, setMode] = useState<Mode>('operador')
-  // View state: scale + pan offset (in viewBox units relative to base center).
-  const [view, setView] = useState({ scale: 1, panX: 0, panY: 0 })
-  const dragRef = useRef<{
-    startX: number
-    startY: number
-    startPanX: number
-    startPanY: number
-    moved: boolean
-  } | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const svgRef = useRef<SVGSVGElement | null>(null)
 
-  // Base viewBox derived from the lat/lon window — never changes.
+  // Base viewBox derived from the lat/lon window — never changes. Screen-space
+  // (y already negated) so it matches the per-point `-y` flips below.
   const baseVB = useMemo(() => {
     const tl = toMercator(VIEW.latMax, VIEW.lonMin)
     const br = toMercator(VIEW.latMin, VIEW.lonMax)
@@ -159,6 +146,8 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     const h = maxY - minY
     return { minX, minY, w, h, cx: minX + w / 2, cy: minY + h / 2 }
   }, [])
+
+  const { svgRef, viewBox, isDragging, handlers, zoomIn, zoomOut, reset } = useMapPanZoom(baseVB)
 
   // Project polygon rings + precompute area & densities once per dataset load.
   // Latest-month density is recomputed when latestMes changes, but is cheap.
@@ -311,92 +300,6 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
   const hovered = projected.find((p) => p.feature.properties.id === hoverId)
   const hoveredProd = hovered ? prodByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase()) : null
 
-  // ----- viewBox + interaction handlers -----
-  const visibleW = baseVB.w / view.scale
-  const visibleH = baseVB.h / view.scale
-  const visibleCx = baseVB.cx + view.panX
-  const visibleCy = baseVB.cy + view.panY
-  const PAD = baseVB.w * 0.02
-  const viewBox = `${visibleCx - visibleW / 2 - PAD} ${visibleCy - visibleH / 2 - PAD} ${visibleW + 2 * PAD} ${visibleH + 2 * PAD}`
-
-  function clampScale(s: number): number {
-    return Math.min(MAX_SCALE, Math.max(MIN_SCALE, s))
-  }
-
-  function zoomAtPoint(newScale: number, anchorFraction: { fx: number; fy: number }) {
-    const clamped = clampScale(newScale)
-    const newW = baseVB.w / clamped
-    const newH = baseVB.h / clamped
-    // Anchor: the point under (fx, fy) in viewBox units must stay there after zoom.
-    const anchorX = visibleCx - visibleW / 2 + anchorFraction.fx * visibleW
-    const anchorY = visibleCy - visibleH / 2 + anchorFraction.fy * visibleH
-    const newCx = anchorX - (anchorFraction.fx - 0.5) * newW
-    const newCy = anchorY - (anchorFraction.fy - 0.5) * newH
-    setView({ scale: clamped, panX: newCx - baseVB.cx, panY: newCy - baseVB.cy })
-  }
-
-  function mouseFractionFromEvent(e: { clientX: number; clientY: number }): { fx: number; fy: number } {
-    const svg = svgRef.current
-    if (!svg) return { fx: 0.5, fy: 0.5 }
-    const rect = svg.getBoundingClientRect()
-    return {
-      fx: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
-      fy: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height)),
-    }
-  }
-
-  // Wheel zoom must be a non-passive listener so we can preventDefault and
-  // stop the page from scrolling. React's onWheel is passive by default.
-  useEffect(() => {
-    const svg = svgRef.current
-    if (!svg) return
-    const handler = (e: WheelEvent) => {
-      e.preventDefault()
-      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP
-      zoomAtPoint(view.scale * factor, mouseFractionFromEvent(e))
-    }
-    svg.addEventListener('wheel', handler, { passive: false })
-    return () => svg.removeEventListener('wheel', handler)
-  }, [view.scale, visibleW, visibleH, visibleCx, visibleCy])
-
-  function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-    if (e.button !== 0) return
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startPanX: view.panX,
-      startPanY: view.panY,
-      moved: false,
-    }
-    setIsDragging(true)
-  }
-
-  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (!dragRef.current || !svgRef.current) return
-    const rect = svgRef.current.getBoundingClientRect()
-    const dxFrac = (e.clientX - dragRef.current.startX) / rect.width
-    const dyFrac = (e.clientY - dragRef.current.startY) / rect.height
-    if (Math.abs(dxFrac) + Math.abs(dyFrac) > 0.002) dragRef.current.moved = true
-    setView({
-      scale: view.scale,
-      panX: dragRef.current.startPanX - dxFrac * visibleW,
-      panY: dragRef.current.startPanY - dyFrac * visibleH,
-    })
-  }
-
-  function onMouseUp() {
-    dragRef.current = null
-    setIsDragging(false)
-  }
-
-  function resetView() {
-    setView({ scale: 1, panX: 0, panY: 0 })
-  }
-
-  function zoomBtn(delta: number) {
-    return () => zoomAtPoint(view.scale * delta, { fx: 0.5, fy: 0.5 })
-  }
-
   // ----- mode-specific fill color -----
   function valueForMode(p: ProjectedFeature): number {
     if (mode === 'gas_prod') return p.gasDailyDensity
@@ -465,10 +368,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
           ref={svgRef}
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseUp}
+          {...handlers}
           style={{
             width: '100%',
             height: 'auto',
@@ -521,9 +421,9 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
             gap: 4,
           }}
         >
-          <button onClick={zoomBtn(ZOOM_STEP)} style={iconBtn} title="Acercar">＋</button>
-          <button onClick={zoomBtn(1 / ZOOM_STEP)} style={iconBtn} title="Alejar">－</button>
-          <button onClick={resetView} style={iconBtn} title="Reset">⟲</button>
+          <button onClick={zoomIn} style={iconBtn} title="Acercar">＋</button>
+          <button onClick={zoomOut} style={iconBtn} title="Alejar">－</button>
+          <button onClick={reset} style={iconBtn} title="Reset">⟲</button>
         </div>
 
         {hovered && (
@@ -706,21 +606,6 @@ const modeBtn = (active: boolean): React.CSSProperties => ({
   fontSize: 12,
   fontWeight: 600,
 })
-
-const iconBtn: React.CSSProperties = {
-  background: colors.surface,
-  color: colors.textPrimary,
-  border: `1px solid ${colors.border}`,
-  borderRadius: radius.sm,
-  width: 28,
-  height: 28,
-  cursor: 'pointer',
-  fontSize: 14,
-  fontWeight: 700,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}
 
 const legendChip: React.CSSProperties = {
   display: 'inline-flex',

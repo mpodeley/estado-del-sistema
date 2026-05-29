@@ -1,4 +1,4 @@
-import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useTramos, useEnargasING } from '../hooks/useData'
+import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useTramos, useEnargasING, useEnargasRDS } from '../hooks/useData'
 import { card, colors, sectionTitle, space } from '../theme'
 import NetworkMap from './NetworkMap'
 import { RegionalSection } from './GasoductoFlowChart'
@@ -14,6 +14,7 @@ export default function MapaPage() {
   const distribuidorasState = useDistribuidoras()
   const tramosState = useTramos()
   const ingState = useEnargasING()
+  const rdsState = useEnargasRDS()
 
   if (networkState.loading || outlineState.loading) {
     return (
@@ -29,6 +30,11 @@ export default function MapaPage() {
   const ingRecent = ingRows
     .filter((r) => r.tipo === 'R' && r.total != null)
     .slice(-14)
+
+  // Latest RDS row carries the full payload (consumos/importaciones) for the
+  // national mix donuts.
+  const rdsRows = rdsState.data ?? []
+  const rdsLatest = rdsRows.length > 0 ? rdsRows[rdsRows.length - 1] : null
 
   return (
     <>
@@ -47,6 +53,7 @@ export default function MapaPage() {
             tramos={tramosState.data}
             distribuidoras={distribuidorasState.data}
             monthly={monthlyState.data}
+            rds={rdsLatest}
           />
         </div>
       )}

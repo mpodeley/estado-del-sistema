@@ -66,3 +66,20 @@ export const badge = (color: string): React.CSSProperties => ({
   fontSize: 11,
   fontWeight: 700,
 })
+
+// Square icon button used by the map zoom controls (＋ － ⟲). Shared so both
+// SVG maps render identical controls.
+export const iconBtn: React.CSSProperties = {
+  background: colors.surface,
+  color: colors.textPrimary,
+  border: `1px solid ${colors.border}`,
+  borderRadius: radius.sm,
+  width: 28,
+  height: 28,
+  cursor: 'pointer',
+  fontSize: 14,
+  fontWeight: 700,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}
