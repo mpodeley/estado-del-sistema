@@ -92,6 +92,24 @@ def scrape_system_state(page):
         except Exception as e:
             print(f'fetch_tgn: could not set {fid}: {e}', file=sys.stderr)
 
+    # Inspect what buttons/submits actually live in the form so we can
+    # pick the right element for 'Ver reporte'.
+    buttons = page.eval_on_selector_all(
+        'button, input[type="submit"], a.ui-button, span.ui-button',
+        """els => els.map(e => ({
+            tag: e.tagName.toLowerCase(),
+            id: e.id,
+            type: e.getAttribute('type'),
+            value: e.getAttribute('value'),
+            text: (e.textContent || '').trim().slice(0,60),
+            onclick: (e.getAttribute('onclick') || '').slice(0,140)
+        }))"""
+    )
+    print(f'fetch_tgn: {len(buttons)} clickable element(s) in page:')
+    for b in buttons[:25]:
+        print(f"  {b.get('tag')} id={b.get('id')!r} type={b.get('type')!r} "
+              f"text={b.get('text')!r} onclick={b.get('onclick')!r}")
+
     # Click the 'Ver reporte' button. Look it up by visible label so we
     # don't depend on JSF-generated j_idt IDs.
     try:
