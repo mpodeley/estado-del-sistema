@@ -300,7 +300,12 @@ export default function OperacionPage() {
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Linepack TGS + TGN (MMm³)</h3>
-          <LinepackChart data={valid} allDates={visibleDates} />
+          <LinepackChart
+            data={valid}
+            etgsRows={etgsState.data ?? []}
+            tgnRows={tgnSystemState.data ?? []}
+            allDates={visibleDates}
+          />
         </div>
         {rdsReports.length > 0 && (
           <div style={card}>

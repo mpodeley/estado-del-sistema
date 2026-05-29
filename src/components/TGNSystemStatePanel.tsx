@@ -11,7 +11,8 @@ const MONTHS: Record<string, number> = {
   Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
 }
 
-// 'Thu May 28 00:00:00 ART 2026' -> '2026-05-28'
+// 'Thu May 28 00:00:00 ART 2026' -> '2026-05-28'. Used as a fallback for
+// rows from older runs that don't carry a precomputed 'fecha' field.
 function parseJavaDate(raw: string | undefined): string | null {
   if (!raw) return null
   const m = raw.match(/^\w+\s+(\w+)\s+(\d{1,2})\s+\d{2}:\d{2}:\d{2}\s+\w+\s+(\d{4})$/)
@@ -19,6 +20,10 @@ function parseJavaDate(raw: string | undefined): string | null {
   const mon = MONTHS[m[1]]
   if (!mon) return null
   return `${m[3]}-${String(mon).padStart(2, '0')}-${m[2].padStart(2, '0')}`
+}
+
+function rowFecha(r: { fecha?: string | null; 'Día Operativo'?: string }): string {
+  return r.fecha ?? parseJavaDate(r['Día Operativo']) ?? ''
 }
 
 function toNumber(s: string | undefined): number | null {
@@ -74,11 +79,7 @@ function Metric({
 
 export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
   // Pick the most recent row by Día Operativo.
-  const sorted = (rows ?? []).slice().sort((a, b) => {
-    const da = parseJavaDate(a['Día Operativo']) ?? ''
-    const db = parseJavaDate(b['Día Operativo']) ?? ''
-    return da.localeCompare(db)
-  })
+  const sorted = (rows ?? []).slice().sort((a, b) => rowFecha(a).localeCompare(rowFecha(b)))
   const latest = sorted[sorted.length - 1]
   if (!latest) {
     return (
@@ -91,7 +92,7 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
     )
   }
 
-  const fecha = parseJavaDate(latest['Día Operativo'])
+  const fecha = rowFecha(latest)
   const actual = toNumber(latest['Actual'])
   const equilibrio = toNumber(latest['Equilibrio'])
   const desbalance = toNumber(latest['Desbalance del sistema'])

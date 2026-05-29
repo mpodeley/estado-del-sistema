@@ -353,6 +353,8 @@ export interface DistribuidorasCollection {
   crs?: unknown
 }
 export interface TGNSystemStateRow {
+  /** YYYY-MM-DD normalised from the Java toString in 'Día Operativo'. */
+  fecha?: string | null
   'Día Operativo': string
   'Actual': string
   'Equilibrio': string

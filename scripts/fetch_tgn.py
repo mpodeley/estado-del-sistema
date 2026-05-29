@@ -17,12 +17,19 @@ session to raw/tgn_state.json, and exits. Per-section scrapers are
 added in Phase 2 once we've mapped the portal's pages and selectors.
 """
 
+import json
 import os
+import re
 import sys
 from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
+
+# Window we ask TGN for on every run. 30 days is enough to keep the
+# Operación page's linepack chart populated (it shows the last 7-30
+# days) and to recover quickly if the workflow was paused.
+SYSTEM_STATE_DAYS_BACK = 30
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 RAW_DIR = os.path.join(ROOT, 'raw')
@@ -67,8 +74,8 @@ def scrape_system_state(page):
     postback to settle before reading the result table.
     """
     today = datetime.now(timezone.utc).date()
-    yesterday = today - timedelta(days=1)
-    desde = yesterday.strftime('%d/%m/%Y')
+    start = today - timedelta(days=SYSTEM_STATE_DAYS_BACK)
+    desde = start.strftime('%d/%m/%Y')
     hasta = today.strftime('%d/%m/%Y')
     print(f'fetch_tgn: system_state range {desde} -> {hasta}')
 
@@ -164,23 +171,70 @@ def scrape_system_state(page):
     _save_system_state(data_rows, desde, hasta, headers)
 
 
+# Java toString returns e.g. 'Thu May 28 00:00:00 ART 2026' for the
+# Día Operativo cell — normalise to YYYY-MM-DD so the JSON sorts and
+# joins cleanly against ETGS/daily.
+_MONTHS = {
+    'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+    'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12,
+}
+
+
+def _iso_date(raw):
+    if not raw:
+        return None
+    m = re.match(r'^\w+\s+(\w+)\s+(\d{1,2})\s+\d{2}:\d{2}:\d{2}\s+\w+\s+(\d{4})$', raw)
+    if not m:
+        return None
+    mon = _MONTHS.get(m.group(1))
+    if not mon:
+        return None
+    return f"{m.group(3)}-{mon:02d}-{int(m.group(2)):02d}"
+
+
 def _save_system_state(rows, desde, hasta, headers):
     out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
     os.makedirs(OUT_DIR, exist_ok=True)
     # Strip the literal '<br>' that pdfplumber-style textContent leaves
-    # in header keys ('Día <br>Operativo').
-    rows = [{k.replace('<br>', ' ').strip(): v for k, v in r.items()} for r in rows]
+    # in header keys ('Día <br>Operativo') and surface a normalised
+    # 'fecha' (YYYY-MM-DD) so the dashboard can join on it.
+    cleaned = []
+    for r in rows:
+        record = {k.replace('<br>', ' ').strip(): v for k, v in r.items()}
+        record['fecha'] = _iso_date(record.get('Día Operativo'))
+        cleaned.append(record)
     headers = [h.replace('<br>', ' ').strip() for h in headers]
+
+    # Upsert against any rows we wrote on previous runs — the public
+    # report only goes back ~30 days so without this we'd lose anything
+    # older every time we shrink the window.
+    existing = []
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, encoding='utf-8') as f:
+                payload = json.load(f)
+            existing = payload.get('data') or []
+            if not isinstance(existing, list):
+                existing = []
+        except (OSError, json.JSONDecodeError):
+            existing = []
+    merged = {r.get('fecha'): r for r in existing if r.get('fecha')}
+    for r in cleaned:
+        if r.get('fecha'):
+            merged[r['fecha']] = r  # newer wins
+    final_rows = sorted(merged.values(), key=lambda r: r.get('fecha') or '')
+
     write_json(
         out_path,
-        rows,
+        final_rows,
         source='TGN ABII — Estado del Sistema',
         source_date=hasta,
         query={'desde': desde, 'hasta': hasta, 'gasoducto': 'TODOS'},
         headers=headers,
     )
-    write_csv(json_to_csv_path(out_path), rows)
-    print(f'fetch_tgn: wrote {len(rows)} rows to tgn_system_state.json')
+    write_csv(json_to_csv_path(out_path), final_rows)
+    print(f'fetch_tgn: wrote {len(final_rows)} rows to tgn_system_state.json '
+          f'({len(cleaned)} from this run, {len(existing)} pre-existing)')
 
 
 def scrape_nominaciones(page):
