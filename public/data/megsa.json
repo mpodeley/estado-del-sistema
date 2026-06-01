@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T19:20:56+00:00",
+  "generated_at": "2026-06-01T20:04:57+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -16,7 +16,7 @@
         "previousPeriod": null,
         "nominalDifference": -0.11,
         "percentageDifference": -3.34,
-        "lastUpdated": "2026-06-01T16:20:15.5209466",
+        "lastUpdated": "2026-06-01T17:01:31.6849606",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -32,7 +32,7 @@
         "previousPeriod": null,
         "nominalDifference": 3.16,
         "percentageDifference": 6.87,
-        "lastUpdated": "2026-06-01T16:20:15.9164459",
+        "lastUpdated": "2026-06-01T17:01:36.3312839",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -42,13 +42,13 @@
         "series": "BRENT_CRUDE_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 95.2,
+        "currentPrice": 95.29,
         "currentPeriod": "2026-06-01T00:00:00",
         "previousPrice": 91.99,
         "previousPeriod": null,
-        "nominalDifference": 3.21,
-        "percentageDifference": 3.49,
-        "lastUpdated": "2026-06-01T16:20:15.0970438",
+        "nominalDifference": 3.3,
+        "percentageDifference": 3.59,
+        "lastUpdated": "2026-06-01T17:01:19.4190067",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 92.3,
+        "currentPrice": 92.46,
         "currentPeriod": "2026-06-01T00:00:00",
         "previousPrice": 87.36,
         "previousPeriod": null,
-        "nominalDifference": 4.94,
-        "percentageDifference": 5.65,
-        "lastUpdated": "2026-06-01T16:20:12.9849159",
+        "nominalDifference": 5.1,
+        "percentageDifference": 5.84,
+        "lastUpdated": "2026-06-01T17:00:55.6323459",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -90,7 +90,7 @@
         "fechaUltimaModificacion": "2026-05-29T13:41:44"
       }
     ],
-    "fetched_at": "2026-06-01T19:20:56+00:00"
+    "fetched_at": "2026-06-01T20:04:57+00:00"
   },
   "errors": null
 }
