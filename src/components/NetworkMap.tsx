@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { colors, iconBtn, radius, sectionTitle, space } from '../theme'
 import { useMapPanZoom } from '../hooks/useMapPanZoom'
+import { HEAT_PALETTE, NO_DATA, quantileBins, densityColor, formatBins } from '../utils/choropleth'
+import ProvinciaTrendPanel, { type TrendPoint } from './ProvinciaTrendPanel'
 import type {
   GasNetwork,
   GasRoute,
@@ -8,7 +10,8 @@ import type {
   TramoRow,
   DistribuidorasCollection,
   EnargasMonthly,
-  GedRow,
+  ProvinciasCollection,
+  ProvinciaConsumoRow,
 } from '../hooks/useData'
 import type { EnargasRDSRow } from '../types'
 
@@ -118,7 +121,13 @@ interface Props {
   monthly?: EnargasMonthly | null
   /** Latest ENARGAS RDS row — feeds the national consumption/supply donuts. */
   rds?: EnargasRDSRow | null
+  /** Province polygons (EPSG:3857, with area_km2) for the density heatmap. */
+  provincias?: ProvinciasCollection | null
+  /** Monthly gas-entregado per province — feeds the heatmap + consumption bubbles. */
+  provinciasConsumo?: ProvinciaConsumoRow[] | null
 }
+
+type LayerKey = 'heatmap' | 'network' | 'provBubbles' | 'distribuidoras' | 'cuencaBubbles'
 
 const DIST_COLORS: Record<string, string> = {
   metrogas: '#3b82f6',
@@ -172,10 +181,20 @@ function pieWedgePath(cx: number, cy: number, r: number, a0: number, a1: number)
   return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`
 }
 
-export default function NetworkMap({ network, outline, tramos, distribuidoras, monthly, rds }: Props) {
+export default function NetworkMap({ network, outline, tramos, distribuidoras, monthly, rds, provincias, provinciasConsumo }: Props) {
   const [hover, setHover] = useState<GasRoute | null>(null)
   const [hoverDist, setHoverDist] = useState<string | null>(null)
   const [hoverCuenca, setHoverCuenca] = useState<string | null>(null)
+  const [hoverProv, setHoverProv] = useState<string | null>(null)
+  const [selectedProv, setSelectedProv] = useState<string | null>(null)
+  const [layers, setLayers] = useState<Record<LayerKey, boolean>>({
+    heatmap: true,
+    network: true,
+    provBubbles: true,
+    distribuidoras: true,
+    cuencaBubbles: false,
+  })
+  const toggle = (k: LayerKey) => setLayers((s) => ({ ...s, [k]: !s[k] }))
 
   const latestTramo = tramos[tramos.length - 1]
 
@@ -244,37 +263,66 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
     })
   }, [monthly])
 
-  // ----- distribuidora bubbles from GED (authoritative monthly consumption) -----
-  const distBubbles = useMemo(() => {
-    if (!distribuidoras?.features) return []
-    const ged = monthly?.gas_entregado
-    const latest = ged && ged.length > 0 ? ged[ged.length - 1] : null
-    const values: Record<string, number> = {}
-    let max = 1
-    for (const f of distribuidoras.features) {
-      const id = f.properties.id as keyof GedRow
-      const v = latest && typeof latest[id] === 'number' ? (latest[id] as number) : 0
-      values[f.properties.id] = v
-      if (v > max) max = v
+  // ----- province consumption (heatmap density + bubbles) -----
+  // Latest monthly row of ENARGAS gas-entregado-por-provincia (dam³/mes).
+  const provLatest = provinciasConsumo && provinciasConsumo.length > 0
+    ? provinciasConsumo[provinciasConsumo.length - 1]
+    : null
+
+  // Per-province total + density (dam³/mes·km⁻²) and the quantile bins for the
+  // heatmap color scale. Provinces without a network (Misiones/Formosa) → null.
+  const provInfo = useMemo(() => {
+    const map = new Map<string, { total: number | null; density: number; name: string; area: number }>()
+    if (!provincias?.features) return { map, bins: [] as number[] }
+    const densities: number[] = []
+    for (const f of provincias.features) {
+      const slug = f.properties.id
+      const raw = provLatest ? provLatest[slug] : null
+      const total = typeof raw === 'number' ? raw : null
+      const area = f.properties.area_km2 || 0
+      const density = total != null && area > 0 ? total / area : 0
+      map.set(slug, { total, density, name: f.properties.name, area })
+      densities.push(density)
     }
-    return distribuidoras.features.map((f) => {
-      const id = f.properties.id
-      const v = values[id] ?? 0
-      const { x, y } = polyCentroid(f.geometry.coordinates)
-      // Value comes in dam³/month; divide by 1000 * 28 for MMm³/d (approx).
-      const perDay = v / 1000 / 28
-      return {
-        id,
-        name: f.properties.name,
-        x,
-        y,
-        gedDam3Month: v,
-        gedMMm3Day: perDay,
-        // Radius in screen px (converted at render time); capped.
-        radiusPx: Math.min(6 + 10 * Math.sqrt(v / max), 16),
-      }
-    })
-  }, [distribuidoras, monthly])
+    return { map, bins: quantileBins(densities) }
+  }, [provincias, provLatest])
+
+  // Consumption bubbles sized by absolute volume (complementary to the density
+  // heatmap). Placed at each province's largest-ring centroid.
+  const provBubbles = useMemo(() => {
+    if (!provincias?.features) return []
+    let max = 1
+    for (const info of provInfo.map.values()) if (info.total && info.total > max) max = info.total
+    return provincias.features
+      .map((f) => {
+        const info = provInfo.map.get(f.properties.id)
+        const v = info?.total ?? 0
+        const { x, y } = polyCentroid(f.geometry.coordinates)
+        return {
+          slug: f.properties.id,
+          name: f.properties.name,
+          x,
+          y,
+          total: v,
+          mmm3Month: v / 1000,
+          radiusPx: v > 0 ? Math.min(6 + 12 * Math.sqrt(v / max), 18) : 0,
+        }
+      })
+      .filter((b) => b.total > 0)
+  }, [provincias, provInfo])
+
+  // Monthly trend (MMm³) for the selected province.
+  const selectedSeries = useMemo<TrendPoint[]>(() => {
+    if (!selectedProv || !provinciasConsumo) return []
+    return provinciasConsumo
+      .map((r) => {
+        const v = r[selectedProv]
+        return { fecha: (r.fecha as string).slice(0, 7), mmm3: typeof v === 'number' ? v / 1000 : null }
+      })
+      .filter((d) => d.mmm3 != null)
+  }, [provinciasConsumo, selectedProv])
+  const selectedName = selectedProv ? provInfo.map.get(selectedProv)?.name ?? selectedProv : ''
+  const hasProv = !!provincias?.features?.length && !!provLatest
 
   const nodesById = useMemo(
     () => Object.fromEntries(network.nodes.map((n) => [n.nodeId, n])),
@@ -284,7 +332,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
   return (
     <div>
       <h3 style={sectionTitle}>
-        Red de gasoductos — mapa real
+        Mapa del sistema — red, distribuidoras y consumo por provincia
         <span style={{ float: 'right', fontSize: 11, color: colors.textDim, textTransform: 'none', fontWeight: 400 }}>
           Topología via{' '}
           <a href="https://github.com/mpodeley/gasoductos" target="_blank" rel="noopener" style={{ color: colors.accent.blue }}>
@@ -292,7 +340,25 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           </a>
         </span>
       </h3>
-      <div style={{ position: 'relative', maxWidth: 560, margin: '0 auto' }}>
+
+      {/* Layer toggles */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: space.sm }}>
+        {([
+          ['heatmap', 'Densidad provincial', hasProv],
+          ['provBubbles', 'Consumo (burbujas)', hasProv],
+          ['network', 'Red de gasoductos', true],
+          ['distribuidoras', 'Distribuidoras', !!distribuidoras?.features?.length],
+          ['cuencaBubbles', 'Oferta por cuenca', cuencaData.length > 0],
+        ] as [LayerKey, string, boolean][])
+          .filter(([, , avail]) => avail)
+          .map(([key, label]) => (
+            <button key={key} onClick={() => toggle(key)} style={layerBtn(layers[key])}>
+              {label}
+            </button>
+          ))}
+      </div>
+
+      <div style={{ position: 'relative', maxWidth: 640, margin: '0 auto' }}>
         <svg
           ref={svgRef}
           viewBox={viewBox}
@@ -319,27 +385,62 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             />
           ))}
 
-          {/* Distribuidora regions — subtle fill */}
-          {distribuidoras?.features.map((f) => {
-            const id = f.properties.id
-            const color = DIST_COLORS[id] ?? '#475569'
-            const isHover = hoverDist === id
+          {/* Province consumption heatmap (density gas/km²). Bottom interactive
+              layer: hover → tooltip, click → trend. */}
+          {layers.heatmap && provincias?.features.map((f) => {
+            const slug = f.properties.id
+            const info = provInfo.map.get(slug)
+            const hasData = !!info && info.total != null
+            const fill = hasData ? densityColor(info!.density, provInfo.bins) : NO_DATA
+            const isHover = hoverProv === slug
+            const isSel = selectedProv === slug
             return (
               <g
-                key={id}
-                onMouseEnter={() => !isDragging && setHoverDist(id)}
-                onMouseLeave={() => setHoverDist(null)}
-                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+                key={`heat-${slug}`}
+                onMouseEnter={() => !isDragging && setHoverProv(slug)}
+                onMouseLeave={() => setHoverProv(null)}
+                onClick={() => !isDragging && setSelectedProv(isSel ? null : slug)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto', cursor: 'pointer' }}
               >
                 {f.geometry.coordinates.map((polygon, pi) => (
                   <polygon
                     key={pi}
                     points={(polygon[0] ?? []).map(([x, y]) => `${x},${-y}`).join(' ')}
-                    fill={color}
-                    fillOpacity={isHover ? 0.35 : 0.15}
+                    fill={fill}
+                    fillOpacity={hasData ? (isHover || isSel ? 0.82 : 0.55) : 0.22}
+                    stroke={isSel ? '#f1f5f9' : '#0b1220'}
+                    strokeWidth={px(isSel ? 1 : 0.4)}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
+              </g>
+            )
+          })}
+
+          {/* Distribuidora regions: outline-only when the heatmap is on (lets the
+              density show through and province clicks pass to the layer below);
+              colored fill + hover when the heatmap is off (legacy look). */}
+          {layers.distribuidoras && distribuidoras?.features.map((f) => {
+            const id = f.properties.id
+            const color = DIST_COLORS[id] ?? '#475569'
+            const isHover = hoverDist === id
+            const outlineOnly = layers.heatmap
+            return (
+              <g
+                key={id}
+                onMouseEnter={() => !outlineOnly && !isDragging && setHoverDist(id)}
+                onMouseLeave={() => setHoverDist(null)}
+                style={{ pointerEvents: outlineOnly || isDragging ? 'none' : 'auto' }}
+              >
+                {f.geometry.coordinates.map((polygon, pi) => (
+                  <polygon
+                    key={pi}
+                    points={(polygon[0] ?? []).map(([x, y]) => `${x},${-y}`).join(' ')}
+                    fill={outlineOnly ? 'none' : color}
+                    fillOpacity={outlineOnly ? 0 : isHover ? 0.35 : 0.15}
                     stroke={color}
-                    strokeOpacity={isHover ? 0.8 : 0.35}
-                    strokeWidth={px(isHover ? 0.8 : 0.4)}
+                    strokeOpacity={outlineOnly ? 0.5 : isHover ? 0.8 : 0.35}
+                    strokeWidth={px(outlineOnly ? 0.5 : isHover ? 0.8 : 0.4)}
                   />
                 ))}
               </g>
@@ -348,7 +449,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
 
           {/* Pipelines: operator color by default, stress color overrides for
               the 3 tramos we track (CCO, Neuba I/II, Gas Andes). */}
-          {network.routes.map((e) => {
+          {layers.network && network.routes.map((e) => {
             const util = stressForGasoducto(e.gasoducto, latestTramo)
             const hasStress = util != null
             const operator: Operator = OPERATOR_BY_GASODUCTO[e.gasoducto] ?? 'Otro'
@@ -386,7 +487,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           })}
 
           {/* Network nodes — bigger dots and readable labels */}
-          {network.nodes.map((n) => {
+          {layers.network && network.nodes.map((n) => {
             const role = n.roleProxy
             const fill = role === 'source_proxy' ? '#34d399'
               : role === 'sink_proxy' ? '#60a5fa'
@@ -418,7 +519,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           {/* Cuenca bubbles (supply). Neuquina splits TGN/TGS as a pie; the
               single-transportista cuencas render as a solid circle. Name is
               always shown to orient; volume + split only on hover. */}
-          {cuencaData.map((c) => {
+          {layers.cuencaBubbles && cuencaData.map((c) => {
             const isHover = hoverCuenca === c.id
             const rr = px(c.radiusPx)
             const cy = -c.y
@@ -510,29 +611,30 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             )
           })}
 
-          {/* Distribuidora bubbles (demand). Labels only on hover — the region
-              fill already identifies each zone, so permanent labels just clutter. */}
-          {distBubbles.map((b) => {
-            const color = DIST_COLORS[b.id] ?? '#475569'
-            const isHover = hoverDist === b.id
+          {/* Province consumption bubbles (demand). Sized by absolute volume so
+              they complement the density heatmap (which encodes intensity). */}
+          {layers.provBubbles && provBubbles.map((b) => {
+            const isHover = hoverProv === b.slug
+            const isSel = selectedProv === b.slug
             const rr = px(b.radiusPx)
             return (
               <g
-                key={b.id}
-                onMouseEnter={() => !isDragging && setHoverDist(b.id)}
-                onMouseLeave={() => setHoverDist(null)}
-                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+                key={`bub-${b.slug}`}
+                onMouseEnter={() => !isDragging && setHoverProv(b.slug)}
+                onMouseLeave={() => setHoverProv(null)}
+                onClick={() => !isDragging && setSelectedProv(isSel ? null : b.slug)}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto', cursor: 'pointer' }}
               >
                 <circle
                   cx={b.x}
                   cy={-b.y}
                   r={rr}
-                  fill={color}
-                  fillOpacity={isHover ? 0.75 : 0.5}
-                  stroke={color}
-                  strokeWidth={px(0.6)}
+                  fill={colors.accent.orange}
+                  fillOpacity={isHover || isSel ? 0.85 : 0.55}
+                  stroke={isSel ? '#f1f5f9' : '#0b1220'}
+                  strokeWidth={px(isSel ? 1 : 0.6)}
                 />
-                {isHover && (
+                {(isHover || isSel) && (
                   <>
                     <text
                       x={b.x}
@@ -545,7 +647,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                       paintOrder="stroke"
                       fontWeight={700}
                     >
-                      {b.name.split(' ')[0]}
+                      {b.name}
                     </text>
                     <text
                       x={b.x}
@@ -558,7 +660,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                       paintOrder="stroke"
                       fontWeight={600}
                     >
-                      {b.gedMMm3Day.toFixed(1)} MMm³/d
+                      {b.mmm3Month.toFixed(0)} MMm³/mes
                     </text>
                   </>
                 )}
@@ -627,7 +729,41 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             )}
           </div>
         )}
+
+        {/* Province hover tooltip */}
+        {hoverProv && (() => {
+          const info = provInfo.map.get(hoverProv)
+          if (!info) return null
+          return (
+            <div
+              style={{
+                position: 'absolute', bottom: space.sm, left: space.sm,
+                background: 'rgba(15,23,42,0.95)', border: `1px solid ${colors.border}`,
+                borderRadius: 8, padding: `${space.sm}px ${space.md}px`, fontSize: 12,
+                color: colors.textSecondary, pointerEvents: 'none', maxWidth: 240,
+              }}
+            >
+              <div style={{ color: colors.textPrimary, fontWeight: 700 }}>{info.name}</div>
+              {info.total != null ? (
+                <div style={{ marginTop: 4, lineHeight: 1.6 }}>
+                  <div>Consumo: <strong>{(info.total / 1000).toFixed(1)}</strong> MMm³/mes</div>
+                  <div>Densidad: <strong>{info.density.toFixed(2)}</strong> mil m³/mes·km⁻²</div>
+                  <div style={{ color: colors.textDim, fontSize: 11 }}>click para ver evolución</div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 4, color: colors.textDim }}>Sin red de distribución.</div>
+              )}
+            </div>
+          )
+        })()}
       </div>
+
+      {/* Per-province monthly trend (opens on click) */}
+      {selectedProv && (
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <ProvinciaTrendPanel provinciaName={selectedName} series={selectedSeries} onClose={() => setSelectedProv(null)} />
+        </div>
+      )}
 
       {/* National mix donuts — the only level at which the segment / supply
           split exists. Helps read the system composition at a glance. */}
@@ -635,6 +771,23 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
 
       {/* Legends */}
       <div style={{ marginTop: space.sm, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: space.md, fontSize: 11, color: colors.textDim }}>
+        {layers.heatmap && provInfo.bins.length > 0 && (
+          <div>
+            <div style={{ color: colors.textDim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Densidad consumo (mil m³/mes·km⁻²)</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {HEAT_PALETTE.map((c, i) => (
+                <span key={c} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 12, height: 10, background: c, borderRadius: 2 }} />
+                  {formatBins(provInfo.bins)[i]}
+                </span>
+              ))}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 12, height: 10, background: NO_DATA, borderRadius: 2 }} />
+                sin red
+              </span>
+            </div>
+          </div>
+        )}
         <div>
           <div style={{ color: colors.textDim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Operador (línea)</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
@@ -654,13 +807,15 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         </div>
       </div>
       <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm }}>
-        Rueda para zoom, arrastrar para mover, ⟲ para resetear. Líneas coloreadas por operador; donde
-        el Excel trae capacidad + corte (CCO, Neuba I/II, Gas Andes) el color pasa a reflejar el stress
-        (verde→rojo). Grosor = caudal relativo del snapshot GCIE. Burbujas sobre cuencas = volumen
-        mensual inyectado ({formatVolDate(monthly)}), partido TGN/TGS donde aplica (Neuquina).
-        Burbujas coloreadas sobre zonas de distribuidoras = <strong>gas efectivamente entregado
-        </strong> (ENARGAS GED, {formatGedDate(monthly)}). Pasá el cursor sobre una burbuja para ver
-        el detalle.
+        Usá los toggles para prender/apagar capas. <strong>Fondo</strong> = densidad de gas entregado
+        por la red de distribución sobre la superficie provincial (ENARGAS, último mes); las burbujas
+        naranjas miden el <strong>volumen absoluto</strong> por provincia. No incluye usinas ni grandes
+        usuarios que compran gas directo al productor. Pasá el cursor sobre una provincia y hacé click
+        para ver su evolución mensual. <strong>Líneas</strong> = gasoductos coloreados por operador;
+        donde el Excel trae capacidad + corte (CCO, Neuba I/II, Gas Andes) el color refleja el stress
+        (verde→rojo) y el grosor el caudal relativo (snapshot GCIE). Las burbujas de oferta por cuenca
+        ({formatVolDate(monthly)}, partido TGN/TGS en Neuquina) son una capa opcional. Rueda para zoom,
+        arrastrar para mover, ⟲ para resetear.
       </p>
     </div>
   )
@@ -671,11 +826,16 @@ function formatVolDate(monthly: EnargasMonthly | null | undefined): string {
   return s ? s.slice(0, 7) : 'último mes'
 }
 
-function formatGedDate(monthly: EnargasMonthly | null | undefined): string {
-  const arr = monthly?.gas_entregado
-  const s = arr && arr.length > 0 ? arr[arr.length - 1].fecha : undefined
-  return s ? s.slice(0, 7) : 'último mes'
-}
+const layerBtn = (active: boolean): React.CSSProperties => ({
+  background: active ? colors.accent.blue + '33' : 'transparent',
+  color: active ? colors.textPrimary : colors.textDim,
+  border: `1px solid ${active ? colors.accent.blue : colors.border}`,
+  borderRadius: radius.pill,
+  padding: '3px 12px',
+  cursor: 'pointer',
+  fontSize: 12,
+  fontWeight: 600,
+})
 
 function Kv({ label, value }: { label: string; value: string }) {
   return (
