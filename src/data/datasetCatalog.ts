@@ -45,6 +45,7 @@ export type FreshnessKey =
   | 'capiv'
   | 'planesDesarrollo'
   | 'tgnSystemState'
+  | 'enargasProvincias'
 
 export const CATALOG: DatasetEntry[] = [
   {
@@ -144,6 +145,29 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/fetch_enargas_estadisticas.py',
         purpose: 'Descarga GRT/GED/Contratos XLSX y los parsea con openpyxl.',
+      },
+    ],
+  },
+  {
+    id: 'enargas_provincias',
+    name: 'ENARGAS — Gas entregado por provincia',
+    shortDescription:
+      'Gas entregado por las distribuidoras desagregado por provincia (cuadro 1.06 de ENARGAS, hoja PTS de GED.xlsx). Mensual, ~10 años de historia. Alimenta el heatmap de densidad (gas/km²) y la serie por provincia del Mapa. No incluye usinas ni grandes usuarios que compran gas directo al productor; el desglose por segmento solo existe a nivel nacional.',
+    kind: 'auto',
+    frequency: 'Diaria (origen mensual)',
+    sourceUrl:
+      'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/datos-operativos.php',
+    jsonPath: './data/enargas_provincias.json',
+    csvPath: './data/enargas_provincias.csv',
+    freshnessKey: 'enargasProvincias',
+    scripts: [
+      {
+        file: 'scripts/fetch_enargas_provincias.py',
+        purpose: 'Descarga GED.xlsx, parsea la hoja PTS y suma columnas distribuidora→provincia por mes.',
+      },
+      {
+        file: 'scripts/build_provincias_geojson.cjs',
+        purpose: 'Build one-shot del provincias.geojson (EPSG:3857) con area_km2 precalculada para la densidad.',
       },
     ],
   },

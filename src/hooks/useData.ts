@@ -352,6 +352,42 @@ export interface DistribuidorasCollection {
   features: DistribuidoraFeature[]
   crs?: unknown
 }
+/** Gas entregado por provincia (ENARGAS GED.xlsx / cuadro 1.06). One row per
+ *  month; keys beyond `fecha` are province slugs → dam³/mes (miles de m³).
+ *  Tipo de servicio is collapsed (national-only split), so this is the province
+ *  total — feeds the choropleth density + per-province trend. */
+export interface ProvinciaConsumoRow {
+  fecha: string
+  [provinciaSlug: string]: number | string | null
+}
+export const useEnargasProvincias = () =>
+  useJson<ProvinciaConsumoRow[]>('./data/enargas_provincias.json')
+
+export interface ProvinciaFeature {
+  type: 'Feature'
+  properties: { id: string; name: string; area_km2: number }
+  geometry: { type: 'MultiPolygon'; coordinates: number[][][][] }
+}
+export interface ProvinciasCollection {
+  type: 'FeatureCollection'
+  features: ProvinciaFeature[]
+  crs?: unknown
+}
+/** Provincias GeoJSON (EPSG:3857, like distribuidoras.geojson): raw
+ *  FeatureCollection without the pipeline envelope, so fetch manually. */
+export function useProvincias() {
+  const [state, setState] = useState<{ data: ProvinciasCollection | null; loading: boolean; error: Error | null }>({
+    data: null, loading: true, error: null,
+  })
+  useEffect(() => {
+    fetch('./data/provincias.geojson', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d: ProvinciasCollection) => setState({ data: d, loading: false, error: null }))
+      .catch((e: Error) => setState({ data: null, loading: false, error: e }))
+  }, [])
+  return state
+}
+
 export interface TGNSystemStateRow {
   /** YYYY-MM-DD normalised from the Java toString in 'Día Operativo'. */
   fecha?: string | null

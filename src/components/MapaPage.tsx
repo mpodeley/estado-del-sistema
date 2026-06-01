@@ -1,6 +1,7 @@
-import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useTramos, useEnargasING, useEnargasRDS } from '../hooks/useData'
+import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useTramos, useEnargasING, useEnargasRDS, useEnargasProvincias, useProvincias } from '../hooks/useData'
 import { card, colors, sectionTitle, space } from '../theme'
 import NetworkMap from './NetworkMap'
+import ProvinciasMap from './ProvinciasMap'
 import { RegionalSection } from './GasoductoFlowChart'
 import TransportRestrictionsPanel from './TransportRestrictionsPanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
@@ -15,6 +16,8 @@ export default function MapaPage() {
   const tramosState = useTramos()
   const ingState = useEnargasING()
   const rdsState = useEnargasRDS()
+  const provConsumoState = useEnargasProvincias()
+  const provGeoState = useProvincias()
 
   if (networkState.loading || outlineState.loading) {
     return (
@@ -55,6 +58,16 @@ export default function MapaPage() {
             monthly={monthlyState.data}
             rds={rdsLatest}
           />
+        </div>
+      )}
+
+      {provGeoState.data && provConsumoState.data && provConsumoState.data.length > 0 && (
+        <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.orange}` }}>
+          <h3 style={sectionTitle}>Consumo de gas por provincia — densidad (gas/km²)</h3>
+          <p style={{ color: colors.textDim, fontSize: 12, marginTop: -4, marginBottom: space.md }}>
+            Gas entregado por las distribuidoras, normalizado por superficie provincial. Mensual, último dato disponible.
+          </p>
+          <ProvinciasMap provincias={provGeoState.data} consumo={provConsumoState.data} />
         </div>
       )}
 

@@ -14,6 +14,7 @@ import {
   useProduccionNeuquina,
   usePlanesDesarrollo,
   useTGNSystemState,
+  useEnargasProvincias,
 } from '../hooks/useData'
 import { CATALOG, DatasetEntry, DatasetKind, FreshnessKey } from '../data/datasetCatalog'
 import { REPO_ROOT, REPO_BRANCH, githubFileUrl } from '../utils/github'
@@ -191,6 +192,7 @@ export default function FuentesPage() {
     capiv: useProduccionNeuquina(),
     planesDesarrollo: usePlanesDesarrollo(),
     tgnSystemState: useTGNSystemState(),
+    enargasProvincias: useEnargasProvincias(),
   }
 
   return (
