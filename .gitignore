@@ -10,6 +10,7 @@ raw/incoming/_archive/
 raw/tgn_state.json
 raw/tgn_har/
 scripts/.capiv_cache.json
+scripts/.pozos_terminados_cache.json
 curso/node_modules/
 curso/dist/
 curso/.astro/

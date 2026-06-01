@@ -43,6 +43,7 @@ export type FreshnessKey =
   | 'smn'
   | 'megsa'
   | 'capiv'
+  | 'pozosTerminados'
   | 'planesDesarrollo'
   | 'tgnSystemState'
   | 'enargasProvincias'
@@ -321,6 +322,24 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/fetch_capiv.py',
         purpose: 'Stremea los CSV anuales de CKAN, filtra cuenca=NEUQUINA, agrega por bloque+operador+mes y upserta por mes.',
+      },
+    ],
+  },
+  {
+    id: 'pozos_terminados',
+    name: 'Secretaría de Energía — Pozos terminados (perforación)',
+    shortDescription:
+      'Conteo mensual de pozos terminados (perforación completada) por bloque, el proxy público de la actividad de perforación. El fetcher streamea el CSV único de datos.energia.gob.ar, filtra a Cuenca Neuquina y agrega cantidad por (mes, bloque) con desglose por concepto (petróleo/gas/servicio). Alimenta el heatmap de "pozos perforados / km²" del mapa de concesiones.',
+    kind: 'auto',
+    frequency: 'Mensual',
+    sourceUrl: 'https://datos.energia.gob.ar/dataset/perforacion-de-pozos-de-petroleo-y-gas',
+    jsonPath: './data/pozos_terminados.json',
+    csvPath: './data/pozos_terminados.csv',
+    freshnessKey: 'pozosTerminados',
+    scripts: [
+      {
+        file: 'scripts/fetch_pozos_terminados.py',
+        purpose: 'Streamea el CSV "Pozos terminados" de CKAN, filtra cuenca=NEUQUINA y agrega por (mes, bloque). Salta la descarga si Last-Modified no cambió.',
       },
     ],
   },

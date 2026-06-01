@@ -197,6 +197,19 @@ export interface ProduccionHistoricoRow {
 }
 export const useProduccionHistorico = () => useJson<ProduccionHistoricoRow[]>('./data/produccion_neuquina_historico.json')
 
+export interface PozoTerminadoMes {
+  mes: string                  // YYYY-MM
+  area: string                 // areapermisoconcesion (bloque / concesión)
+  cuenca: string
+  provincia: string
+  pozos: number                // total pozos terminados en el mes
+  pozos_pet: number            // concepto "Productivos de Petróleo"
+  pozos_gas: number            // concepto "Productivos de Gas"
+  pozos_serv: number           // concepto "Servicio"
+  pozos_otros: number          // improductivos y otros
+}
+export const usePozosTerminados = () => useJson<PozoTerminadoMes[]>('./data/pozos_terminados.json')
+
 export interface PlanDesarrollo {
   id: string
   operador: string

@@ -6,6 +6,7 @@ import type {
   ConcesionFeature,
   ProduccionMes,
   ProduccionHistoricoRow,
+  PozoTerminadoMes,
 } from '../hooks/useData'
 
 // Cuenca Neuquina viewport (lon/lat). Tight crop around the productive area —
@@ -99,9 +100,14 @@ function polygonAreaKm2(coords: number[][][][]): number {
   return total
 }
 
-type Mode = 'operador' | 'gas_prod' | 'pet_prod' | 'gas_acum' | 'pet_acum'
+type Mode = 'operador' | 'gas_prod' | 'pet_prod' | 'gas_acum' | 'pet_acum' | 'pozos_act' | 'pozos_perf'
 
 const M3_PER_BBL = 6.2898   // industry conversion: 1 m³ ≈ 6.2898 bbl
+
+// Trailing window (in months) over which "pozos perforados / km²" sums completed
+// wells. 12 months smooths the month-to-month noise (single months swing 18→49
+// wells across the whole basin) while still reflecting recent drilling intensity.
+const PERF_WINDOW_MONTHS = 12
 
 interface Props {
   concesiones: ConcesionesCollection
@@ -111,6 +117,9 @@ interface Props {
    *  absent, the mode falls back to summing the months present in
    *  `produccion` (typically just the last 2 years). */
   historico?: ProduccionHistoricoRow[] | null
+  /** Optional "pozos terminados" per (mes, area). When provided, enables the
+   *  "Pozos perforados / km²" heatmap mode (trailing PERF_WINDOW_MONTHS sum). */
+  perforaciones?: PozoTerminadoMes[] | null
   latestMes: string | null
 }
 
@@ -127,9 +136,13 @@ interface ProjectedFeature {
   petDailyDensity: number
   gasTotalDensity: number
   petTotalDensity: number
+  //   pozosActDensity  → pozos activos · km⁻²  (latest month)
+  //   pozosPerfDensity → pozos terminados · km⁻²  (trailing PERF_WINDOW_MONTHS)
+  pozosActDensity: number
+  pozosPerfDensity: number
 }
 
-export default function CuencaMap({ concesiones, produccion, historico, latestMes }: Props) {
+export default function CuencaMap({ concesiones, produccion, historico, perforaciones, latestMes }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null)
   const [mode, setMode] = useState<Mode>('operador')
 
@@ -217,6 +230,30 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     return primer && ultimo ? { primer, ultimo } : null
   }, [historico])
 
+  // Trailing-window completed wells per block. Uses the most recent
+  // PERF_WINDOW_MONTHS distinct months present in `perforaciones`.
+  const perf = useMemo(() => {
+    if (!perforaciones || perforaciones.length === 0) {
+      return { byArea: new Map<string, { pozos: number; pet: number; gas: number; serv: number; otros: number }>(), primer: null as string | null, ultimo: null as string | null }
+    }
+    const months = [...new Set(perforaciones.map((r) => r.mes))].sort()
+    const window = new Set(months.slice(-PERF_WINDOW_MONTHS))
+    const byArea = new Map<string, { pozos: number; pet: number; gas: number; serv: number; otros: number }>()
+    for (const r of perforaciones) {
+      if (!window.has(r.mes)) continue
+      const key = (r.area || '').trim().toUpperCase()
+      const slot = byArea.get(key) ?? { pozos: 0, pet: 0, gas: 0, serv: 0, otros: 0 }
+      slot.pozos += r.pozos
+      slot.pet += r.pozos_pet
+      slot.gas += r.pozos_gas
+      slot.serv += r.pozos_serv
+      slot.otros += r.pozos_otros
+      byArea.set(key, slot)
+    }
+    const wm = [...window].sort()
+    return { byArea, primer: wm[0] ?? null, ultimo: wm[wm.length - 1] ?? null }
+  }, [perforaciones])
+
   const projected = useMemo<ProjectedFeature[]>(() => {
     return concesiones.features.map((f) => {
       const ringStrings: string[] = []
@@ -243,6 +280,8 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       // Oil cumulative: m³ → MMbbl (millions of barrels). Loma Campana lifetime
       // is roughly 30 MMbbl after a few years of Vaca Muerta — easy to read.
       const totalPetMMbbl = totals ? (totals.pet * M3_PER_BBL) / 1_000_000 : 0
+      const pozosAct = prod?.pozos ?? 0
+      const pozosPerf = perf.byArea.get(nombreKey)?.pozos ?? 0
       return {
         feature: f,
         ringStrings,
@@ -251,9 +290,11 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
         petDailyDensity: areaKm2 > 0 ? dailyPetBbl / areaKm2 : 0,
         gasTotalDensity: areaKm2 > 0 ? totalGas / areaKm2 : 0,
         petTotalDensity: areaKm2 > 0 ? totalPetMMbbl / areaKm2 : 0,
+        pozosActDensity: areaKm2 > 0 ? pozosAct / areaKm2 : 0,
+        pozosPerfDensity: areaKm2 > 0 ? pozosPerf / areaKm2 : 0,
       }
     })
-  }, [concesiones, prodByArea, totalByArea, daysInLatest])
+  }, [concesiones, prodByArea, totalByArea, perf, daysInLatest])
 
   // Quantile thresholds for the heatmap (one per palette step) — one set per
   // density mode so each gets its own legible scale.
@@ -273,6 +314,8 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       pet_prod: quantiles(projected.map((p) => p.petDailyDensity)),
       gas_acum: quantiles(projected.map((p) => p.gasTotalDensity)),
       pet_acum: quantiles(projected.map((p) => p.petTotalDensity)),
+      pozos_act: quantiles(projected.map((p) => p.pozosActDensity)),
+      pozos_perf: quantiles(projected.map((p) => p.pozosPerfDensity)),
     }
   }, [projected])
 
@@ -298,7 +341,9 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
   }, [projected])
 
   const hovered = projected.find((p) => p.feature.properties.id === hoverId)
-  const hoveredProd = hovered ? prodByArea.get((hovered.feature.properties.nombre || '').trim().toUpperCase()) : null
+  const hoveredKey = hovered ? (hovered.feature.properties.nombre || '').trim().toUpperCase() : ''
+  const hoveredProd = hovered ? prodByArea.get(hoveredKey) : null
+  const hoveredPerf = hovered ? perf.byArea.get(hoveredKey) : null
 
   // ----- mode-specific fill color -----
   function valueForMode(p: ProjectedFeature): number {
@@ -306,6 +351,8 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     if (mode === 'pet_prod') return p.petDailyDensity
     if (mode === 'gas_acum') return p.gasTotalDensity
     if (mode === 'pet_acum') return p.petTotalDensity
+    if (mode === 'pozos_act') return p.pozosActDensity
+    if (mode === 'pozos_perf') return p.pozosPerfDensity
     return 0
   }
   function binsForMode(): number[] {
@@ -313,6 +360,8 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
     if (mode === 'pet_prod') return heatBins.pet_prod
     if (mode === 'gas_acum') return heatBins.gas_acum
     if (mode === 'pet_acum') return heatBins.pet_acum
+    if (mode === 'pozos_act') return heatBins.pozos_act
+    if (mode === 'pozos_perf') return heatBins.pozos_perf
     return []
   }
   function fillFor(p: ProjectedFeature): string {
@@ -340,6 +389,10 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
           {(
             [
               { id: 'operador', label: 'Operador' },
+              { id: 'pozos_act', label: 'Pozos activos/km²' },
+              ...(perf.byArea.size > 0
+                ? [{ id: 'pozos_perf' as const, label: `Pozos perforados/km² (${PERF_WINDOW_MONTHS}m)` }]
+                : []),
               { id: 'gas_prod', label: 'Productividad gas' },
               { id: 'pet_prod', label: 'Productividad petróleo' },
               {
@@ -354,7 +407,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
                   ? `Acumulado petróleo ${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
                   : 'Acumulado petróleo',
               },
-            ] as const
+            ] as { id: Mode; label: string }[]
           ).map((m) => (
             <button key={m.id} onClick={() => setMode(m.id)} style={modeBtn(mode === m.id)}>
               {m.label}
@@ -457,7 +510,19 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
                 <div>
                   Petróleo: <strong>{((hoveredProd.latestPet * 6.2898) / daysInLatest / 1000).toFixed(2)}</strong> kbbl/d
                 </div>
-                <div>Pozos activos: <strong>{hoveredProd.pozos}</strong></div>
+                <div>
+                  Pozos activos: <strong>{hoveredProd.pozos}</strong>
+                  <span style={{ color: colors.textDim }}> ({hovered.pozosActDensity.toFixed(3)}/km²)</span>
+                </div>
+                {hoveredPerf && hoveredPerf.pozos > 0 && (
+                  <div>
+                    Perforados {PERF_WINDOW_MONTHS}m: <strong>{hoveredPerf.pozos}</strong>
+                    <span style={{ color: colors.textDim }}> ({hovered.pozosPerfDensity.toFixed(3)}/km²)</span>
+                    <span style={{ color: colors.textDim, fontSize: 11 }}>
+                      {' '}· {hoveredPerf.pet}p / {hoveredPerf.gas}g{hoveredPerf.serv > 0 ? ` / ${hoveredPerf.serv}s` : ''}
+                    </span>
+                  </div>
+                )}
                 <div style={{ color: colors.textDim, fontSize: 11, marginTop: 4 }}>
                   Área: {hovered.areaKm2.toFixed(0)} km²
                 </div>
@@ -479,6 +544,13 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
             ) : (
               <div style={{ marginTop: space.sm, color: colors.textDim }}>
                 Sin producción reportada en {formatMes(latestMes)}.
+                {hoveredPerf && hoveredPerf.pozos > 0 && (
+                  <div style={{ marginTop: 4 }}>
+                    Perforados {PERF_WINDOW_MONTHS}m: <strong>{hoveredPerf.pozos}</strong>
+                    {' '}({hovered.pozosPerfDensity.toFixed(3)}/km²)
+                  </div>
+                )}
+                <div style={{ fontSize: 11, marginTop: 4 }}>Área: {hovered.areaKm2.toFixed(0)} km²</div>
               </div>
             )}
           </div>
@@ -506,7 +578,7 @@ export default function CuencaMap({ concesiones, produccion, historico, latestMe
       ) : (
         <HeatLegend
           bins={binsForMode()}
-          unit={unitForMode(mode, historicoRango, monthsCoveredRecent)}
+          unit={unitForMode(mode, historicoRango, monthsCoveredRecent, perf)}
         />
       )}
 
@@ -522,9 +594,15 @@ function unitForMode(
   mode: Mode,
   historicoRango: { primer: string; ultimo: string } | null,
   monthsCoveredRecent: number,
+  perf: { primer: string | null; ultimo: string | null },
 ): string {
   if (mode === 'gas_prod') return 'mil m³/d · km⁻²'
   if (mode === 'pet_prod') return 'bbl/d · km⁻²'
+  if (mode === 'pozos_act') return 'pozos activos · km⁻²'
+  if (mode === 'pozos_perf') {
+    const r = perf.primer && perf.ultimo ? ` (${perf.primer}…${perf.ultimo})` : ''
+    return `pozos perforados · km⁻²${r}`
+  }
   const rango = historicoRango
     ? `${historicoRango.primer.slice(0, 4)}-${historicoRango.ultimo.slice(0, 4)}`
     : `${monthsCoveredRecent}m`

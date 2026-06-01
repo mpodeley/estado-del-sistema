@@ -11,7 +11,7 @@ import {
   Line,
   CartesianGrid,
 } from 'recharts'
-import { useProduccionNeuquina, useProduccionHistorico, useConcesionesNeuquina, usePlanesDesarrollo } from '../hooks/useData'
+import { useProduccionNeuquina, useProduccionHistorico, useConcesionesNeuquina, usePlanesDesarrollo, usePozosTerminados } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import FreshnessBadge from './FreshnessBadge'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
@@ -138,6 +138,7 @@ export default function ProduccionPage() {
   const state = useProduccionNeuquina()
   const historicoState = useProduccionHistorico()
   const concesionesState = useConcesionesNeuquina()
+  const perforacionesState = usePozosTerminados()
   const planesState = usePlanesDesarrollo()
   const [sortKey, setSortKey] = useState<SortKey>('gas')
 
@@ -333,6 +334,7 @@ export default function ProduccionPage() {
             concesiones={concesionesState.data}
             produccion={rows}
             historico={historicoState.data}
+            perforaciones={perforacionesState.data}
             latestMes={latestMes}
           />
         )}
