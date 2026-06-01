@@ -4,8 +4,12 @@
 // based (rank, not value) so a single extreme outlier (e.g. CABA's density)
 // doesn't collapse everyone else into one bucket.
 
-export const HEAT_PALETTE = ['#451a03', '#7c2d12', '#9a3412', '#c2410c', '#ea580c', '#f97316', '#fbbf24']
-export const NO_DATA = '#334155'
+// Warm ramp tuned for a dark basemap: every step keeps enough luminance to read
+// over the slate map (the original dark-brown floor blended into the background).
+// Drawn at full opacity so the colors render true rather than muddied by the
+// basemap showing through.
+export const HEAT_PALETTE = ['#b45309', '#d97706', '#ea580c', '#f97316', '#fb923c', '#fbbf24', '#fde047']
+export const NO_DATA = '#475569'
 
 /** One threshold per palette step (HEAT_PALETTE.length - 1 thresholds) from the
  *  positive values, by quantile. */

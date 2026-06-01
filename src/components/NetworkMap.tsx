@@ -198,7 +198,18 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
 
   const latestTramo = tramos[tramos.length - 1]
 
-  const { minX, maxX, minY, maxY } = outline.bounds
+  // Render in EPSG:3857 metres ÷ K. Raw metres are ~8e6 with a ~5e6 extent;
+  // browsers fail to rasterize large polygon *fills* at that magnitude (lines,
+  // strokes and small circles still paint, which is why this only bit the
+  // province heatmap). Scaling every coordinate — and the viewBox — by the same
+  // factor keeps the geometry identical on screen but small enough to fill.
+  const K = 1000
+  const sx = (v: number) => v / K
+  const sy = (v: number) => -v / K
+  const minX = outline.bounds.minX / K
+  const maxX = outline.bounds.maxX / K
+  const minY = outline.bounds.minY / K
+  const maxY = outline.bounds.maxY / K
   const width = maxX - minX
   const height = maxY - minY
 
@@ -378,7 +389,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           {outline.polygons.map((poly, i) => (
             <polygon
               key={i}
-              points={poly.map((v) => `${v.x},${-v.y}`).join(' ')}
+              points={poly.map((v) => `${sx(v.x)},${sy(v.y)}`).join(' ')}
               fill="#1e293b"
               stroke="#334155"
               strokeWidth={px(0.7)}
@@ -405,11 +416,11 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 {f.geometry.coordinates.map((polygon, pi) => (
                   <polygon
                     key={pi}
-                    points={(polygon[0] ?? []).map(([x, y]) => `${x},${-y}`).join(' ')}
+                    points={(polygon[0] ?? []).map(([x, y]) => `${sx(x)},${sy(y)}`).join(' ')}
                     fill={fill}
-                    fillOpacity={hasData ? (isHover || isSel ? 0.82 : 0.55) : 0.22}
+                    fillOpacity={hasData ? 1 : 0.5}
                     stroke={isSel ? '#f1f5f9' : '#0b1220'}
-                    strokeWidth={px(isSel ? 1 : 0.4)}
+                    strokeWidth={px(isSel ? 1.2 : 0.5)}
                     vectorEffect="non-scaling-stroke"
                   />
                 ))}
@@ -435,11 +446,11 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 {f.geometry.coordinates.map((polygon, pi) => (
                   <polygon
                     key={pi}
-                    points={(polygon[0] ?? []).map(([x, y]) => `${x},${-y}`).join(' ')}
+                    points={(polygon[0] ?? []).map(([x, y]) => `${sx(x)},${sy(y)}`).join(' ')}
                     fill={outlineOnly ? 'none' : color}
                     fillOpacity={outlineOnly ? 0 : isHover ? 0.35 : 0.15}
-                    stroke={color}
-                    strokeOpacity={outlineOnly ? 0.5 : isHover ? 0.8 : 0.35}
+                    stroke={outlineOnly ? '#e2e8f0' : color}
+                    strokeOpacity={outlineOnly ? 0.22 : isHover ? 0.8 : 0.35}
                     strokeWidth={px(outlineOnly ? 0.5 : isHover ? 0.8 : 0.4)}
                   />
                 ))}
@@ -466,19 +477,19 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
               >
                 <line
-                  x1={e.xOrigen}
-                  y1={-e.yOrigen}
-                  x2={e.xDestino}
-                  y2={-e.yDestino}
+                  x1={sx(e.xOrigen)}
+                  y1={sy(e.yOrigen)}
+                  x2={sx(e.xDestino)}
+                  y2={sy(e.yDestino)}
                   stroke={color}
                   strokeWidth={isHover ? w * 1.7 : w}
                   strokeOpacity={isDim ? 0.2 : 0.9}
                 />
                 <line
-                  x1={e.xOrigen}
-                  y1={-e.yOrigen}
-                  x2={e.xDestino}
-                  y2={-e.yDestino}
+                  x1={sx(e.xOrigen)}
+                  y1={sy(e.yOrigen)}
+                  x2={sx(e.xDestino)}
+                  y2={sy(e.yDestino)}
                   stroke="transparent"
                   strokeWidth={Math.max(w * 3, px(8))}
                 />
@@ -497,11 +508,11 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             const labeled = ALWAYS_LABELED.has(n.nombre)
             return (
               <g key={n.nodeId}>
-                <circle cx={n.x} cy={-n.y} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={px(0.5)} />
+                <circle cx={sx(n.x)} cy={sy(n.y)} r={r} fill={fill} fillOpacity={0.9} stroke="#0b1220" strokeWidth={px(0.5)} />
                 {labeled && (
                   <text
-                    x={n.x + px(4)}
-                    y={-n.y + px(3.5)}
+                    x={sx(n.x) + px(4)}
+                    y={sy(n.y) + px(3.5)}
                     fontSize={px(11)}
                     fill={colors.textSecondary}
                     stroke="#0b1220"
@@ -522,7 +533,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
           {layers.cuencaBubbles && cuencaData.map((c) => {
             const isHover = hoverCuenca === c.id
             const rr = px(c.radiusPx)
-            const cy = -c.y
+            const cx = sx(c.x)
+            const cy = sy(c.y)
             const op = isHover ? 0.6 : 0.32
             const isSplit = c.tgn > 0 && c.tgs > 0
             const total = c.tgn + c.tgs || 1
@@ -537,14 +549,14 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 {isSplit ? (
                   <>
                     <path
-                      d={pieWedgePath(c.x, cy, rr, -Math.PI / 2, tgsEnd)}
+                      d={pieWedgePath(cx, cy, rr, -Math.PI / 2, tgsEnd)}
                       fill={OPERATOR_COLORS.TGS}
                       fillOpacity={op}
                       stroke="#0b1220"
                       strokeWidth={px(0.6)}
                     />
                     <path
-                      d={pieWedgePath(c.x, cy, rr, tgsEnd, -Math.PI / 2 + 2 * Math.PI)}
+                      d={pieWedgePath(cx, cy, rr, tgsEnd, -Math.PI / 2 + 2 * Math.PI)}
                       fill={OPERATOR_COLORS.TGN}
                       fillOpacity={op}
                       stroke="#0b1220"
@@ -553,7 +565,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   </>
                 ) : (
                   <circle
-                    cx={c.x}
+                    cx={cx}
                     cy={cy}
                     r={rr}
                     fill={c.tgs > 0 ? OPERATOR_COLORS.TGS : OPERATOR_COLORS.TGN}
@@ -563,7 +575,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                   />
                 )}
                 <text
-                  x={c.x}
+                  x={cx}
                   y={cy - rr - px(4)}
                   fontSize={px(13)}
                   fill={colors.textPrimary}
@@ -578,7 +590,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 {isHover && (
                   <>
                     <text
-                      x={c.x}
+                      x={cx}
                       y={cy + rr + px(11)}
                       fontSize={px(12)}
                       fill={colors.textPrimary}
@@ -592,7 +604,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                     </text>
                     {isSplit && (
                       <text
-                        x={c.x}
+                        x={cx}
                         y={cy + rr + px(22)}
                         fontSize={px(10)}
                         fill={colors.textSecondary}
@@ -626,8 +638,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 style={{ pointerEvents: isDragging ? 'none' : 'auto', cursor: 'pointer' }}
               >
                 <circle
-                  cx={b.x}
-                  cy={-b.y}
+                  cx={sx(b.x)}
+                  cy={sy(b.y)}
                   r={rr}
                   fill={colors.accent.orange}
                   fillOpacity={isHover || isSel ? 0.85 : 0.55}
@@ -637,8 +649,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                 {(isHover || isSel) && (
                   <>
                     <text
-                      x={b.x}
-                      y={-b.y - rr - px(3)}
+                      x={sx(b.x)}
+                      y={sy(b.y) - rr - px(3)}
                       fontSize={px(11)}
                       fill={colors.textPrimary}
                       textAnchor="middle"
@@ -650,8 +662,8 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
                       {b.name}
                     </text>
                     <text
-                      x={b.x}
-                      y={-b.y + rr + px(10)}
+                      x={sx(b.x)}
+                      y={sy(b.y) + rr + px(10)}
                       fontSize={px(9.5)}
                       fill={colors.textSecondary}
                       textAnchor="middle"
