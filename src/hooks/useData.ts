@@ -77,6 +77,9 @@ export const useDemandForecast = () => useJson<DemandForecast>('./data/demand_fo
 export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_regions.json')
 export const useEnargasRDS = () => useJson<EnargasRDSRow[]>('./data/enargas.json')
 export const useEnargasING = () => useJson<EnargasINGRow[]>('./data/enargas_ing.json')
+// ENARGAS Proyección Semanal (PS) — REAL column actuals. Authority for linepack
+// TGN/TGS/total + límites that build_daily.py folds into daily.json.
+export const useEnargasPS = () => useJson<Record<string, number | string | null>[]>('./data/enargas_ps.json')
 export const useETGS = () => useJson<ETGSRow[]>('./data/etgs.json')
 export const useSMNAlerts = () => useJson<unknown[]>('./data/smn_alerts.json')
 export interface CammesaWeek {

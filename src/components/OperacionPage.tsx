@@ -6,11 +6,10 @@ import {
   useDemandForecast,
   useWeatherRegions,
   useEnargasRDS,
-  useEnargasING,
+  useEnargasPS,
   useETGS,
   useSMNAlerts,
   useMEGSA,
-  useTramos,
   useCammesaPPO,
   useTGNSystemState,
 } from '../hooks/useData'
@@ -31,7 +30,6 @@ import ColdRanking from './ColdRanking'
 import EnargasRDSPanel from './EnargasRDSPanel'
 import MEGSAPanel from './MEGSAPanel'
 import SystemFlowPanel from './SystemFlowPanel'
-import TransportRestrictionsPanel from './TransportRestrictionsPanel'
 import PulseCard from './PulseCard'
 import LNGArrivalsChart from './LNGArrivalsChart'
 import TomorrowCard from './TomorrowCard'
@@ -41,7 +39,6 @@ import TGNSystemStatePanel from './TGNSystemStatePanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 import { ChartGroup, ScaleSelector } from './_layout'
 import { collectDates, demandYDomain, filterDatesByScale, type TimeScale } from '../utils/charts'
-import { mergeDailyWithSources } from '../utils/mergeDaily'
 import { linepackAlerts } from '../utils/alerts'
 
 // Operational view: last 1-2 weeks of history + 5-7 days of forecast.
@@ -75,11 +72,10 @@ export default function OperacionPage() {
   const forecastState = useDemandForecast()
   const regionsState = useWeatherRegions()
   const rdsState = useEnargasRDS()
-  const ingState = useEnargasING()
+  const psState = useEnargasPS()
   const etgsState = useETGS()
   const smnState = useSMNAlerts()
   const megsaState = useMEGSA()
-  const tramosState = useTramos()
   const ppoState = useCammesaPPO()
   const tgnSystemState = useTGNSystemState()
 
@@ -89,19 +85,13 @@ export default function OperacionPage() {
   // All hooks must run on every render — keep them above any early return,
   // otherwise React complains about "rendered more hooks than the previous
   // render" when loading flips from true to false.
-  const rawDaily = dailyState.data ?? []
   const weatherForecast = weatherState.data?.forecast ?? []
   const demandFc = forecastState.data
 
-  const data = useMemo(
-    () => mergeDailyWithSources(rawDaily, {
-      rds: rdsState.data,
-      ing: ingState.data,
-      etgs: etgsState.data,
-      ppo: ppoState.data,
-    }),
-    [rawDaily, rdsState.data, ingState.data, etgsState.data, ppoState.data],
-  )
+  // daily.json is built self-sufficient by the pipeline (build_daily.py merges
+  // RDS + PS + ING + ETGS + PPO over the frozen history), so we read it straight
+  // — no client-side merge.
+  const data = useMemo(() => dailyState.data ?? [], [dailyState.data])
   const valid = useMemo(() => data.filter((d) => d.demanda_total != null), [data])
   const allDates = useMemo(
     () => collectDates(data, demandFc?.forecast ?? [], weatherForecast),
@@ -132,6 +122,7 @@ export default function OperacionPage() {
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
     { label: 'Clima', generatedAt: weatherState.meta.generated_at },
     { label: 'ENARGAS', generatedAt: rdsState.meta.generated_at },
+    { label: 'Proy. ENARGAS', generatedAt: psState.meta.generated_at },
     { label: 'MEGSA', generatedAt: megsaState.meta.generated_at },
     { label: 'TGN', generatedAt: tgnSystemState.meta.generated_at },
     { label: 'Forecast', generatedAt: forecastState.meta.generated_at },
@@ -167,12 +158,6 @@ export default function OperacionPage() {
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl }}>
           <SystemFlowPanel latest={rdsReports[rdsReports.length - 1] as never} />
-        </div>
-      )}
-
-      {tramosState.data && tramosState.data.length > 0 && (
-        <div style={{ ...card, marginTop: space.xl }}>
-          <TransportRestrictionsPanel rows={tramosState.data} />
         </div>
       )}
 

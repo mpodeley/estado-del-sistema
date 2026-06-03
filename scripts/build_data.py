@@ -113,6 +113,7 @@ def main():
     # Phase 1: Fetch new data
     errors += run('fetch_enargas.py')
     errors += run('fetch_enargas_ing.py')
+    errors += run('fetch_enargas_ps.py')
     errors += run('fetch_cammesa.py')
     errors += run('fetch_weather.py')
     errors += run('fetch_smn_alerts.py')
@@ -131,13 +132,20 @@ def main():
     # skips the ~190 MB download when the resource's Last-Modified is unchanged.
     errors += run('fetch_pozos_terminados.py')
 
-    # Phase 2: Parse all sources
-    errors += run('parse_base_excel.py')
+    # Phase 2: Parse all sources.
+    # The manual Excel (parse_base_excel.py) is retired: daily.json is now built
+    # by build_daily.py from the automatic feeds, with the Excel-era manual rows
+    # frozen once in daily_history.json. Run parse_base_excel.py by hand only to
+    # re-import historical Excel rows into that snapshot.
     errors += run('parse_linepack.py')
     errors += run('parse_enargas.py')
     errors += run('parse_enargas_ing.py')
+    errors += run('parse_enargas_ps.py')
     errors += run('parse_etgs.py')
     errors += run('parse_cammesa.py')
+    # Merge the automatic feeds (+ frozen history) into daily.json. Must run
+    # after the parsers above since it consumes their JSON outputs.
+    errors += run('build_daily.py')
 
     # Phase 3: Generate forecast + auto-comments
     errors += run('generate_forecast.py')

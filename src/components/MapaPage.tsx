@@ -1,8 +1,7 @@
-import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useTramos, useEnargasING, useEnargasRDS, useEnargasProvincias, useProvincias } from '../hooks/useData'
+import { useEnargasMonthly, useGasNetwork, useOutline, useDistribuidoras, useEnargasING, useEnargasRDS, useEnargasProvincias, useProvincias } from '../hooks/useData'
 import { card, colors, sectionTitle, space } from '../theme'
 import NetworkMap from './NetworkMap'
 import { RegionalSection } from './GasoductoFlowChart'
-import TransportRestrictionsPanel from './TransportRestrictionsPanel'
 import { ChartSkeleton, SkeletonBlock } from './Skeleton'
 
 // Map view: full-width network map, regional monthly flows, and (when present)
@@ -12,7 +11,6 @@ export default function MapaPage() {
   const networkState = useGasNetwork()
   const outlineState = useOutline()
   const distribuidorasState = useDistribuidoras()
-  const tramosState = useTramos()
   const ingState = useEnargasING()
   const rdsState = useEnargasRDS()
   const provConsumoState = useEnargasProvincias()
@@ -47,24 +45,17 @@ export default function MapaPage() {
         Red de transporte: nodos, gasoductos coloreados por operador y utilización, distribuidoras y cuencas.
       </p>
 
-      {networkState.data && outlineState.data && tramosState.data && (
+      {networkState.data && outlineState.data && (
         <div style={{ ...card }}>
           <NetworkMap
             network={networkState.data}
             outline={outlineState.data}
-            tramos={tramosState.data}
             distribuidoras={distribuidorasState.data}
             monthly={monthlyState.data}
             rds={rdsLatest}
             provincias={provGeoState.data}
             provinciasConsumo={provConsumoState.data}
           />
-        </div>
-      )}
-
-      {tramosState.data && tramosState.data.length > 0 && (
-        <div style={{ ...card, marginTop: space.xl }}>
-          <TransportRestrictionsPanel rows={tramosState.data} />
         </div>
       )}
 

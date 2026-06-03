@@ -372,24 +372,45 @@ export const CATALOG: DatasetEntry[] = [
   },
   {
     id: 'daily',
-    name: 'Excel base — daily.json',
+    name: 'daily.json — serie operativa diaria',
     shortDescription:
-      'Histórico manual mantenido en "Base Reporte Estado de Sistema.xlsx": demanda, linepack TGS/TGN, mix CAMMESA, temperaturas. En vías de reemplazo por el RDS + PPO automáticos; se conserva por la historia anterior a los fetchers.',
-    kind: 'manual',
-    frequency: 'Manual',
+      'Serie diaria de demanda, linepack TGS/TGN/total + límites, inyección, mix CAMMESA y temperaturas. Construida automáticamente desde RDS + Proyección Semanal (PS) + ING + ETGS + PPO; la historia previa a los fetchers quedó congelada en daily_history.json. El Excel manual "Base Reporte Estado de Sistema.xlsx" fue retirado del flujo (solo se usa a mano para reimportar historia vieja).',
+    kind: 'auto',
+    frequency: 'Diaria (build nightly)',
     jsonPath: './data/daily.json',
     csvPath: './data/daily.csv',
     docRepoPath: 'docs/datasets/daily.md',
     freshnessKey: 'daily',
     scripts: [
       {
-        file: 'scripts/parse_base_excel.py',
+        file: 'scripts/build_daily.py',
         purpose:
-          'Abre el XLSX con openpyxl, valida headers contra SCHEMA, extrae la hoja "Conv. valores".',
+          'Carga el histórico congelado (daily_history.json) y hace upsert por fecha desde PS/RDS/ING/ETGS/PPO, rellenando solo huecos (mismo orden que el viejo merge del frontend).',
+      },
+    ],
+  },
+  {
+    id: 'enargas_ps',
+    name: 'ENARGAS — Proyección Semanal (PS)',
+    shortDescription:
+      'Proyección semanal de demanda del sistema de transporte (PS_YYYYMMDD.pdf). Su columna REAL trae el dato real del día anterior: linepack TGN/TGS/total + límites Min/Max, tramos iniciales/finales, inyección por gasoducto (Sur, Neuba I/II, Norte, Neuquén), ENARSA/GPFM, Buque Escobar, Bolivia, demanda por segmento y temperatura BA. Es la fuente que mantiene el linepack TGN actualizado.',
+    kind: 'auto',
+    frequency: 'Días hábiles',
+    jsonPath: './data/enargas_ps.json',
+    csvPath: './data/enargas_ps.csv',
+    docRepoPath: 'docs/datasets/enargas_ps.md',
+    scripts: [
+      {
+        file: 'scripts/fetch_enargas_ps.py',
+        purpose: 'Descarga los últimos PDFs PS de ENARGAS (descarga.php?path=proyeccion-semanal) a raw/.',
       },
       {
-        file: 'scripts/ingest_incoming.py',
-        purpose: 'Si se dropeó en raw/incoming/, lo detecta por magic bytes y lo rutea a raw/.',
+        file: 'scripts/parse_enargas_ps.py',
+        purpose: 'Extrae la tabla con pdfplumber (anclajes de columna del header) y upserta la fila REAL en enargas_ps.json.',
+      },
+      {
+        file: 'scripts/backfill_enargas_ps.py',
+        purpose: 'Backfill histórico caminando PS_<fecha>.pdf hacia atrás.',
       },
     ],
   },
@@ -407,23 +428,6 @@ export const CATALOG: DatasetEntry[] = [
       {
         file: 'scripts/parse_linepack.py',
         purpose: 'Busca cualquier *linepack*.xlsx en raw/ y extrae la primera hoja.',
-      },
-    ],
-  },
-  {
-    id: 'tramos',
-    name: 'Tramos — Restricciones de transporte',
-    shortDescription:
-      'Gas Andes (autorización export), CCO (capacidad + corte), TGS NQN (capacidad + corte). Se mantiene manual en el Excel base — no hay fuente pública con esta granularidad.',
-    kind: 'manual',
-    frequency: 'Manual',
-    jsonPath: './data/tramos.json',
-    csvPath: './data/tramos.csv',
-    docRepoPath: 'docs/datasets/tramos.md',
-    scripts: [
-      {
-        file: 'scripts/parse_base_excel.py',
-        purpose: 'Función parse_tramos() lee la hoja "Datos" cols 82-86.',
       },
     ],
   },
@@ -481,20 +485,15 @@ export const CATALOG: DatasetEntry[] = [
   },
   {
     id: 'comments_manual',
-    name: 'Comentarios manuales (Excel base)',
+    name: 'Comentarios manuales (Excel base, retirado)',
     shortDescription:
-      'Notas tipeadas por el analista en las hojas "Diario" y "Proyección Semanal" del Excel base. Se extraen todas las strings >20 chars.',
-    kind: 'manual',
-    frequency: 'Manual',
+      'Notas tipeadas por el analista en el Excel base. El Excel fue retirado del flujo automático y los comentarios del tablero ahora son autogenerados (comments.json); este archivo queda como snapshot histórico.',
+    kind: 'discarded',
+    frequency: 'Retirado',
     jsonPath: './data/comments_manual.json',
     csvPath: './data/comments_manual.csv',
     docRepoPath: 'docs/datasets/comments_manual.md',
-    scripts: [
-      {
-        file: 'scripts/parse_base_excel.py',
-        purpose: 'Función parse_comments() itera las hojas de comentarios.',
-      },
-    ],
+    scripts: [],
   },
   {
     id: 'drop-folder',

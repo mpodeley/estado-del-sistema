@@ -116,7 +116,7 @@ function toMercator(lat: number, lon: number): { x: number; y: number } {
 interface Props {
   network: GasNetwork
   outline: CountryOutline
-  tramos: TramoRow[]
+  tramos?: TramoRow[]
   distribuidoras?: DistribuidorasCollection | null
   monthly?: EnargasMonthly | null
   /** Latest ENARGAS RDS row — feeds the national consumption/supply donuts. */
@@ -181,7 +181,7 @@ function pieWedgePath(cx: number, cy: number, r: number, a0: number, a1: number)
   return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`
 }
 
-export default function NetworkMap({ network, outline, tramos, distribuidoras, monthly, rds, provincias, provinciasConsumo }: Props) {
+export default function NetworkMap({ network, outline, tramos = [], distribuidoras, monthly, rds, provincias, provinciasConsumo }: Props) {
   const [hover, setHover] = useState<GasRoute | null>(null)
   const [hoverDist, setHoverDist] = useState<string | null>(null)
   const [hoverCuenca, setHoverCuenca] = useState<string | null>(null)
@@ -808,15 +808,17 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
             ))}
           </div>
         </div>
-        <div>
-          <div style={{ color: colors.textDim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Stress (tramos Excel)</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
-            <Pill color="#53e0a1" label="< 50%" />
-            <Pill color="#ffe06d" label="50–80%" />
-            <Pill color="#ff9d4d" label="80–100%" />
-            <Pill color="#ff5f87" label="saturado" />
+        {latestTramo && (
+          <div>
+            <div style={{ color: colors.textDim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Stress (tramos)</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: space.sm }}>
+              <Pill color="#53e0a1" label="< 50%" />
+              <Pill color="#ffe06d" label="50–80%" />
+              <Pill color="#ff9d4d" label="80–100%" />
+              <Pill color="#ff5f87" label="saturado" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <p style={{ color: colors.textDim, fontSize: 11, marginTop: space.sm }}>
         Usá los toggles para prender/apagar capas. <strong>Fondo</strong> = densidad de gas entregado
@@ -824,8 +826,7 @@ export default function NetworkMap({ network, outline, tramos, distribuidoras, m
         naranjas miden el <strong>volumen absoluto</strong> por provincia. No incluye usinas ni grandes
         usuarios que compran gas directo al productor. Pasá el cursor sobre una provincia y hacé click
         para ver su evolución mensual. <strong>Líneas</strong> = gasoductos coloreados por operador;
-        donde el Excel trae capacidad + corte (CCO, Neuba I/II, Gas Andes) el color refleja el stress
-        (verde→rojo) y el grosor el caudal relativo (snapshot GCIE). Las burbujas de oferta por cuenca
+        el grosor refleja el caudal relativo (snapshot GCIE). Las burbujas de oferta por cuenca
         ({formatVolDate(monthly)}, partido TGN/TGS en Neuquina) son una capa opcional. Rueda para zoom,
         arrastrar para mover, ⟲ para resetear.
       </p>

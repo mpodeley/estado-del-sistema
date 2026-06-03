@@ -39,7 +39,7 @@ export default function GuidePage() {
             <strong style={{ color: colors.status.ok }}> NORMAL</strong> (dentro de banda),
             <strong style={{ color: colors.status.err }}> BAJO</strong> (por debajo del límite inferior),
             <strong style={{ color: colors.status.warn }}> ALTO</strong> (por encima del superior).
-            Los límites se toman del Excel base y se pueden actualizar por sistema.
+            Los límites (Min/Max) vienen de la Proyección Semanal de ENARGAS (PS), por sistema.
           </dd>
 
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Comparación semanal</dt>
@@ -50,7 +50,7 @@ export default function GuidePage() {
 
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Forecast de demanda</dt>
           <dd style={{ margin: 0 }}>
-            Línea sólida = real (del Excel base). Línea punteada = estimada con regresión
+            Línea sólida = real (RDS + Proyección Semanal de ENARGAS). Línea punteada = estimada con regresión
             temperatura → demanda. La marca "Hoy" separa lo que pasó de lo que se proyecta.
             <br />
             <em style={{ color: colors.textDim }}>
@@ -121,8 +121,9 @@ export default function GuidePage() {
             API pública y gratuita.
           </li>
           <li>
-            <strong>Excel base</strong> (<code>raw/Base Reporte Estado de Sistema.xlsx</code>): fuente
-            histórica manual. Se está migrando a fuentes automáticas (RDS diario es el primer paso).
+            <strong>ENARGAS Proyección Semanal (PS)</strong> (automático): trae el linepack
+            TGN/TGS/total real + límites, tramos e inyección por gasoducto. Reemplazó al Excel base
+            manual, que quedó retirado (su historia previa está congelada en <code>daily_history.json</code>).
           </li>
         </ul>
         <p style={{ color: colors.textDim, fontSize: 13, marginTop: space.md }}>
