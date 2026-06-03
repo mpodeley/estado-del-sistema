@@ -198,6 +198,24 @@ def main():
         row['linepack_tgn'] = fill(row['linepack_tgn'], mmm3)
 
     rows = sorted(by_date.values(), key=lambda r: r.get('fecha') or '')
+
+    # Forward-fill the operating bands. The Min/Max limits only arrive on PS
+    # report days; on weekends/holidays and on "today" (before that day's PS
+    # publishes) they'd be null, which drops the TGN/TGS % KPI and the chart band
+    # on the most recent row. Limits are slow-moving setpoints, so carrying the
+    # last known value forward is the right behaviour.
+    LIMIT_FIELDS = [
+        'lim_inf_tgs', 'lim_sup_tgs', 'lim_inf_tgn', 'lim_sup_tgn',
+        'lim_inf_total', 'lim_sup_total',
+    ]
+    last = {}
+    for row in rows:
+        for k in LIMIT_FIELDS:
+            if row.get(k) is not None:
+                last[k] = row[k]
+            elif k in last:
+                row[k] = last[k]
+
     latest = rows[-1]['fecha'] if rows else None
     write_json(
         DAILY_JSON, rows,
