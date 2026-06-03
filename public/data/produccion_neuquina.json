@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-02T12:40:29+00:00",
+  "generated_at": "2026-06-03T13:14:55+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-04",
   "data": [
@@ -35950,7 +35950,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.34,
-      "prod_pet_m3": 2472.77,
+      "prod_pet_m3": 2472.78,
       "prod_agua_m3": 141796.08,
       "pozos_activos": 37,
       "pozos_no_conv": 0
