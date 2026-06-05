@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-03T15:21:15+00:00",
+  "generated_at": "2026-06-05T12:08:59+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
-  "source_date": "2026-04",
+  "source_date": "2026-05",
   "data": [
     {
       "mes": "2025-01",
@@ -36859,6 +36859,30 @@
       "mes": "2026-04",
       "area": "VETA ESCONDIDA",
       "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "LA PENDIENTE",
+      "empresa": "INGENIERIA SIMA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "PASO AGUERRE",
+      "empresa": "INGENIERIA SIMA S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 0.0,
