@@ -1,7 +1,8 @@
 ﻿tipo,texto
 daily,"Temperatura promedio en Buenos Aires: 16 C (min 13.0, max 18.0)."
-daily,Demanda total del sistema: 151.9 MMm3/dia (suba de 5.4 MMm3/d vs dia anterior).
+daily,Demanda total del sistema: 152.2 MMm3/dia (suba de 0.3 MMm3/d vs dia anterior).
+daily,"Linepack TGS: 224.9 MMm3, variacion +1.0 - Estado: NORMAL (limites: 215.0-235.0)."
 daily,Linepack TGN: 133.0 MMm3 - Estado: NORMAL (limites: 110.0-142.0).
-weekly,Pronostico de temperatura para los proximos 7 dias: rango 9-17 C (promedio 14.0 C).
-weekly,Demanda total estimada para la semana: 121-144 MMm3/dia.
-weekly,Demanda prioritaria estimada: 40-68 MMm3/dia.
+weekly,Pronostico de temperatura para los proximos 7 dias: rango 11-15 C (promedio 12.9 C).
+weekly,Demanda total estimada para la semana: 118-144 MMm3/dia.
+weekly,Demanda prioritaria estimada: 40-62 MMm3/dia.
