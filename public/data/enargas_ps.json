@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T12:10:23+00:00",
+  "generated_at": "2026-06-06T10:56:33+00:00",
   "source": "ENARGAS Proyección Semanal (PS) — columna REAL",
-  "source_date": "2026-06-02",
+  "source_date": "2026-06-03",
   "data": [
     {
       "fecha": "2026-04-05",
@@ -1929,7 +1929,57 @@
       "tramo_final_tgs": 83.73,
       "tramo_final_tgn": 15.63,
       "source": "PS_20260603.pdf"
+    },
+    {
+      "fecha": "2026-06-03",
+      "tipo": "R",
+      "temp_prom_ba": 14.0,
+      "demanda_total": 169.5,
+      "prioritaria": 59.3,
+      "combustible": 5.1,
+      "gnc": 5.4,
+      "industria": 34.4,
+      "usinas": 38.6,
+      "exp_tgn": 7.8,
+      "exp_tgs": 0.7,
+      "iny_total": 149.0,
+      "iny_tgs": 74.6,
+      "iny_sur": 24.0,
+      "iny_neuba1": 9.8,
+      "iny_neuba2": 40.9,
+      "iny_patagonico": 0.0,
+      "iny_tgn": 38.6,
+      "iny_norte": 2.7,
+      "iny_neuquen": 35.9,
+      "iny_enarsa": 23.7,
+      "iny_gpm": 23.7,
+      "iny_bolivia": 0.1,
+      "iny_chile": 0.0,
+      "peak_shaving": 0.0,
+      "iny_escobar": 12.0,
+      "linepack_total": 350.3,
+      "lim_inf_total": 312.0,
+      "lim_sup_total": 368.0,
+      "var_linepack_total": -1.6,
+      "linepack_tgs": 219.97,
+      "lim_inf_tgs": 215.0,
+      "lim_sup_tgs": 235.0,
+      "linepack_tgn": 130.34,
+      "lim_inf_tgn": 110.0,
+      "lim_sup_tgn": 142.0,
+      "tramo_inicial": 249.87,
+      "lim_inf_tramo_inicial": 218.0,
+      "lim_sup_tramo_inicial": 254.0,
+      "tramo_final": 98.83,
+      "lim_inf_tramo_final": 85.0,
+      "lim_sup_tramo_final": 101.0,
+      "tramo_final_tgs": 84.85,
+      "tramo_final_tgn": 13.98,
+      "source": "PS_20260604.pdf"
     }
   ],
-  "issues": []
+  "issues": [
+    "PS_20260605.pdf: header: could not parse column anchors",
+    "PS_20260605.pdf: no REAL row"
+  ]
 }
