@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-06T10:56:35+00:00",
+  "generated_at": "2026-06-07T11:09:08+00:00",
   "source": "rolling train/predict on ENARGAS RDS",
   "source_date": null,
   "data": {
@@ -8,16 +8,11 @@
     "segments": {
       "prioritaria": {
         "metrics": {
-          "mae": 9.96,
-          "mape": 22.03,
+          "mae": 10.17,
+          "mape": 22.12,
           "n": 60
         },
         "series": [
-          {
-            "fecha": "2026-04-06",
-            "actual": 26.9,
-            "predicted": 36.93
-          },
           {
             "fecha": "2026-04-07",
             "actual": 27.1,
@@ -312,21 +307,21 @@
             "fecha": "2026-06-05",
             "actual": 57.9,
             "predicted": 31.99
+          },
+          {
+            "fecha": "2026-06-06",
+            "actual": 54.1,
+            "predicted": 31.12
           }
         ]
       },
       "usinas": {
         "metrics": {
-          "mae": 4.15,
-          "mape": 13.75,
+          "mae": 4.26,
+          "mape": 14.03,
           "n": 60
         },
         "series": [
-          {
-            "fecha": "2026-04-06",
-            "actual": 37.0,
-            "predicted": 36.82
-          },
           {
             "fecha": "2026-04-07",
             "actual": 40.1,
@@ -621,21 +616,21 @@
             "fecha": "2026-06-05",
             "actual": 40.0,
             "predicted": 34.13
+          },
+          {
+            "fecha": "2026-06-06",
+            "actual": 37.7,
+            "predicted": 31.15
           }
         ]
       },
       "demanda_total": {
         "metrics": {
-          "mae": 5.93,
-          "mape": 4.55,
+          "mae": 6.11,
+          "mape": 4.66,
           "n": 60
         },
         "series": [
-          {
-            "fecha": "2026-04-06",
-            "actual": 118.3,
-            "predicted": 125.1
-          },
           {
             "fecha": "2026-04-07",
             "actual": 124.0,
@@ -930,6 +925,11 @@
             "fecha": "2026-06-05",
             "actual": 152.8,
             "predicted": 131.66
+          },
+          {
+            "fecha": "2026-06-06",
+            "actual": 143.6,
+            "predicted": 125.78
           }
         ]
       }
