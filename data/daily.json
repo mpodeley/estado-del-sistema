@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-09T13:06:32+00:00",
+  "generated_at": "2026-06-09T15:56:26+00:00",
   "source": "Construido de RDS + PS + ING + ETGS + PPO (histórico manual congelado en daily_history.json)",
   "source_date": "2026-06-09",
   "data": [
@@ -34009,11 +34009,11 @@
       "temp_min_esquel": null,
       "temp_max_esquel": null,
       "temp_prom_esquel": null,
-      "cammesa_gas": null,
+      "cammesa_gas": 47.747,
       "cammesa_gasoil": null,
       "cammesa_fueloil": null,
       "cammesa_carbon": null,
-      "cammesa_total": null
+      "cammesa_total": 47.747
     },
     {
       "fecha": "2026-06-09",
