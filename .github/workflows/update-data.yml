@@ -13,7 +13,7 @@ permissions:
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +34,10 @@ jobs:
         run: npm ci
 
       - name: Run data pipeline
-        timeout-minutes: 8
+        # 13 min: el archivo de Open-Meteo (weather_history) y los CSV anuales
+        # de Cap IV (~100-330 MB c/u en días de cache-miss) empujan el pipeline
+        # por encima de los 8 min originales en algunas corridas.
+        timeout-minutes: 13
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
