@@ -31,6 +31,11 @@ interface Props {
  *   local = consumo + exports + Δlinepack − imports
  * which by construction makes the balance check zero out exactly; the value
  * is in surfacing the composition, not in verifying consistency.
+ *
+ * NOTE: the RDS `consumo_total_estimado` ALREADY includes exportaciones (its
+ * TOTAL line = the 5 segments + exports), so it stands in for "consumo +
+ * exports" directly — don't add exportsTotal on top of it or exports get
+ * double-counted (which inflated both the demand total and derived local).
  */
 export default function SystemFlowPanel({ latest }: Props) {
   if (!latest || !latest.fecha) return null
@@ -54,7 +59,10 @@ export default function SystemFlowPanel({ latest }: Props) {
   const exp_tgs = exps.tgs?.vol_exportar ?? 0
   const exportsTotal = exp_tgn + exp_tgs
 
-  const demandTotal = (latest.consumo_total_estimado ?? prioritaria + cammesa + industria + gnc + combustible) + exportsTotal
+  // consumo_total_estimado ya incluye exportaciones; solo el fallback (suma de
+  // segmentos) necesita sumarlas para no subcontar.
+  const demandTotal = latest.consumo_total_estimado
+    ?? prioritaria + cammesa + industria + gnc + combustible + exportsTotal
   const deltaLP = latest.linepack_delta ?? 0
 
   const local = Math.max(0, demandTotal + deltaLP - importsTotal)

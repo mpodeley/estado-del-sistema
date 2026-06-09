@@ -2,7 +2,7 @@ name: Update data and deploy
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 6:00 AM Argentina (UTC-3)
+    - cron: '0 13 * * *'  # 10:00 Argentina (UTC-3) — tras las 09:45 ya llegó el correo ETGS
   workflow_dispatch:  # Manual trigger
 
 permissions:

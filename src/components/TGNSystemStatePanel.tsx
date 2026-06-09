@@ -93,7 +93,15 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
   }
 
   const fecha = rowFecha(latest)
+  // 'Actual' es el linepack TGN del día (m³); su variación sale de comparar
+  // contra la fila previa disponible (espejo del Linepack TGS en TGSPanel).
   const actual = toNumber(latest['Actual'])
+  const prev = sorted[sorted.length - 2]
+  const prevActual = prev ? toNumber(prev['Actual']) : null
+  const varActual = actual != null && prevActual != null ? actual - prevActual : null
+  const varHint = varActual != null
+    ? `${varActual >= 0 ? '+' : ''}${(varActual / 1_000_000).toFixed(2)} MMm³ vs día anterior`
+    : 'Volumen en el sistema'
   const equilibrio = toNumber(latest['Equilibrio'])
   const desbalance = toNumber(latest['Desbalance del sistema'])
   const desbalancePct = toNumber(latest['Desbalance porcentual'])
@@ -134,7 +142,7 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
           padding: `${space.sm}px 0`,
         }}
       >
-        <Metric label="Inyección real" value={fmtMMm3(actual)} hint="Volumen recibido por TGN" />
+        <Metric label="Linepack TGN" value={fmtMMm3(actual)} hint={varHint} />
         <Metric label="Equilibrio" value={fmtMMm3(equilibrio)} hint="Demanda + extracciones esperadas" />
         <Metric
           label="Desbalance"

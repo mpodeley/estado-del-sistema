@@ -116,6 +116,10 @@ def main():
     errors += run('fetch_enargas_ps.py')
     errors += run('fetch_cammesa.py')
     errors += run('fetch_weather.py')
+    # 2-year temperature archive (Open-Meteo). Cheap (10 cities), and keeping it
+    # fresh feeds both the forecast training and the Datos carga sheet (Tucumán /
+    # Esquel actuals). The archive lags ~5 days, so the latest days stay blank.
+    errors += run('fetch_weather_history.py')
     errors += run('fetch_smn_alerts.py')
     errors += run('fetch_megsa.py')
     errors += run('fetch_enargas_estadisticas.py')
@@ -146,6 +150,10 @@ def main():
     # Merge the automatic feeds (+ frozen history) into daily.json. Must run
     # after the parsers above since it consumes their JSON outputs.
     errors += run('build_daily.py')
+    # Paste-ready 'Datos' sheet for the legacy Excel — maps the automatic feeds
+    # onto the analyst's manual-entry sheet. Runs after build_daily (consumes
+    # daily.json + enargas_ps.json + cammesa_ppo.json + weather_history.json).
+    errors += run('generate_datos_sheet.py')
 
     # Phase 3: Generate forecast + auto-comments
     errors += run('generate_forecast.py')

@@ -2,8 +2,9 @@ name: Update TGN data
 
 on:
   schedule:
-    # Every 6 hours UTC ~= 9 PM / 3 AM / 9 AM / 3 PM Argentina (UTC-3).
-    - cron: '0 0,6,12,18 * * *'
+    # Argentina (UTC-3): el portal recién publica el cierre ~09:45.
+    - cron: '45 12 * * *'  # 09:45 ART — primera pasada cuando ya hay datos
+    - cron: '0 18 * * *'   # 15:00 ART — segunda pasada por si corrigen el cierre
   workflow_dispatch:
 
 permissions:

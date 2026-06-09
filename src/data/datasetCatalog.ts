@@ -415,6 +415,25 @@ export const CATALOG: DatasetEntry[] = [
     ],
   },
   {
+    id: 'carga_datos',
+    name: 'Hoja de carga "Datos" (Excel legacy)',
+    shortDescription:
+      'Archivo pre-cargado que mapea columna por columna con la hoja "Datos" del Excel legacy (Base Reporte): demanda, inyección por cuenca, linepack TGS/TGN/total + límites, tramos finales, combustibles CAMMESA y temperaturas. Los últimos ~60 días. El analista copia las filas nuevas y las pega en "Datos" en vez de tipearlas. Quedan en blanco solo las columnas sin fuente automática (Stock GNL, PCS, inyección por punto, límites de tramos finales).',
+    kind: 'auto',
+    frequency: 'Diaria (build nightly)',
+    csvPath: './data/carga_datos.csv',
+    extraCsvPaths: [
+      { label: 'Excel (.xlsx) — pegar en hoja "Datos"', path: './data/carga_datos.xlsx' },
+    ],
+    scripts: [
+      {
+        file: 'scripts/generate_datos_sheet.py',
+        purpose:
+          'Mapea daily.json + enargas_ps.json + cammesa_ppo.json + weather_history.json a los índices de columna de la hoja "Datos" y escribe el xlsx/csv alineado.',
+      },
+    ],
+  },
+  {
     id: 'linepack',
     name: 'Linepack equilibrio (Excel)',
     shortDescription:
