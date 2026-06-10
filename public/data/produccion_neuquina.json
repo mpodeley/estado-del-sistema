@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-09T15:55:02+00:00",
+  "generated_at": "2026-06-10T16:36:13+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.63,
+      "prod_agua_m3": 135272.64,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -29951,7 +29951,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 5366.61,
-      "prod_agua_m3": 16795.9,
+      "prod_agua_m3": 16795.91,
       "pozos_activos": 20,
       "pozos_no_conv": 0
     },
@@ -30394,7 +30394,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.86,
+      "prod_pet_m3": 97761.85,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -31054,7 +31054,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.76,
-      "prod_pet_m3": 39723.49,
+      "prod_pet_m3": 39723.48,
       "prod_agua_m3": 586440.0,
       "pozos_activos": 310,
       "pozos_no_conv": 85
@@ -33311,7 +33311,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.96,
       "prod_pet_m3": 41688.4,
-      "prod_agua_m3": 641886.74,
+      "prod_agua_m3": 641886.75,
       "pozos_activos": 302,
       "pozos_no_conv": 85
     },
@@ -33430,7 +33430,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.38,
-      "prod_pet_m3": 2148.04,
+      "prod_pet_m3": 2148.05,
       "prod_agua_m3": 30204.07,
       "pozos_activos": 42,
       "pozos_no_conv": 43
@@ -35165,6 +35165,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "ENTRE LOMAS",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 6.44,
+      "prod_pet_m3": 12039.21,
+      "prod_agua_m3": 156073.58,
+      "pozos_activos": 302,
+      "pozos_no_conv": 7
+    },
+    {
+      "mes": "2026-04",
       "area": "LOS TOLDOS II ESTE",
       "empresa": "TECPETROL S.A.",
       "cuenca": "NEUQUINA",
@@ -35477,6 +35489,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "JAGÜEL DE LOS MACHOS RN",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 2.02,
+      "prod_pet_m3": 6938.67,
+      "prod_agua_m3": 17171.05,
+      "pozos_activos": 149,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "CN VII A",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -35486,6 +35510,18 @@
       "prod_agua_m3": 10.56,
       "pozos_activos": 1,
       "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-04",
+      "area": "25 DE MAYO - MEDANITO SUD ESTE RN",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 1.93,
+      "prod_pet_m3": 7124.59,
+      "prod_agua_m3": 44541.69,
+      "pozos_activos": 155,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-04",
@@ -35813,6 +35849,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "CHARCO DEL PALENQUE",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.56,
+      "prod_pet_m3": 1127.29,
+      "prod_agua_m3": 11082.74,
+      "pozos_activos": 21,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "CERRO MORADO ESTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -35902,7 +35950,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.34,
-      "prod_pet_m3": 2472.77,
+      "prod_pet_m3": 2472.78,
       "prod_agua_m3": 141796.08,
       "pozos_activos": 37,
       "pozos_no_conv": 0
@@ -35915,7 +35963,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 0.33,
       "prod_pet_m3": 1531.94,
-      "prod_agua_m3": 520.02,
+      "prod_agua_m3": 520.01,
       "pozos_activos": 4,
       "pozos_no_conv": 6
     },
@@ -35957,6 +36005,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "CONFLUENCIA SUR",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.24,
+      "prod_pet_m3": 2975.87,
+      "prod_agua_m3": 7656.65,
+      "pozos_activos": 12,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-04",
       "area": "AGUADA DEL CHIVATO - AGUADA BOCAREY",
       "empresa": "PATAGONIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -35989,6 +36049,18 @@
       "prod_pet_m3": 2604.91,
       "prod_agua_m3": 55450.85,
       "pozos_activos": 26,
+      "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-04",
+      "area": "JARILLA QUEMADA",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.09,
+      "prod_pet_m3": 1.02,
+      "prod_agua_m3": 209.0,
+      "pozos_activos": 1,
       "pozos_no_conv": 2
     },
     {
@@ -36101,6 +36173,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "CATRIEL OESTE",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.06,
+      "prod_pet_m3": 1030.05,
+      "prod_agua_m3": 33377.96,
+      "pozos_activos": 18,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "LA BREA",
       "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
       "cuenca": "NEUQUINA",
@@ -36125,6 +36209,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "ATUEL NORTE EXPLOTACION",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.04,
+      "prod_pet_m3": 140.35,
+      "prod_agua_m3": 38.65,
+      "pozos_activos": 6,
+      "pozos_no_conv": 4
+    },
+    {
+      "mes": "2026-04",
       "area": "RINCONADA - PUESTO MORALES",
       "empresa": "PAMPETROL S.A.P.E.M",
       "cuenca": "NEUQUINA",
@@ -36133,6 +36229,18 @@
       "prod_pet_m3": 29.92,
       "prod_agua_m3": 668.59,
       "pozos_activos": 2,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
+      "area": "CATRIEL VIEJO",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.01,
+      "prod_pet_m3": 271.97,
+      "prod_agua_m3": 471.76,
+      "pozos_activos": 5,
       "pozos_no_conv": 0
     },
     {
@@ -36677,6 +36785,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "PAYUN OESTE",
+      "empresa": "TANGO ENERGY ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 42.37,
+      "prod_agua_m3": 250.53,
+      "pozos_activos": 1,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-04",
       "area": "PORTEZUELO MINAS",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -36718,7 +36838,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.34,
+      "prod_pet_m3": 111.33,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -36761,6 +36881,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "BAJO DEL CHOIQUE - LA INVERNADA",
+      "empresa": "PLUSPETROL CUENCA NEUQUINA S.R.L.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 51.19,
+      "prod_pet_m3": 141546.9,
+      "prod_agua_m3": 73006.09,
+      "pozos_activos": 37,
+      "pozos_no_conv": 49
+    },
+    {
+      "mes": "2026-05",
       "area": "CENTENARIO CENTRO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -36785,6 +36917,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "PAMPA DE LAS YEGUAS I",
+      "empresa": "PLUSPETROL CUENCA NEUQUINA S.R.L.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 5.82,
+      "prod_pet_m3": 11.31,
+      "prod_agua_m3": 836.65,
+      "pozos_activos": 4,
+      "pozos_no_conv": 5
+    },
+    {
+      "mes": "2026-05",
       "area": "OCTOGONO",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -36797,12 +36941,24 @@
     },
     {
       "mes": "2026-05",
+      "area": "LOS TOLDOS I SUR",
+      "empresa": "PLUSPETROL CUENCA NEUQUINA S.R.L.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 3.28,
+      "prod_pet_m3": 1299.51,
+      "prod_agua_m3": 777.91,
+      "pozos_activos": 3,
+      "pozos_no_conv": 7
+    },
+    {
+      "mes": "2026-05",
       "area": "VOLCAN AUCA MAHUIDA",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 1.99,
-      "prod_pet_m3": 5269.63,
+      "prod_pet_m3": 5269.64,
       "prod_agua_m3": 21910.31,
       "pozos_activos": 45,
       "pozos_no_conv": 0
