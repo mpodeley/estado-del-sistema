@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-10T16:36:13+00:00",
+  "generated_at": "2026-06-11T16:48:06+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -29633,6 +29633,18 @@
     },
     {
       "mes": "2026-01",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
       "area": "CENTENARIO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -29777,6 +29789,18 @@
     },
     {
       "mes": "2026-01",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -29861,10 +29885,34 @@
     },
     {
       "mes": "2026-01",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -30137,6 +30185,18 @@
     },
     {
       "mes": "2026-01",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
       "area": "PUESTO TOUQUET",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -30206,6 +30266,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-01",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-01",
@@ -30394,7 +30466,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.85,
+      "prod_pet_m3": 97761.86,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -31901,6 +31973,18 @@
     },
     {
       "mes": "2026-02",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
       "area": "CENTENARIO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -32045,6 +32129,18 @@
     },
     {
       "mes": "2026-02",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -32129,10 +32225,34 @@
     },
     {
       "mes": "2026-02",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -32405,6 +32525,18 @@
     },
     {
       "mes": "2026-02",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
       "area": "PUESTO TOUQUET",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -32462,6 +32594,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-02",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-02",
@@ -34157,6 +34301,18 @@
     },
     {
       "mes": "2026-03",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
       "area": "CENTENARIO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -34277,6 +34433,18 @@
     },
     {
       "mes": "2026-03",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -34361,10 +34529,34 @@
     },
     {
       "mes": "2026-03",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -34625,6 +34817,18 @@
     },
     {
       "mes": "2026-03",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
       "area": "PUESTO TOUQUET",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -34670,6 +34874,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-03",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-03",
@@ -36329,6 +36545,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "CENTENARIO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -36449,6 +36677,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -36545,10 +36785,34 @@
     },
     {
       "mes": "2026-04",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -36821,6 +37085,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "PUESTO TOUQUET",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -36838,7 +37114,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.33,
+      "prod_pet_m3": 111.34,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -36866,6 +37142,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-04",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-04",
@@ -36897,10 +37185,10 @@
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
-      "prod_gas_mm3": 27.55,
-      "prod_pet_m3": 1231.23,
+      "prod_gas_mm3": 27.59,
+      "prod_pet_m3": 1234.57,
       "prod_agua_m3": 5458.21,
-      "pozos_activos": 264,
+      "pozos_activos": 265,
       "pozos_no_conv": 138
     },
     {
@@ -37013,6 +37301,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "CENTENARIO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -37025,10 +37325,46 @@
     },
     {
       "mes": "2026-05",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -37053,6 +37389,30 @@
       "empresa": "INGENIERIA SIMA S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
