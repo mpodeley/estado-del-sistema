@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-10T16:31:55+00:00",
-  "source": "Open-Meteo Archive API (2024-06-03 to 2026-06-03)",
-  "source_date": "2026-06-03",
+  "generated_at": "2026-06-11T16:46:10+00:00",
+  "source": "Open-Meteo Archive API (2024-06-04 to 2026-06-04)",
+  "source_date": "2026-06-04",
   "data": [
     {
       "id": "ba",
@@ -10,12 +10,6 @@
       "lon": -58.3816,
       "region": "pampa",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 11.4,
-          "temp_min": 4.8,
-          "temp_prom": 8.1
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 12.1,
@@ -4395,6 +4389,12 @@
           "temp_max": 16.5,
           "temp_min": 13.0,
           "temp_prom": 14.8
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 15.3,
+          "temp_min": 13.6,
+          "temp_prom": 14.4
         }
       ]
     },
@@ -4405,12 +4405,6 @@
       "lon": -60.6393,
       "region": "pampa",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 12.4,
-          "temp_min": 4.8,
-          "temp_prom": 8.6
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 14.1,
@@ -8790,6 +8784,12 @@
           "temp_max": 18.3,
           "temp_min": 11.3,
           "temp_prom": 14.8
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 21.7,
+          "temp_min": 14.1,
+          "temp_prom": 17.9
         }
       ]
     },
@@ -8800,12 +8800,6 @@
       "lon": -64.1888,
       "region": "centro",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 11.9,
-          "temp_min": 2.8,
-          "temp_prom": 7.3
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 13.5,
@@ -13185,6 +13179,12 @@
           "temp_max": 16.2,
           "temp_min": 11.7,
           "temp_prom": 13.9
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 20.8,
+          "temp_min": 13.6,
+          "temp_prom": 17.2
         }
       ]
     },
@@ -13195,12 +13195,6 @@
       "lon": -60.7,
       "region": "pampa",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 12.8,
-          "temp_min": 7.1,
-          "temp_prom": 9.9
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 15.3,
@@ -17580,6 +17574,12 @@
           "temp_max": 20.0,
           "temp_min": 12.7,
           "temp_prom": 16.4
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 23.6,
+          "temp_min": 15.2,
+          "temp_prom": 19.4
         }
       ]
     },
@@ -17590,12 +17590,6 @@
       "lon": -68.8458,
       "region": "cuyo",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 9.8,
-          "temp_min": -0.3,
-          "temp_prom": 4.8
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 11.8,
@@ -21975,6 +21969,12 @@
           "temp_max": 17.4,
           "temp_min": 7.7,
           "temp_prom": 12.5
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 16.5,
+          "temp_min": 8.8,
+          "temp_prom": 12.7
         }
       ]
     },
@@ -21985,12 +21985,6 @@
       "lon": -68.0591,
       "region": "patagonia",
       "history": [
-        {
-          "fecha": "2024-06-03",
-          "temp_max": 8.5,
-          "temp_min": 1.6,
-          "temp_prom": 5.0
-        },
         {
           "fecha": "2024-06-04",
           "temp_max": 10.4,
@@ -26370,6 +26364,12 @@
           "temp_max": 15.6,
           "temp_min": 8.8,
           "temp_prom": 12.2
+        },
+        {
+          "fecha": "2026-06-04",
+          "temp_max": 11.8,
+          "temp_min": 6.7,
+          "temp_prom": 9.2
         }
       ]
     }

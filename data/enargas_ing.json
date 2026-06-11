@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-10T16:38:48+00:00",
+  "generated_at": "2026-06-11T16:48:43+00:00",
   "source": "ENARGAS Inyección Nacional por Gasoducto (ING)",
-  "source_date": "2026-06-13",
+  "source_date": "2026-06-14",
   "data": [
     {
       "fecha": "2024-10-27",
@@ -8062,7 +8062,7 @@
       "gpfm": 23.9,
       "centro_oeste": 37.1,
       "total": 135.5,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.0,
       "tgs": 96.4,
       "tgn": 39.1
@@ -8076,7 +8076,7 @@
       "gpfm": 24.0,
       "centro_oeste": 39.4,
       "total": 139.0,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.4,
       "tgs": 97.2,
       "tgn": 41.8
@@ -8090,7 +8090,7 @@
       "gpfm": 23.9,
       "centro_oeste": 37.2,
       "total": 135.5,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.2,
       "tgs": 96.1,
       "tgn": 39.4
@@ -8104,7 +8104,7 @@
       "gpfm": 23.7,
       "centro_oeste": 35.9,
       "total": 136.8,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.5,
       "tgs": 98.4,
       "tgn": 38.4
@@ -8118,7 +8118,7 @@
       "gpfm": 23.5,
       "centro_oeste": 38.0,
       "total": 140.2,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.2,
       "tgs": 100.0,
       "tgn": 40.2
@@ -8132,7 +8132,7 @@
       "gpfm": 21.7,
       "centro_oeste": 36.8,
       "total": 135.9,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.2,
       "tgs": 96.9,
       "tgn": 39.0
@@ -8146,7 +8146,7 @@
       "gpfm": 19.8,
       "centro_oeste": 37.7,
       "total": 133.6,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.4,
       "tgs": 93.5,
       "tgn": 40.1
@@ -8160,7 +8160,7 @@
       "gpfm": 19.4,
       "centro_oeste": 36.0,
       "total": 133.2,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.5,
       "tgs": 94.7,
       "tgn": 38.5
@@ -8174,38 +8174,38 @@
       "gpfm": 22.2,
       "centro_oeste": 36.9,
       "total": 137.3,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
       "norte": 2.5,
       "tgs": 97.9,
       "tgn": 39.4
     },
     {
       "fecha": "2026-06-09",
-      "tipo": "P",
-      "san_martin": 25.1,
-      "neuba_1": 9.5,
-      "neuba_2": 41.2,
-      "gpfm": 24.2,
-      "centro_oeste": 36.1,
-      "total": 138.4,
-      "source": "ING_20260608.pdf",
-      "norte": 2.3,
-      "tgs": 100.0,
-      "tgn": 38.4
+      "tipo": "R",
+      "san_martin": 24.8,
+      "neuba_1": 10.0,
+      "neuba_2": 40.9,
+      "gpfm": 23.3,
+      "centro_oeste": 36.8,
+      "total": 138.3,
+      "source": "ING_20260609.pdf",
+      "norte": 2.5,
+      "tgs": 99.0,
+      "tgn": 39.3
     },
     {
       "fecha": "2026-06-10",
       "tipo": "P",
       "san_martin": 25.2,
       "neuba_1": 9.5,
-      "neuba_2": 41.2,
+      "neuba_2": 41.5,
       "gpfm": 24.6,
-      "centro_oeste": 36.1,
-      "total": 138.9,
-      "source": "ING_20260608.pdf",
+      "centro_oeste": 35.5,
+      "total": 138.6,
+      "source": "ING_20260609.pdf",
       "norte": 2.3,
-      "tgs": 100.5,
-      "tgn": 38.4
+      "tgs": 100.8,
+      "tgn": 37.8
     },
     {
       "fecha": "2026-06-11",
@@ -8214,12 +8214,12 @@
       "neuba_1": 9.5,
       "neuba_2": 42.0,
       "gpfm": 24.6,
-      "centro_oeste": 36.1,
-      "total": 139.7,
-      "source": "ING_20260608.pdf",
+      "centro_oeste": 35.6,
+      "total": 139.2,
+      "source": "ING_20260609.pdf",
       "norte": 2.3,
       "tgs": 101.3,
-      "tgn": 38.4
+      "tgn": 37.9
     },
     {
       "fecha": "2026-06-12",
@@ -8228,12 +8228,12 @@
       "neuba_1": 9.5,
       "neuba_2": 42.0,
       "gpfm": 24.6,
-      "centro_oeste": 36.1,
-      "total": 139.7,
-      "source": "ING_20260608.pdf",
+      "centro_oeste": 35.6,
+      "total": 139.2,
+      "source": "ING_20260609.pdf",
       "norte": 2.3,
       "tgs": 101.3,
-      "tgn": 38.4
+      "tgn": 37.9
     },
     {
       "fecha": "2026-06-13",
@@ -8244,7 +8244,21 @@
       "gpfm": 24.6,
       "centro_oeste": 36.1,
       "total": 139.5,
-      "source": "ING_20260608.pdf",
+      "source": "ING_20260609.pdf",
+      "norte": 2.1,
+      "tgs": 101.3,
+      "tgn": 38.2
+    },
+    {
+      "fecha": "2026-06-14",
+      "tipo": "P",
+      "san_martin": 25.2,
+      "neuba_1": 9.5,
+      "neuba_2": 42.0,
+      "gpfm": 24.6,
+      "centro_oeste": 36.1,
+      "total": 139.5,
+      "source": "ING_20260609.pdf",
       "norte": 2.1,
       "tgs": 101.3,
       "tgn": 38.2
