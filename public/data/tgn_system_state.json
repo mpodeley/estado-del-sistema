@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-11T20:30:57+00:00",
+  "generated_at": "2026-06-12T12:34:39+00:00",
   "source": "TGN ABII — Estado del Sistema",
-  "source_date": "11/06/2026",
+  "source_date": "29/05/2026",
   "data": [
     {
       "Día Operativo": "Wed Apr 29 00:00:00 ART 2026",
@@ -245,120 +245,120 @@
     },
     {
       "Día Operativo": "Fri May 29 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "125929070",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "7070930",
+      "Desbalance porcentual": "7.81",
       "fecha": "2026-05-29"
     },
     {
       "Día Operativo": "Sat May 30 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "125033880",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "7966120",
+      "Desbalance porcentual": "8.79",
       "fecha": "2026-05-30"
     },
     {
       "Día Operativo": "Sun May 31 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "129573480",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "3426520",
+      "Desbalance porcentual": "3.78",
       "fecha": "2026-05-31"
     },
     {
       "Día Operativo": "Mon Jun 01 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "132592530",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "407470",
+      "Desbalance porcentual": "0.45",
       "fecha": "2026-06-01"
     },
     {
       "Día Operativo": "Tue Jun 02 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "130344690",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "2655310",
+      "Desbalance porcentual": "2.93",
       "fecha": "2026-06-02"
     },
     {
       "Día Operativo": "Wed Jun 03 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "124729150",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "8270850",
+      "Desbalance porcentual": "9.13",
       "fecha": "2026-06-03"
     },
     {
       "Día Operativo": "Thu Jun 04 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "125494930",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "7505070",
+      "Desbalance porcentual": "8.29",
       "fecha": "2026-06-04"
     },
     {
       "Día Operativo": "Fri Jun 05 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "125892230",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "7107770",
+      "Desbalance porcentual": "7.85",
       "fecha": "2026-06-05"
     },
     {
       "Día Operativo": "Sat Jun 06 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "128432850",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "4567150",
+      "Desbalance porcentual": "5.04",
       "fecha": "2026-06-06"
     },
     {
       "Día Operativo": "Sun Jun 07 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "130822860",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "2177140",
+      "Desbalance porcentual": "2.4",
       "fecha": "2026-06-07"
     },
     {
       "Día Operativo": "Mon Jun 08 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "130310040",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "2689960",
+      "Desbalance porcentual": "2.97",
       "fecha": "2026-06-08"
     },
     {
       "Día Operativo": "Tue Jun 09 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "127534850",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "5465150",
+      "Desbalance porcentual": "6.03",
       "fecha": "2026-06-09"
     },
     {
       "Día Operativo": "Wed Jun 10 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "128074490",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "4925510",
+      "Desbalance porcentual": "5.44",
       "fecha": "2026-06-10"
     },
     {
       "Día Operativo": "Thu Jun 11 00:00:00 ART 2026",
-      "Actual": "133000000",
+      "Actual": "127435620",
       "Equilibrio": "133000000",
-      "Desbalance del sistema": "0",
-      "Desbalance porcentual": "0.0",
+      "Desbalance del sistema": "5564380",
+      "Desbalance porcentual": "6.14",
       "fecha": "2026-06-11"
     }
   ],
   "query": {
-    "desde": "11/06/2026",
-    "hasta": "11/06/2026",
+    "desde": "29/05/2026",
+    "hasta": "29/05/2026",
     "gasoducto": "TODOS"
   },
   "headers": [
