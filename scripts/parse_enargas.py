@@ -281,9 +281,9 @@ def flatten_for_csv(row):
 def slim_row(row):
     """Drop fields the dashboard doesn't need on historical rows.
 
-    Current day keeps the full row (EnargasRDSPanel uses the prev-year comparisons
-    and forecast_temp_ba); every prior day is slimmed to the fields used by the
-    historical / YoY / pulse charts. Cuts ~75% off the per-row size.
+    Current day keeps the full row (PulseCard/SystemFlowPanel use the prev-year
+    comparisons and forecast_temp_ba); every prior day is slimmed to the fields
+    used by the historical / YoY / pulse charts. Cuts ~75% off the per-row size.
     """
     slim = {
         'fecha': row.get('fecha'),

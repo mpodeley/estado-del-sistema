@@ -5,7 +5,6 @@ TGS sends this PDF every morning to all transport shippers. It's the only
 direct line into TGS-specific operational state we have:
     - Linepack TGS in absolute MMm³ (stock, not delta) — the value the public
       ENARGAS PDFs only show as a system total.
-    - Programmed vs realised reception per cuenca (Sur, Neuquina).
     - Operational alert + motivo (e.g. "Por bajo linepack del sistema").
     - Poder calorífico (Kcal) per gasoducto and cámara.
 
@@ -36,8 +35,6 @@ ETGS_JSON = os.path.join(OUT_DIR, 'etgs.json')
 ETGS_CSV_COLS = [
     'fecha', 'source', 'generado_at',
     'linepack_tgs_dia_anterior', 'linepack_tgs_dia_actual', 'linepack_tgs_variacion',
-    'recepcion_sur_programada', 'recepcion_sur_realizada',
-    'recepcion_neuquina_programada', 'recepcion_neuquina_realizada',
     'alerta_estado', 'alerta_motivo',
     'pcs_san_martin', 'pcs_neuba_1', 'pcs_neuba_2',
     'pcs_troncal', 'pcs_paralelo',
@@ -97,16 +94,6 @@ def extract_etgs(text: str) -> dict:
     if m:
         dd, mm, yy = m.groups()
         d['fecha'] = f'{yy}-{mm}-{dd}'
-
-    # "Cuenca Sur 24,378 22,654" / "Cuenca Neuquina 57,392 55,214"
-    m = re.search(r'Cuenca\s*Sur\s+([\d.,]+)\s+([\d.,]+)', text)
-    if m:
-        d['recepcion_sur_programada'] = _num(m.group(1))
-        d['recepcion_sur_realizada'] = _num(m.group(2))
-    m = re.search(r'Cuenca\s*Neuquina\s+([\d.,]+)\s+([\d.,]+)', text)
-    if m:
-        d['recepcion_neuquina_programada'] = _num(m.group(1))
-        d['recepcion_neuquina_realizada'] = _num(m.group(2))
 
     # "Día Anterior 208.16 Día Actual 204.96 Variación -3.20"
     m = re.search(

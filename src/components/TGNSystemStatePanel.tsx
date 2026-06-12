@@ -86,7 +86,7 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
       <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>
         <h3 style={sectionTitle}>TGN — Estado del sistema</h3>
         <p style={{ color: colors.textDim, fontSize: 13, margin: 0 }}>
-          Sin datos disponibles. El scraper corre cada 6 hs.
+          Sin datos disponibles. El scraper corre cada 3 hs.
         </p>
       </div>
     )
@@ -168,7 +168,7 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
           fontSize: 11,
         }}
       >
-        Fuente: portal TGN ABII (`pages/reports/system_state`). Se consulta cada 6 h con rango ayer→hoy y todos los gasoductos.
+        Fuente: portal TGN ABII (`pages/reports/system_state`). Se consulta cada 3 h con rango ayer→hoy y todos los gasoductos.
       </div>
     </div>
   )

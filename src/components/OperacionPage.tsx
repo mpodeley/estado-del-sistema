@@ -27,7 +27,6 @@ import InjectionsTable from './InjectionsTable'
 import WeeklyComparison from './WeeklyComparison'
 import CommentsSection from './CommentsSection'
 import ColdRanking from './ColdRanking'
-import EnargasRDSPanel from './EnargasRDSPanel'
 import MEGSAPanel from './MEGSAPanel'
 import SystemFlowPanel from './SystemFlowPanel'
 import PulseCard from './PulseCard'
@@ -116,7 +115,7 @@ export default function OperacionPage() {
   const latest = valid[valid.length - 1]
   const comments = commentsState.data ?? { daily: [], weekly: [] }
   const regions = regionsState.data ?? []
-  const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
+  const rdsReports = rdsState.data ?? []
 
   const freshness = [
     { label: 'Base', generatedAt: dailyState.meta.generated_at },
@@ -167,12 +166,6 @@ export default function OperacionPage() {
         rows={tgnSystemState.data}
         generatedAt={tgnSystemState.meta.generated_at}
       />
-
-      {rdsReports.length > 0 && (
-        <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.blue}` }}>
-          <EnargasRDSPanel reports={rdsReports} />
-        </div>
-      )}
 
       {megsaState.data && megsaState.data.benchmarks?.length > 0 && (
         <div style={{ ...card, marginTop: space.xl, borderTop: `3px solid ${colors.accent.green}` }}>

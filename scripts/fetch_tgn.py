@@ -62,16 +62,37 @@ def login(page, user, pw):
     page.wait_for_load_state('networkidle')
 
 
-def _load_existing_fechas():
+def _is_sentinel(rec):
+    """The ABII report returns Actual == Equilibrio with a zero desbalance for a
+    day that hasn't closed yet — a placeholder, not a real reading. Such days
+    must keep being re-queried (the closing value lands later) and must never be
+    persisted; otherwise the panel freezes on the equilibrium value, which is the
+    133/133/0 bug where every day from 2026-05-29 on showed a fixed linepack."""
+    a = str(rec.get('Actual') or '').strip()
+    e = str(rec.get('Equilibrio') or '').strip()
+    d = str(rec.get('Desbalance del sistema') or '').strip().lstrip('-')
+    return bool(a) and a == e and d in ('0', '0.0', '')
+
+
+def _load_existing_state():
+    """Return (all_fechas, sentinel_fechas) from the JSON written on prior runs."""
     out_path = os.path.join(OUT_DIR, 'tgn_system_state.json')
+    fechas, sentinels = set(), set()
     if not os.path.exists(out_path):
-        return set()
+        return fechas, sentinels
     try:
         with open(out_path, encoding='utf-8') as f:
             payload = json.load(f)
-        return {r.get('fecha') for r in (payload.get('data') or []) if r.get('fecha')}
     except (OSError, json.JSONDecodeError):
-        return set()
+        return fechas, sentinels
+    for r in (payload.get('data') or []):
+        fecha = r.get('fecha')
+        if not fecha:
+            continue
+        fechas.add(fecha)
+        if _is_sentinel(r):
+            sentinels.add(fecha)
+    return fechas, sentinels
 
 
 def scrape_system_state(page):
@@ -83,7 +104,7 @@ def scrape_system_state(page):
     """
     today = datetime.now(timezone.utc).date()
     today_iso = today.isoformat()
-    existing = _load_existing_fechas()
+    existing, sentinels = _load_existing_state()
 
     all_rows = []
     headers = []
@@ -91,7 +112,10 @@ def scrape_system_state(page):
     for n in range(SYSTEM_STATE_DAYS_BACK + 1):
         day = today - timedelta(days=n)
         iso = day.isoformat()
-        if iso != today_iso and iso in existing:
+        # Re-query today, days we never fetched, and days still stored as a
+        # placeholder — those refresh once TGN publishes the real closing value.
+        # Days that already carry a real reading stay cached so runs stay short.
+        if iso != today_iso and iso in existing and iso not in sentinels:
             continue
         day_str = day.strftime('%d/%m/%Y')
         last_desde = last_hasta = day_str
@@ -260,9 +284,14 @@ def _save_system_state(rows, desde, hasta, headers):
                 existing = []
         except (OSError, json.JSONDecodeError):
             existing = []
-    merged = {r.get('fecha'): r for r in existing if r.get('fecha')}
+    # Drop placeholder rows (Actual == Equilibrio, zero desbalance): purge any we
+    # may have frozen on earlier runs and never persist new ones, so the panel
+    # falls back to the last real reading instead of a fake 0% balance. A purged
+    # day reverts to "missing" and gets re-queried until its real cierre lands.
+    merged = {r.get('fecha'): r for r in existing
+              if r.get('fecha') and not _is_sentinel(r)}
     for r in cleaned:
-        if r.get('fecha'):
+        if r.get('fecha') and not _is_sentinel(r):
             merged[r['fecha']] = r  # newer wins
     final_rows = sorted(merged.values(), key=lambda r: r.get('fecha') or '')
 

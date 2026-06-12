@@ -2,7 +2,6 @@ import { useEnargasRDS } from '../hooks/useData'
 import { card, colors, sectionTitle, space } from '../theme'
 import HistoricalBandChart from './HistoricalBandChart'
 import YearOverYearChart from './YearOverYearChart'
-import EnargasRDSPanel from './EnargasRDSPanel'
 import { ChartGroup } from './_layout'
 import { ChartSkeleton } from './Skeleton'
 
@@ -15,7 +14,7 @@ export default function HistoricoPage() {
     return <ChartSkeleton height={420} />
   }
 
-  const rdsReports = (rdsState.data ?? []) as Parameters<typeof EnargasRDSPanel>[0]['reports']
+  const rdsReports = rdsState.data ?? []
 
   if (rdsReports.length < 60) {
     return (

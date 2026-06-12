@@ -2,18 +2,23 @@ name: Update TGN data
 
 on:
   schedule:
-    # Argentina (UTC-3): el portal recién publica el cierre ~09:45.
+    # Argentina (UTC-3): el portal recién publica el cierre ~09:45, después
+    # corrige durante el día. Corremos cada 3 h para reflejar esas correcciones.
     - cron: '45 12 * * *'  # 09:45 ART — primera pasada cuando ya hay datos
-    - cron: '0 18 * * *'   # 15:00 ART — segunda pasada por si corrigen el cierre
+    - cron: '45 15 * * *'  # 12:45 ART
+    - cron: '45 18 * * *'  # 15:45 ART
+    - cron: '45 21 * * *'  # 18:45 ART
   workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
 
@@ -28,6 +33,14 @@ jobs:
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install npm dependencies
+        run: npm ci
+
       - name: Fetch TGN
         timeout-minutes: 10
         env:
@@ -35,16 +48,46 @@ jobs:
           TGN_PASSWORD: ${{ secrets.TGN_PASSWORD }}
         run: python scripts/fetch_tgn.py
 
-      - name: Commit TGN JSONs
+      - name: Rebuild daily.json
+        # Refresca linepack_tgn en daily.json con el TGN recién bajado, sin
+        # volver a correr todo el pipeline (build_daily.py solo lee JSONs locales).
+        run: python scripts/build_daily.py
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build dashboard
+        run: npm run build
+
+      - name: Install course dependencies
+        working-directory: ./curso
+        run: npm ci
+
+      - name: Build course site
+        working-directory: ./curso
+        run: npm run build
+
+      - name: Place course under dist/curso
+        run: |
+          mkdir -p dist/curso
+          cp -r curso/dist/. dist/curso/
+
+      - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/tgn_*.json public/data/tgn_*.csv 2>/dev/null || true
+          git add public/data/
           if git diff --staged --quiet; then
-            echo "No TGN changes to commit"
+            echo "No data changes to commit"
           else
             git commit -m "TGN auto-update $(date -u +%Y-%m-%dT%H:%MZ)"
             # Keep up with the main workflow's commits to data files.
             git pull --rebase origin master || git rebase --abort
             git push
           fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

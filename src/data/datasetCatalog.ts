@@ -108,7 +108,7 @@ export const CATALOG: DatasetEntry[] = [
     id: 'etgs',
     name: 'TGS — Síntesis del Estado Operativo (ETGS)',
     shortDescription:
-      'Reporte diario que TGS envía por mail con el estado interno del sistema: linepack TGS en MMm³ (stock absoluto, no disponible públicamente), recepciones programadas vs realizadas por cuenca (Sur y Neuquina), alerta operativa con motivo, y poder calorífico por gasoducto. Llega vía la casilla de ingestión por mail.',
+      'Reporte diario que TGS envía por mail con el estado interno del sistema: linepack TGS en MMm³ (stock absoluto, no disponible públicamente), alerta operativa con motivo, y poder calorífico por gasoducto. Llega vía la casilla de ingestión por mail.',
     kind: 'manual',
     frequency: 'Diaria (vía email)',
     jsonPath: './data/etgs.json',
@@ -121,7 +121,7 @@ export const CATALOG: DatasetEntry[] = [
       },
       {
         file: 'scripts/parse_etgs.py',
-        purpose: 'Extrae linepack, recepciones, alerta y PCS de cada PDF ETGS_*.pdf en raw/.',
+        purpose: 'Extrae linepack, alerta y PCS de cada PDF ETGS_*.pdf en raw/.',
       },
     ],
   },

@@ -1,6 +1,11 @@
 import { useETGS } from '../hooks/useData'
 import { card, colors, sectionTitle, space } from '../theme'
 
+// Referencias de desbalance TGS (en m³). Editar acá si cambian: la
+// "Capacidad de Transporte TGS" es el divisor del desbalance % y es variable.
+const LINEPACK_EQUILIBRIO_M3 = 224_486_000      // Linepack de equilibrio
+const CAPACIDAD_TRANSPORTE_TGS_M3 = 92_393_583  // Capacidad de Transporte TGS
+
 // Real TGS state from the daily ETGS email-fed report. Shows the only
 // publicly-non-available data we have: absolute TGS linepack (stock) plus
 // TGS's own operational alert banner.
@@ -21,9 +26,12 @@ export default function TGSPanel() {
       ? colors.accent.orange
       : colors.status.ok
 
-  const recepCuencaSur = latest.recepcion_sur_realizada
-  const recepCuencaNeuq = latest.recepcion_neuquina_realizada
-  const totalRealizado = (recepCuencaSur ?? 0) + (recepCuencaNeuq ?? 0)
+  // Desbalance % = (Linepack de equilibrio − Linepack actual) / Capacidad de
+  // Transporte TGS. lp viene en MMm³ y las constantes en m³, así que convertimos.
+  const lpActualM3 = lp != null ? lp * 1_000_000 : null
+  const desbalancePct = lpActualM3 != null
+    ? ((LINEPACK_EQUILIBRIO_M3 - lpActualM3) / CAPACIDAD_TRANSPORTE_TGS_M3) * 100
+    : null
 
   return (
     <div style={{ ...card, borderTop: `3px solid ${colors.accent.green}`, marginTop: space.xl }}>
@@ -35,9 +43,8 @@ export default function TGSPanel() {
       </h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: space.md, marginTop: space.sm }}>
         <Stat label="Linepack TGS" value={lp != null ? `${lp.toFixed(2)} MMm³` : '—'} sub={variacion != null ? `${variacion >= 0 ? '+' : ''}${variacion.toFixed(2)} vs anterior` : undefined} />
-        <Stat label="Recepción Cuenca Sur" value={recepCuencaSur != null ? `${recepCuencaSur.toFixed(2)} MMm³/d` : '—'} sub={latest.recepcion_sur_programada != null ? `prog: ${latest.recepcion_sur_programada.toFixed(2)}` : undefined} />
-        <Stat label="Recepción Neuquina" value={recepCuencaNeuq != null ? `${recepCuencaNeuq.toFixed(2)} MMm³/d` : '—'} sub={latest.recepcion_neuquina_programada != null ? `prog: ${latest.recepcion_neuquina_programada.toFixed(2)}` : undefined} />
-        <Stat label="Total recepción TGS" value={totalRealizado > 0 ? `${totalRealizado.toFixed(1)} MMm³/d` : '—'} />
+        <Stat label="Linepack de equilibrio" value={`${(LINEPACK_EQUILIBRIO_M3 / 1_000_000).toFixed(2)} MMm³`} />
+        <Stat label="Desbalance %" value={desbalancePct != null ? `${desbalancePct >= 0 ? '+' : ''}${desbalancePct.toFixed(2)}%` : '—'} sub="(equilibrio − actual) / cap. transporte" />
       </div>
       {motivo && (
         <div style={{
