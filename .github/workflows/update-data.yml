@@ -67,8 +67,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/data/
-          git diff --staged --quiet || git commit -m "Auto-update data $(date -u +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "No data changes to commit"
+          else
+            git commit -m "Auto-update data $(date -u +%Y-%m-%d)"
+            # The tgn-update workflow can push to master concurrently (its
+            # 12:45 UTC run overlaps this 13:00 one), so rebase before pushing.
+            git pull --rebase origin master || git rebase --abort
+            git push
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
