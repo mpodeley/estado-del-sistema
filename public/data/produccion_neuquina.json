@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-11T16:48:06+00:00",
+  "generated_at": "2026-06-12T12:51:40+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.64,
+      "prod_agua_m3": 135272.63,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -33946,7 +33946,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.25,
-      "prod_pet_m3": 2905.05,
+      "prod_pet_m3": 2905.06,
       "prod_agua_m3": 8530.8,
       "pozos_activos": 12,
       "pozos_no_conv": 1
@@ -36166,7 +36166,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.34,
-      "prod_pet_m3": 2472.78,
+      "prod_pet_m3": 2472.77,
       "prod_agua_m3": 141796.08,
       "pozos_activos": 37,
       "pozos_no_conv": 0
@@ -37169,6 +37169,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "LA CALERA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 416.29,
+      "prod_pet_m3": 142413.92,
+      "prod_agua_m3": 153982.81,
+      "pozos_activos": 107,
+      "pozos_no_conv": 134
+    },
+    {
+      "mes": "2026-05",
       "area": "BAJO DEL CHOIQUE - LA INVERNADA",
       "empresa": "PLUSPETROL CUENCA NEUQUINA S.R.L.",
       "cuenca": "NEUQUINA",
@@ -37265,6 +37277,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "JAGÜEL CASA DE PIEDRA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 1.92,
+      "prod_pet_m3": 41532.58,
+      "prod_agua_m3": 640223.66,
+      "pozos_activos": 302,
+      "pozos_no_conv": 85
+    },
+    {
+      "mes": "2026-05",
       "area": "SEÑAL CERRO BAYO",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -37277,6 +37301,42 @@
     },
     {
       "mes": "2026-05",
+      "area": "GOBERNADOR AYALA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.68,
+      "prod_pet_m3": 19827.43,
+      "prod_agua_m3": 197017.67,
+      "pozos_activos": 106,
+      "pozos_no_conv": 43
+    },
+    {
+      "mes": "2026-05",
+      "area": "LOMA JARILLOSA ESTE",
+      "empresa": "GEOPARK ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.65,
+      "prod_pet_m3": 7069.36,
+      "prod_agua_m3": 742.61,
+      "pozos_activos": 6,
+      "pozos_no_conv": 11
+    },
+    {
+      "mes": "2026-05",
+      "area": "CNQ 7/A",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 0.25,
+      "prod_pet_m3": 17599.59,
+      "prod_agua_m3": 314731.5,
+      "pozos_activos": 205,
+      "pozos_no_conv": 42
+    },
+    {
+      "mes": "2026-05",
       "area": "LAS MANADAS",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -37286,6 +37346,18 @@
       "prod_agua_m3": 1185.68,
       "pozos_activos": 11,
       "pozos_no_conv": 3
+    },
+    {
+      "mes": "2026-05",
+      "area": "GOBERNADOR AYALA III",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 0.1,
+      "prod_pet_m3": 4390.81,
+      "prod_agua_m3": 80261.29,
+      "pozos_activos": 32,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-05",
@@ -37385,6 +37457,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "LAGUNA BLANCA (CNQ-12)",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "PASO AGUERRE",
       "empresa": "INGENIERIA SIMA S.A.",
       "cuenca": "NEUQUINA",
@@ -37394,6 +37478,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "PUESTO SILVA OESTE",
+      "empresa": "GEOPARK ARGENTINA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 182.39,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 3,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-05",
