@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-14T22:54:10+00:00",
+  "generated_at": "2026-06-15T17:35:35+00:00",
   "source": "Construido de RDS + PS + ING + ETGS + PPO (histórico manual congelado en daily_history.json)",
   "source_date": "2026-06-14",
   "data": [
@@ -34253,7 +34253,7 @@
       "var_linepack_tgs": null,
       "lim_inf_tgs": 215.0,
       "lim_sup_tgs": 235.0,
-      "linepack_tgn": null,
+      "linepack_tgn": 130.65,
       "var_linepack_tgn": null,
       "lim_inf_tgn": 110.0,
       "lim_sup_tgn": 142.0,
