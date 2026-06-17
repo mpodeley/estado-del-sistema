@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T17:59:31+00:00",
+  "generated_at": "2026-06-17T16:35:52+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -31126,7 +31126,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.76,
-      "prod_pet_m3": 39723.49,
+      "prod_pet_m3": 39723.48,
       "prod_agua_m3": 586440.0,
       "pozos_activos": 310,
       "pozos_no_conv": 85
@@ -33922,7 +33922,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.29,
-      "prod_pet_m3": 18971.23,
+      "prod_pet_m3": 18971.24,
       "prod_agua_m3": 309791.03,
       "pozos_activos": 205,
       "pozos_no_conv": 42
@@ -33946,7 +33946,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.25,
-      "prod_pet_m3": 2905.06,
+      "prod_pet_m3": 2905.05,
       "prod_agua_m3": 8530.8,
       "pozos_activos": 12,
       "pozos_no_conv": 1
@@ -36179,7 +36179,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 0.33,
       "prod_pet_m3": 1531.94,
-      "prod_agua_m3": 520.01,
+      "prod_agua_m3": 520.02,
       "pozos_activos": 4,
       "pozos_no_conv": 6
     },
@@ -37409,6 +37409,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "VEGA GRANDE",
+      "empresa": "G Y G OIL SERVICE SRL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.09,
+      "prod_pet_m3": 174.62,
+      "prod_agua_m3": 257.19,
+      "pozos_activos": 3,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-05",
       "area": "AGUADA DEL CHIVATO - AGUADA BOCAREY",
       "empresa": "PATAGONIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -37457,6 +37469,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "Cerro Los Leones",
+      "empresa": "CROWN POINT ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 13
+    },
+    {
+      "mes": "2026-05",
       "area": "DON JOSE",
       "empresa": "PETROLERA DEL COMAHUE S.A.",
       "cuenca": "NEUQUINA",
@@ -37485,6 +37509,18 @@
       "empresa": "PETROLERA DEL COMAHUE S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "FONDO DE LA LEGUA",
+      "empresa": "SAN JORGE PETROLEUM S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
