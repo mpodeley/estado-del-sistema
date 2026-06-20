@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T15:58:49+00:00",
+  "generated_at": "2026-06-20T15:00:58+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -28594,7 +28594,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 3.12,
-      "prod_pet_m3": 50043.78,
+      "prod_pet_m3": 50043.79,
       "prod_agua_m3": 2953.06,
       "pozos_activos": 28,
       "pozos_no_conv": 31
@@ -33574,7 +33574,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.38,
-      "prod_pet_m3": 2148.04,
+      "prod_pet_m3": 2148.05,
       "prod_agua_m3": 30204.07,
       "pozos_activos": 42,
       "pozos_no_conv": 43
@@ -33922,7 +33922,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.29,
-      "prod_pet_m3": 18971.24,
+      "prod_pet_m3": 18971.23,
       "prod_agua_m3": 309791.03,
       "pozos_activos": 205,
       "pozos_no_conv": 42
@@ -36179,7 +36179,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 0.33,
       "prod_pet_m3": 1531.94,
-      "prod_agua_m3": 520.01,
+      "prod_agua_m3": 520.02,
       "pozos_activos": 4,
       "pozos_no_conv": 6
     },
@@ -37169,6 +37169,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "FORTIN DE PIEDRA",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 629.43,
+      "prod_pet_m3": 53586.34,
+      "prod_agua_m3": 142012.24,
+      "pozos_activos": 172,
+      "pozos_no_conv": 205
+    },
+    {
+      "mes": "2026-05",
       "area": "LA CALERA",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
@@ -37178,6 +37190,30 @@
       "prod_agua_m3": 153982.81,
       "pozos_activos": 107,
       "pozos_no_conv": 134
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUADA PICHANA ESTE",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 390.94,
+      "prod_pet_m3": 13059.93,
+      "prod_agua_m3": 78662.31,
+      "pozos_activos": 269,
+      "pozos_no_conv": 141
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUADA PICHANA OESTE",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 273.84,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 39240.63,
+      "pozos_activos": 52,
+      "pozos_no_conv": 59
     },
     {
       "mes": "2026-05",
@@ -37289,6 +37325,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "EL TRAPIAL ESTE",
+      "empresa": "CHEVRON ARGENTINA S.R.L.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 49.97,
+      "prod_pet_m3": 121143.93,
+      "prod_agua_m3": 177855.46,
+      "pozos_activos": 93,
+      "pozos_no_conv": 46
+    },
+    {
+      "mes": "2026-05",
+      "area": "SAN ROQUE",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 48.2,
+      "prod_pet_m3": 2252.21,
+      "prod_agua_m3": 17157.62,
+      "pozos_activos": 29,
+      "pozos_no_conv": 10
+    },
+    {
+      "mes": "2026-05",
       "area": "LA AMARGA CHICA",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -37313,6 +37373,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "BAJADA DEL PALO OESTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 33.72,
+      "prod_pet_m3": 287362.25,
+      "prod_agua_m3": 99631.18,
+      "pozos_activos": 170,
+      "pozos_no_conv": 182
+    },
+    {
+      "mes": "2026-05",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -37334,6 +37406,18 @@
       "prod_agua_m3": 3299.4,
       "pozos_activos": 32,
       "pozos_no_conv": 95
+    },
+    {
+      "mes": "2026-05",
+      "area": "LINDERO ATRAVESADO",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 31.97,
+      "prod_pet_m3": 66313.0,
+      "prod_agua_m3": 19534.07,
+      "pozos_activos": 205,
+      "pozos_no_conv": 178
     },
     {
       "mes": "2026-05",
@@ -37418,6 +37502,30 @@
       "prod_agua_m3": 1870.22,
       "pozos_activos": 20,
       "pozos_no_conv": 20
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUADA DE CASTRO",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 14.87,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 9,
+      "pozos_no_conv": 10
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUA SALADA",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 10.7,
+      "prod_pet_m3": 3364.86,
+      "prod_agua_m3": 11550.34,
+      "pozos_activos": 45,
+      "pozos_no_conv": 16
     },
     {
       "mes": "2026-05",
@@ -37553,6 +37661,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "AGUADA FEDERAL",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 6.08,
+      "prod_pet_m3": 44203.38,
+      "prod_agua_m3": 28608.92,
+      "pozos_activos": 26,
+      "pozos_no_conv": 30
+    },
+    {
+      "mes": "2026-05",
       "area": "PASO DE LAS BARDAS NORTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -37586,6 +37706,18 @@
       "prod_agua_m3": 836.65,
       "pozos_activos": 4,
       "pozos_no_conv": 5
+    },
+    {
+      "mes": "2026-05",
+      "area": "LOS TOLDOS II ESTE",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 5.69,
+      "prod_pet_m3": 19052.52,
+      "prod_agua_m3": 14735.22,
+      "pozos_activos": 11,
+      "pozos_no_conv": 15
     },
     {
       "mes": "2026-05",
@@ -37673,6 +37805,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "LOS TOLDOS I NORTE",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 3.32,
+      "prod_pet_m3": 3704.77,
+      "prod_agua_m3": 534.74,
+      "pozos_activos": 4,
+      "pozos_no_conv": 7
+    },
+    {
+      "mes": "2026-05",
+      "area": "BAJADA DEL PALO ESTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 3.29,
+      "prod_pet_m3": 71954.42,
+      "prod_agua_m3": 10474.35,
+      "pozos_activos": 30,
+      "pozos_no_conv": 39
+    },
+    {
+      "mes": "2026-05",
       "area": "LOS TOLDOS I SUR",
       "empresa": "PLUSPETROL CUENCA NEUQUINA S.R.L.",
       "cuenca": "NEUQUINA",
@@ -37685,6 +37841,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "PUESTO PARADA",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 3.18,
+      "prod_pet_m3": 33545.98,
+      "prod_agua_m3": 3584.67,
+      "pozos_activos": 37,
+      "pozos_no_conv": 26
+    },
+    {
+      "mes": "2026-05",
+      "area": "PUNTA SENILLOSA",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 2.92,
+      "prod_pet_m3": 197.93,
+      "prod_agua_m3": 215.38,
+      "pozos_activos": 21,
+      "pozos_no_conv": 13
+    },
+    {
+      "mes": "2026-05",
       "area": "LAS TACANAS",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -37694,6 +37874,18 @@
       "prod_agua_m3": 120.59,
       "pozos_activos": 1,
       "pozos_no_conv": 5
+    },
+    {
+      "mes": "2026-05",
+      "area": "COIRON AMARGO SUR ESTE",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 2.84,
+      "prod_pet_m3": 46955.59,
+      "prod_agua_m3": 18876.64,
+      "pozos_activos": 31,
+      "pozos_no_conv": 35
     },
     {
       "mes": "2026-05",
@@ -37762,7 +37954,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 1.99,
-      "prod_pet_m3": 5269.64,
+      "prod_pet_m3": 5269.63,
       "prod_agua_m3": 21910.31,
       "pozos_activos": 45,
       "pozos_no_conv": 0
@@ -37901,6 +38093,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "BANDURRIA CENTRO",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 1.2,
+      "prod_pet_m3": 4593.12,
+      "prod_agua_m3": 5176.87,
+      "pozos_activos": 24,
+      "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-05",
+      "area": "LOS BASTOS",
+      "empresa": "TECPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 1.2,
+      "prod_pet_m3": 776.55,
+      "prod_agua_m3": 3683.22,
+      "pozos_activos": 19,
+      "pozos_no_conv": 11
+    },
+    {
+      "mes": "2026-05",
       "area": "PUESTO HERNANDEZ",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -37946,6 +38162,18 @@
       "prod_agua_m3": 9.84,
       "pozos_activos": 7,
       "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUADA CÁNEPA",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.89,
+      "prod_pet_m3": 20896.71,
+      "prod_agua_m3": 4687.11,
+      "pozos_activos": 12,
+      "pozos_no_conv": 12
     },
     {
       "mes": "2026-05",
@@ -38054,6 +38282,18 @@
       "prod_agua_m3": 43336.0,
       "pozos_activos": 30,
       "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUILA MORA",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.35,
+      "prod_pet_m3": 1566.75,
+      "prod_agua_m3": 500.79,
+      "pozos_activos": 4,
+      "pozos_no_conv": 6
     },
     {
       "mes": "2026-05",
@@ -38261,6 +38501,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "BANDURRIA NORTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 5
+    },
+    {
+      "mes": "2026-05",
       "area": "BARRANCA DE LOS LOROS",
       "empresa": "PETROLEOS SUDAMERICANOS S.A.",
       "cuenca": "NEUQUINA",
@@ -38345,6 +38597,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "CN-V",
+      "empresa": "HATTRICK ENERGY SAS",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 94.95,
+      "prod_agua_m3": 9.39,
+      "pozos_activos": 1,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "COIRON AMARGO NORTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "CORRALERA NORESTE",
       "empresa": "PHOENIX GLOBAL RESOURCES S.A.",
       "cuenca": "NEUQUINA",
@@ -38414,6 +38690,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-05",
+      "area": "EL TRAPIAL - CURAMCHED",
+      "empresa": "CHEVRON ARGENTINA S.R.L.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
     },
     {
       "mes": "2026-05",
@@ -38501,6 +38789,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "LINDERO DE PIEDRA",
+      "empresa": "HATTRICK ENERGY SAS",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 4503.95,
+      "prod_agua_m3": 19361.62,
+      "pozos_activos": 21,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "LOMA AMARILLA SUR",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -38525,6 +38825,30 @@
     },
     {
       "mes": "2026-05",
+      "area": "LOMA EL DIVISADERO",
+      "empresa": "HATTRICK ENERGY SAS",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "LOMA GUADALOSA",
+      "empresa": "PAN AMERICAN ENERGY SL",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
       "area": "LOMA MONTOSA OESTE",
       "empresa": "PETROLEOS SUDAMERICANOS S.A.",
       "cuenca": "NEUQUINA",
@@ -38546,6 +38870,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 4
+    },
+    {
+      "mes": "2026-05",
+      "area": "PAMPA DE LAS YEGUAS II",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
     },
     {
       "mes": "2026-05",
