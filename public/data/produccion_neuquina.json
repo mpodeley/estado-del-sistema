@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T15:00:58+00:00",
+  "generated_at": "2026-06-21T15:10:33+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -28594,7 +28594,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 3.12,
-      "prod_pet_m3": 50043.79,
+      "prod_pet_m3": 50043.78,
       "prod_agua_m3": 2953.06,
       "pozos_activos": 28,
       "pozos_no_conv": 31
@@ -33946,7 +33946,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.25,
-      "prod_pet_m3": 2905.05,
+      "prod_pet_m3": 2905.06,
       "prod_agua_m3": 8530.8,
       "pozos_activos": 12,
       "pozos_no_conv": 1
@@ -37114,7 +37114,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.33,
+      "prod_pet_m3": 111.34,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -37823,7 +37823,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 3.29,
       "prod_pet_m3": 71954.42,
-      "prod_agua_m3": 10474.35,
+      "prod_agua_m3": 10474.36,
       "pozos_activos": 30,
       "pozos_no_conv": 39
     },
@@ -37954,7 +37954,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 1.99,
-      "prod_pet_m3": 5269.63,
+      "prod_pet_m3": 5269.64,
       "prod_agua_m3": 21910.31,
       "pozos_activos": 45,
       "pozos_no_conv": 0
@@ -38305,6 +38305,18 @@
       "prod_pet_m3": 2694.54,
       "prod_agua_m3": 135499.68,
       "pozos_activos": 36,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "EL MANZANO ESTE",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.34,
+      "prod_pet_m3": 262.96,
+      "prod_agua_m3": 2647.97,
+      "pozos_activos": 2,
       "pozos_no_conv": 0
     },
     {
@@ -38690,6 +38702,30 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-05",
+      "area": "EL MANZANO OESTE (AGRIO)",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "EL MANZANO OESTE (RESTO)",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-05",
