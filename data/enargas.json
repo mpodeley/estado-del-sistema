@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-21T15:10:57+00:00",
+  "generated_at": "2026-06-22T17:26:17+00:00",
   "source": "ENARGAS Reporte Diario del Sistema (RDS)",
-  "source_date": "2026-06-21",
+  "source_date": "2026-06-22",
   "data": [
     {
       "fecha": "2024-04-20",
@@ -38886,11 +38886,63 @@
     },
     {
       "fecha": "2026-06-21",
+      "source": "RDS_20260621.pdf",
       "linepack_total": 352.0,
       "linepack_delta": 8.7,
+      "consumo_total_estimado": 142.2,
+      "temperatura_ba": {
+        "min": 9.0,
+        "max": 14.0,
+        "tm": 11.5
+      },
       "importaciones": {
         "bolivia": {
-          "programa": 2.0,
+          "programa": 2.0
+        },
+        "chile": {
+          "programa": 0.0
+        },
+        "escobar": {
+          "programa": 15.5,
+          "proximo_barco": "23-jun"
+        },
+        "bahia_blanca": {
+          "programa": 0.0
+        }
+      },
+      "consumos": {
+        "prioritaria": {
+          "programa": 69.1
+        },
+        "cammesa": {
+          "programa": 28.0
+        },
+        "industria": {
+          "programa": 29.6
+        },
+        "gnc": {
+          "programa": 5.0
+        },
+        "combustible": {
+          "programa": 4.0
+        }
+      },
+      "exportaciones": {
+        "tgn": {
+          "vol_exportar": 6.0
+        },
+        "tgs": {
+          "vol_exportar": 0.4
+        }
+      }
+    },
+    {
+      "fecha": "2026-06-22",
+      "linepack_total": 362.5,
+      "linepack_delta": 10.5,
+      "importaciones": {
+        "bolivia": {
+          "programa": 1.4,
           "proximo_barco": null,
           "prom_mes_prev_year": 1.4,
           "misma_semana_prev_year": 3.0
@@ -38916,34 +38968,34 @@
       },
       "exportaciones": {
         "tgn": {
-          "vol_exportar": 6.0,
+          "vol_exportar": 5.0,
           "prom_mes_2025": 5.8,
           "misma_semana_2025": 6.5
         },
         "tgs": {
-          "vol_exportar": 0.4,
+          "vol_exportar": 0.5,
           "prom_mes_2025": 0.5,
           "misma_semana_2025": 0.6
         }
       },
       "consumos": {
         "prioritaria": {
-          "programa": 69.1,
+          "programa": 80.4,
           "prom_mes_2025": 72.6,
           "misma_semana_2025": 84.1
         },
         "cammesa": {
-          "programa": 28.0,
+          "programa": 28.9,
           "prom_mes_2025": 31.0,
           "misma_semana_2025": 22.9
         },
         "industria": {
-          "programa": 29.6,
+          "programa": 31.3,
           "prom_mes_2025": 33.8,
           "misma_semana_2025": 33.5
         },
         "gnc": {
-          "programa": 5.0,
+          "programa": 5.4,
           "prom_mes_2025": 5.4,
           "misma_semana_2025": 5.4
         },
@@ -38953,38 +39005,20 @@
           "misma_semana_2025": 4.7
         }
       },
-      "consumo_total_estimado": 142.2,
+      "consumo_total_estimado": 155.5,
       "temperatura_ba": {
-        "min": 9.0,
-        "max": 14.0,
-        "tm": 11.5,
+        "min": 7.0,
+        "max": 13.0,
+        "tm": 10.0,
         "tm_2025": 10.8,
         "tm_misma_semana": 8.4
       },
       "forecast_temp_ba": [
         {
-          "fecha": "2026-06-22",
-          "min": 8.0,
-          "max": 13.0,
-          "tm": 10.5
-        },
-        {
           "fecha": "2026-06-23",
           "min": 6.0,
           "max": 12.0,
           "tm": 9.0
-        },
-        {
-          "fecha": "2026-06-24",
-          "min": 5.0,
-          "max": 11.0,
-          "tm": 8.0
-        },
-        {
-          "fecha": "2026-06-25",
-          "min": 6.0,
-          "max": 11.0,
-          "tm": 8.5
         },
         {
           "fecha": "2026-06-26",
@@ -38997,9 +39031,15 @@
           "min": 9.0,
           "max": 16.0,
           "tm": 12.5
+        },
+        {
+          "fecha": "2026-06-28",
+          "min": 7.0,
+          "max": 12.0,
+          "tm": 9.5
         }
       ],
-      "source": "RDS_20260621.pdf"
+      "source": "RDS_20260622.pdf"
     }
   ],
   "issues": []
