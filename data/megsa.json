@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T17:24:41+00:00",
+  "generated_at": "2026-06-23T15:45:21+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -10,13 +10,13 @@
         "series": "NATURAL_GAS_USD",
         "seriesDescription": "spot_price",
         "units": "USD/MMbtu",
-        "currentPrice": 3.29,
-        "currentPeriod": "2026-06-22T00:00:00",
-        "previousPrice": 3.2,
+        "currentPrice": 3.2,
+        "currentPeriod": "2026-06-23T00:00:00",
+        "previousPrice": 3.29,
         "previousPeriod": null,
-        "nominalDifference": 0.09,
-        "percentageDifference": 2.81,
-        "lastUpdated": "2026-06-22T14:20:02.0999907",
+        "nominalDifference": -0.09,
+        "percentageDifference": -2.74,
+        "lastUpdated": "2026-06-23T12:40:09.9476715",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -26,13 +26,13 @@
         "series": "DUTCH_TTF_EUR",
         "seriesDescription": "spot_price",
         "units": "€/MWh",
-        "currentPrice": 42.07,
-        "currentPeriod": "2026-06-22T00:00:00",
-        "previousPrice": 42.09,
+        "currentPrice": 41.85,
+        "currentPeriod": "2026-06-23T00:00:00",
+        "previousPrice": 41.9,
         "previousPeriod": null,
-        "nominalDifference": -0.02,
-        "percentageDifference": -0.05,
-        "lastUpdated": "2026-06-22T14:20:02.6716399",
+        "nominalDifference": -0.05,
+        "percentageDifference": -0.12,
+        "lastUpdated": "2026-06-23T12:40:10.2912912",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -42,13 +42,13 @@
         "series": "BRENT_CRUDE_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 77.77,
-        "currentPeriod": "2026-06-22T00:00:00",
-        "previousPrice": 80.38,
+        "currentPrice": 77.06,
+        "currentPeriod": "2026-06-23T00:00:00",
+        "previousPrice": 77.56,
         "previousPeriod": null,
-        "nominalDifference": -2.61,
-        "percentageDifference": -3.25,
-        "lastUpdated": "2026-06-22T14:20:01.6353246",
+        "nominalDifference": -0.5,
+        "percentageDifference": -0.64,
+        "lastUpdated": "2026-06-23T12:40:09.6069161",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 73.54,
-        "currentPeriod": "2026-06-22T00:00:00",
-        "previousPrice": 76.54,
+        "currentPrice": 73.05,
+        "currentPeriod": "2026-06-23T00:00:00",
+        "previousPrice": 73.45,
         "previousPeriod": null,
-        "nominalDifference": -3.0,
-        "percentageDifference": -3.92,
-        "lastUpdated": "2026-06-22T14:20:01.2182028",
+        "nominalDifference": -0.4,
+        "percentageDifference": -0.54,
+        "lastUpdated": "2026-06-23T12:40:09.2475335",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -72,13 +72,13 @@
     "dolar": {
       "currency": "USD",
       "currencyName": "Dolar U.S.A",
-      "currentPrice": 1480.0,
-      "currentPeriod": "2026-06-22T13:24:00",
-      "previousPrice": 1475.0,
-      "previousPeriod": "2026-06-22T11:07:00",
+      "currentPrice": 1485.0,
+      "currentPeriod": "2026-06-23T10:55:00",
+      "previousPrice": 1480.0,
+      "previousPeriod": "2026-06-23T10:03:00",
       "nominalDifference": 5.0,
-      "percentageDifference": 0.3389830508474576,
-      "lastUpdated": "2026-06-22T13:30:15.8978884",
+      "percentageDifference": 0.33783783783783783,
+      "lastUpdated": "2026-06-23T11:00:07.4542602",
       "marketType": "Dollar",
       "displayName": "DOLAR"
     },
@@ -88,9 +88,21 @@
         "descripcion": "SUBASTA ENARSA – VENTA DEMANDA PRIORITARIA\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 10:00 a 10:30",
         "publicaDesde": "2026-06-22T00:00:00",
         "fechaUltimaModificacion": "2026-06-22T14:17:03"
+      },
+      {
+        "id": 408.0,
+        "descripcion": "SUBASTA ENARSA para INDUSTRIAS\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 11:00 a 11:30",
+        "publicaDesde": "2026-06-22T00:00:00",
+        "fechaUltimaModificacion": "2026-06-22T15:03:50"
+      },
+      {
+        "id": 410.0,
+        "descripcion": "SUBASTA ENARSA para GENERADORES, CAMMESA Y COMERCIALIZADORES\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 12:00 a 12:30",
+        "publicaDesde": "2026-06-22T00:00:00",
+        "fechaUltimaModificacion": "2026-06-22T16:20:30"
       }
     ],
-    "fetched_at": "2026-06-22T17:24:41+00:00"
+    "fetched_at": "2026-06-23T15:45:21+00:00"
   },
   "errors": null
 }
