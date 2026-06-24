@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T15:46:40+00:00",
+  "generated_at": "2026-06-24T15:30:07+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.64,
+      "prod_agua_m3": 135272.63,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -37114,7 +37114,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.34,
+      "prod_pet_m3": 111.33,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -37186,7 +37186,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 416.29,
-      "prod_pet_m3": 142413.93,
+      "prod_pet_m3": 142413.92,
       "prod_agua_m3": 153982.81,
       "pozos_activos": 107,
       "pozos_no_conv": 134
@@ -37835,7 +37835,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 3.29,
       "prod_pet_m3": 71954.42,
-      "prod_agua_m3": 10474.35,
+      "prod_agua_m3": 10474.36,
       "pozos_activos": 30,
       "pozos_no_conv": 39
     },
@@ -38002,7 +38002,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 1.99,
-      "prod_pet_m3": 5269.63,
+      "prod_pet_m3": 5269.64,
       "prod_agua_m3": 21910.31,
       "pozos_activos": 45,
       "pozos_no_conv": 0
@@ -38135,7 +38135,7 @@
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.27,
       "prod_pet_m3": 2232.92,
-      "prod_agua_m3": 28855.29,
+      "prod_agua_m3": 28855.3,
       "pozos_activos": 42,
       "pozos_no_conv": 43
     },
@@ -38657,6 +38657,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "BAJO GUANACO",
+      "empresa": "ARGENTA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-05",
       "area": "BANDURRIA NORTE",
       "empresa": "VISTA ENERGY ARGENTINA SAU",
       "cuenca": "NEUQUINA",
@@ -38858,6 +38870,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-05",
+      "area": "EL CORTE",
+      "empresa": "ARGENTA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-05",
