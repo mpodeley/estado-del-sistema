@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-24T15:30:07+00:00",
+  "generated_at": "2026-06-25T15:39:06+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.63,
+      "prod_agua_m3": 135272.64,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -30466,7 +30466,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.86,
+      "prod_pet_m3": 97761.85,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -38135,7 +38135,7 @@
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.27,
       "prod_pet_m3": 2232.92,
-      "prod_agua_m3": 28855.3,
+      "prod_agua_m3": 28855.29,
       "pozos_activos": 42,
       "pozos_no_conv": 43
     },
@@ -38629,6 +38629,18 @@
       "prod_pet_m3": 29.06,
       "prod_agua_m3": 14.3,
       "pozos_activos": 1,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "PUESTO MORALES ESTE",
+      "empresa": "GEOPETROL DRILLING S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.01,
+      "prod_pet_m3": 97.2,
+      "prod_agua_m3": 0.83,
+      "pozos_activos": 2,
       "pozos_no_conv": 0
     },
     {
