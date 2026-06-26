@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T15:37:50+00:00",
+  "generated_at": "2026-06-26T14:40:33+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -10,13 +10,13 @@
         "series": "NATURAL_GAS_USD",
         "seriesDescription": "spot_price",
         "units": "USD/MMbtu",
-        "currentPrice": 3.26,
-        "currentPeriod": "2026-06-25T00:00:00",
-        "previousPrice": 3.21,
+        "currentPrice": 3.38,
+        "currentPeriod": "2026-06-26T00:00:00",
+        "previousPrice": 3.29,
         "previousPeriod": null,
-        "nominalDifference": 0.05,
-        "percentageDifference": 1.56,
-        "lastUpdated": "2026-06-25T12:30:49.7550945",
+        "nominalDifference": 0.09,
+        "percentageDifference": 2.74,
+        "lastUpdated": "2026-06-26T11:40:12.0992635",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -26,13 +26,13 @@
         "series": "DUTCH_TTF_EUR",
         "seriesDescription": "spot_price",
         "units": "€/MWh",
-        "currentPrice": 40.76,
-        "currentPeriod": "2026-06-25T00:00:00",
-        "previousPrice": 40.85,
+        "currentPrice": 41.01,
+        "currentPeriod": "2026-06-26T00:00:00",
+        "previousPrice": 40.6,
         "previousPeriod": null,
-        "nominalDifference": -0.09,
-        "percentageDifference": -0.22,
-        "lastUpdated": "2026-06-25T12:30:56.3686627",
+        "nominalDifference": 0.41,
+        "percentageDifference": 1.01,
+        "lastUpdated": "2026-06-26T11:40:12.5014606",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -42,13 +42,13 @@
         "series": "BRENT_CRUDE_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 74.81,
-        "currentPeriod": "2026-06-25T00:00:00",
-        "previousPrice": 73.41,
+        "currentPrice": 71.95,
+        "currentPeriod": "2026-06-26T00:00:00",
+        "previousPrice": 74.09,
         "previousPeriod": null,
-        "nominalDifference": 1.4,
-        "percentageDifference": 1.91,
-        "lastUpdated": "2026-06-25T12:30:39.7672176",
+        "nominalDifference": -2.14,
+        "percentageDifference": -2.89,
+        "lastUpdated": "2026-06-26T11:40:11.7467624",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 71.7,
-        "currentPeriod": "2026-06-25T00:00:00",
-        "previousPrice": 69.83,
+        "currentPrice": 69.13,
+        "currentPeriod": "2026-06-26T00:00:00",
+        "previousPrice": 70.91,
         "previousPeriod": null,
-        "nominalDifference": 1.87,
-        "percentageDifference": 2.68,
-        "lastUpdated": "2026-06-25T12:30:26.1760545",
+        "nominalDifference": -1.78,
+        "percentageDifference": -2.51,
+        "lastUpdated": "2026-06-26T11:40:11.3739627",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -73,12 +73,12 @@
       "currency": "USD",
       "currencyName": "Dolar U.S.A",
       "currentPrice": 1495.0,
-      "currentPeriod": "2026-06-25T10:10:00",
+      "currentPeriod": "2026-06-26T09:47:00",
       "previousPrice": 1495.0,
-      "previousPeriod": "2026-06-24T16:58:00",
+      "previousPeriod": "2026-06-25T16:56:00",
       "nominalDifference": 0.0,
       "percentageDifference": 0.0,
-      "lastUpdated": "2026-06-25T10:30:06.659574",
+      "lastUpdated": "2026-06-26T10:00:09.4612052",
       "marketType": "Dollar",
       "displayName": "DOLAR"
     },
@@ -91,7 +91,7 @@
       },
       {
         "id": 407.0,
-        "descripcion": "SUBASTA ENARSA – VENTA DEMANDA PRIORITARIA\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 10:00 a 10:30",
+        "descripcion": "SUBASTA ENARSA para la DEMANDA PRIORITARIA\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 10:00 a 10:30",
         "publicaDesde": "2026-06-22T00:00:00",
         "fechaUltimaModificacion": "2026-06-22T14:17:03"
       },
@@ -108,7 +108,7 @@
         "fechaUltimaModificacion": "2026-06-22T16:20:30"
       }
     ],
-    "fetched_at": "2026-06-25T15:37:50+00:00"
+    "fetched_at": "2026-06-26T14:40:33+00:00"
   },
   "errors": null
 }

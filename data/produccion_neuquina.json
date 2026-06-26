@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T15:39:06+00:00",
+  "generated_at": "2026-06-26T14:41:30+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -29999,7 +29999,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 5366.61,
-      "prod_agua_m3": 16795.9,
+      "prod_agua_m3": 16795.91,
       "pozos_activos": 20,
       "pozos_no_conv": 0
     },
@@ -33946,7 +33946,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.25,
-      "prod_pet_m3": 2905.05,
+      "prod_pet_m3": 2905.06,
       "prod_agua_m3": 8530.8,
       "pozos_activos": 12,
       "pozos_no_conv": 1
@@ -37114,7 +37114,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.33,
+      "prod_pet_m3": 111.34,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -37186,7 +37186,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 416.29,
-      "prod_pet_m3": 142413.92,
+      "prod_pet_m3": 142413.93,
       "prod_agua_m3": 153982.81,
       "pozos_activos": 107,
       "pozos_no_conv": 134
@@ -38477,6 +38477,18 @@
     },
     {
       "mes": "2026-05",
+      "area": "PUESTO FLORES - ESTANCIA VIEJA",
+      "empresa": "EDHIPSA",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.12,
+      "prod_pet_m3": 2780.47,
+      "prod_agua_m3": 66486.03,
+      "pozos_activos": 26,
+      "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-05",
       "area": "MEDANITO SUR",
       "empresa": "PAMPETROL S.A.P.E.M",
       "cuenca": "NEUQUINA",
@@ -38641,6 +38653,18 @@
       "prod_pet_m3": 97.2,
       "prod_agua_m3": 0.83,
       "pozos_activos": 2,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "PUESTO PRADO",
+      "empresa": "EDHIPSA",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.01,
+      "prod_pet_m3": 276.31,
+      "prod_agua_m3": 449.9,
+      "pozos_activos": 9,
       "pozos_no_conv": 0
     },
     {
