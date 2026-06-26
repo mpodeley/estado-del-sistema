@@ -10,7 +10,7 @@ const CAPACIDAD_TRANSPORTE_TGS_M3 = 92_393_583  // Capacidad de Transporte TGS
 // publicly-non-available data we have: absolute TGS linepack (stock) plus
 // TGS's own operational alert banner.
 export default function TGSPanel() {
-  const { data } = useETGS()
+  const { data, meta } = useETGS()
   const rows = data ?? []
   if (rows.length === 0) return null
   const latest = rows[rows.length - 1]
@@ -39,6 +39,7 @@ export default function TGSPanel() {
         TGS — Síntesis operativa{' '}
         <span style={{ color: colors.textDim, fontSize: 11, fontWeight: 400, textTransform: 'none', float: 'right' }}>
           {latest.fecha} · fuente: ETGS
+          {meta.generated_at && ` · actualizado ${new Date(meta.generated_at).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' })}`}
         </span>
       </h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: space.md, marginTop: space.sm }}>

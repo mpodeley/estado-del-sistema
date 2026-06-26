@@ -156,7 +156,7 @@ export default function OperacionPage() {
 
       {rdsReports.length > 0 && (
         <div style={{ ...card, marginTop: space.xl }}>
-          <SystemFlowPanel latest={rdsReports[rdsReports.length - 1] as never} />
+          <SystemFlowPanel latest={rdsReports[rdsReports.length - 1] as never} generatedAt={rdsState.meta.generated_at} />
         </div>
       )}
 
@@ -198,6 +198,7 @@ export default function OperacionPage() {
           varKey="var_linepack_tgn"
           limInfKey="lim_inf_tgn"
           limSupKey="lim_sup_tgn"
+          estadoKey="estado_tgn"
         />
         <div style={{ ...card, borderTop: `3px solid ${colors.accent.orange}` }}>
           <WeeklyComparison data={valid} />

@@ -22,6 +22,7 @@ interface RDSRow {
 
 interface Props {
   latest: RDSRow | null | undefined
+  generatedAt?: string | null
 }
 
 /**
@@ -37,7 +38,7 @@ interface Props {
  * exports" directly — don't add exportsTotal on top of it or exports get
  * double-counted (which inflated both the demand total and derived local).
  */
-export default function SystemFlowPanel({ latest }: Props) {
+export default function SystemFlowPanel({ latest, generatedAt }: Props) {
   if (!latest || !latest.fecha) return null
 
   const imps = latest.importaciones ?? {}
@@ -81,6 +82,7 @@ export default function SystemFlowPanel({ latest }: Props) {
         Sistema de transporte — flujo del día
         <span style={{ float: 'right', fontSize: 11, color: colors.textDim, textTransform: 'none', fontWeight: 400 }}>
           {latest.fecha} · MMm³/día
+          {generatedAt && ` · actualizado ${new Date(generatedAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' })}`}
         </span>
       </h3>
       <div style={{

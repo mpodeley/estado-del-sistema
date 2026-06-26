@@ -35,6 +35,14 @@ export interface DailyRow {
   cammesa_fueloil: number | null
   cammesa_carbon: number | null
   cammesa_total: number | null
+  // Estado del sistema TGN (ABII): 'NORMAL' | 'ALERTA' por |desbalance %| vs ±7.
+  estado_tgn?: string | null
+  // Mezcla de combustibles PROYECTADA (CAMMESA Previsión semanal, repartida a
+  // día y en MMm³ gas-equivalente). Sólo poblada en la ventana de pronóstico.
+  cammesa_gas_est?: number | null
+  cammesa_gasoil_est?: number | null
+  cammesa_fueloil_est?: number | null
+  cammesa_carbon_est?: number | null
 }
 
 // One row of the parsed ENARGAS RDS. Historical rows are "slim" (only a

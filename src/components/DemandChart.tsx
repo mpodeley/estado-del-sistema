@@ -97,6 +97,7 @@ export default function DemandChart({
           contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
           labelStyle={{ color: '#94a3b8' }}
           labelFormatter={formatTooltipDate}
+          formatter={(value) => (typeof value === 'number' ? value.toFixed(1) : value)}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
         {weekends.map(([s, e], i) => (

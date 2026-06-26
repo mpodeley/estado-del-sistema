@@ -1,4 +1,4 @@
-import { colors, space } from '../theme'
+import { colors, radius, space } from '../theme'
 import FreshnessBadge from './FreshnessBadge'
 
 interface FreshnessItem {
@@ -41,6 +41,23 @@ export default function Header({ lastDate, freshness = [] }: Props) {
         </p>
       </div>
       <div style={{ textAlign: 'right', minWidth: 0 }}>
+        <button
+          onClick={() => window.location.reload()}
+          title="Recargar para traer la última actualización publicada (cada 3 h)"
+          style={{
+            background: colors.surfaceAlt,
+            color: colors.textSecondary,
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.sm,
+            padding: '4px 10px',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginBottom: 6,
+          }}
+        >
+          ↻ Actualizar
+        </button>
         <p style={{ color: colors.textDim, fontSize: 12 }}>Ultimo dato</p>
         <p style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 600 }}>{formatted}</p>
         {freshness.length > 0 && (

@@ -105,15 +105,11 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
   const equilibrio = toNumber(latest['Equilibrio'])
   const desbalance = toNumber(latest['Desbalance del sistema'])
   const desbalancePct = toNumber(latest['Desbalance porcentual'])
-  // El JSON publica el desbalance como magnitud positiva; el signo
-  // queda implícito en 'Actual vs Equilibrio'.
+  // ABII ya publica el desbalance con su signo correcto: POSITIVO cuando el
+  // linepack actual está por debajo del equilibrio (déficit), negativo cuando
+  // hay superávit. Mostrarlo tal cual viene del reporte — no reinvertir el
+  // signo (el pedido del analista: tomar el número como aparece en ABII).
   const deficit = actual != null && equilibrio != null && actual < equilibrio
-  const signedDesbalance = desbalance != null
-    ? (deficit ? -desbalance : desbalance)
-    : null
-  const signedPct = desbalancePct != null
-    ? (deficit ? -desbalancePct : desbalancePct)
-    : null
   const sevColor = severityColor(desbalancePct != null ? Math.abs(desbalancePct) : null)
 
   const dateLabel = fecha
@@ -146,14 +142,14 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
         <Metric label="Equilibrio" value={fmtMMm3(equilibrio)} hint="Demanda + extracciones esperadas" />
         <Metric
           label="Desbalance"
-          value={fmtMMm3(signedDesbalance != null ? Math.abs(signedDesbalance) : null)}
+          value={fmtMMm3(desbalance != null ? Math.abs(desbalance) : null)}
           hint={deficit ? 'Déficit del sistema' : 'Superávit del sistema'}
           color={sevColor}
         />
         <Metric
           label="Desbalance %"
-          value={fmtPct(signedPct, true)}
-          hint="Sobre equilibrio"
+          value={fmtPct(desbalancePct, true)}
+          hint="Sobre equilibrio (ABII)"
           color={sevColor}
         />
       </div>
