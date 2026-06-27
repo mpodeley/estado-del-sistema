@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T15:19:36+00:00",
+  "generated_at": "2026-06-27T14:24:00+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -10,13 +10,13 @@
         "series": "NATURAL_GAS_USD",
         "seriesDescription": "spot_price",
         "units": "USD/MMbtu",
-        "currentPrice": 3.38,
+        "currentPrice": 3.23,
         "currentPeriod": "2026-06-26T00:00:00",
-        "previousPrice": 3.21,
+        "previousPrice": 3.28,
         "previousPeriod": null,
-        "nominalDifference": 0.17,
-        "percentageDifference": 5.3,
-        "lastUpdated": "2026-06-26T12:10:06.9619316",
+        "nominalDifference": -0.05,
+        "percentageDifference": -1.52,
+        "lastUpdated": "2026-06-26T16:40:04.6318259",
         "marketType": "Gas",
         "displayName": "NAT GAS"
       },
@@ -26,13 +26,13 @@
         "series": "DUTCH_TTF_EUR",
         "seriesDescription": "spot_price",
         "units": "€/MWh",
-        "currentPrice": 40.92,
+        "currentPrice": 41.0,
         "currentPeriod": "2026-06-26T00:00:00",
-        "previousPrice": 40.33,
+        "previousPrice": 40.9,
         "previousPeriod": null,
-        "nominalDifference": 0.59,
-        "percentageDifference": 1.46,
-        "lastUpdated": "2026-06-26T12:10:07.3959382",
+        "nominalDifference": 0.1,
+        "percentageDifference": 0.24,
+        "lastUpdated": "2026-06-26T16:40:05.0362305",
         "marketType": "Gas",
         "displayName": "TTF GAS Fut"
       },
@@ -42,13 +42,13 @@
         "series": "BRENT_CRUDE_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 72.17,
+        "currentPrice": 71.86,
         "currentPeriod": "2026-06-26T00:00:00",
-        "previousPrice": 73.84,
+        "previousPrice": 75.65,
         "previousPeriod": null,
-        "nominalDifference": -1.67,
-        "percentageDifference": -2.26,
-        "lastUpdated": "2026-06-26T12:10:06.2577716",
+        "nominalDifference": -3.79,
+        "percentageDifference": -5.01,
+        "lastUpdated": "2026-06-26T16:40:04.1837958",
         "marketType": "Oil",
         "displayName": "BRENT"
       },
@@ -58,13 +58,13 @@
         "series": "WTI_USD",
         "seriesDescription": "spot_price",
         "units": "USD/bbl",
-        "currentPrice": 69.01,
+        "currentPrice": 69.22,
         "currentPeriod": "2026-06-26T00:00:00",
-        "previousPrice": 71.33,
+        "previousPrice": 72.29,
         "previousPeriod": null,
-        "nominalDifference": -2.32,
-        "percentageDifference": -3.25,
-        "lastUpdated": "2026-06-26T12:10:05.3298996",
+        "nominalDifference": -3.07,
+        "percentageDifference": -4.25,
+        "lastUpdated": "2026-06-26T16:40:03.7327156",
         "marketType": "Oil",
         "displayName": "WTI"
       }
@@ -73,16 +73,22 @@
       "currency": "USD",
       "currencyName": "Dolar U.S.A",
       "currentPrice": 1495.0,
-      "currentPeriod": "2026-06-26T09:47:00",
+      "currentPeriod": "2026-06-26T17:04:00",
       "previousPrice": 1495.0,
-      "previousPeriod": "2026-06-25T16:56:00",
+      "previousPeriod": "2026-06-26T15:02:00",
       "nominalDifference": 0.0,
       "percentageDifference": 0.0,
-      "lastUpdated": "2026-06-26T10:00:09.4612052",
+      "lastUpdated": "2026-06-26T17:30:06.123779",
       "marketType": "Dollar",
       "displayName": "DOLAR"
     },
     "rondas": [
+      {
+        "id": 412.0,
+        "descripcion": "SUBASTA - PRODUCTORES EN GENERAL Y COMERCIALIZADORAS\r\nPERIODO DE ABASTECIMIENTO: 13/07/2026 al 02/08/2026\r\nFecha de Negociación: 02/07 de 10:00 a 10:30",
+        "publicaDesde": "2026-06-26T00:00:00",
+        "fechaUltimaModificacion": "2026-06-26T13:11:27"
+      },
       {
         "id": 411.0,
         "descripcion": "SUBASTA ENARSA para CAMMESA\r\nPERIODO DE ABASTECIMIENTO: 06/08/2026 – 31/08/2026\r\nFecha de Negociación: 25/06/2026 de 13:00 a 13:30",
@@ -108,7 +114,7 @@
         "fechaUltimaModificacion": "2026-06-22T16:20:30"
       }
     ],
-    "fetched_at": "2026-06-26T15:19:36+00:00"
+    "fetched_at": "2026-06-27T14:24:00+00:00"
   },
   "errors": null
 }
