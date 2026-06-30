@@ -1,44 +1,44 @@
 {
-  "generated_at": "2026-06-30T12:16:38+00:00",
+  "generated_at": "2026-06-30T15:25:57+00:00",
   "source": "Open-Meteo API (Buenos Aires)",
   "source_date": "2026-06-30",
   "data": {
     "forecast": [
       {
         "fecha": "2026-06-30",
-        "temp_max": 12.4,
-        "temp_min": 6.1,
-        "temp_prom": 9.2
+        "temp_max": 12.0,
+        "temp_min": 5.3,
+        "temp_prom": 8.7
       },
       {
         "fecha": "2026-07-01",
-        "temp_max": 12.7,
-        "temp_min": 4.8,
-        "temp_prom": 8.8
+        "temp_max": 12.5,
+        "temp_min": 4.1,
+        "temp_prom": 8.3
       },
       {
         "fecha": "2026-07-02",
-        "temp_max": 8.4,
+        "temp_max": 8.0,
         "temp_min": 1.7,
-        "temp_prom": 5.0
+        "temp_prom": 4.8
       },
       {
         "fecha": "2026-07-03",
-        "temp_max": 8.8,
-        "temp_min": 2.3,
-        "temp_prom": 5.6
+        "temp_max": 8.1,
+        "temp_min": 1.7,
+        "temp_prom": 4.9
       },
       {
         "fecha": "2026-07-04",
-        "temp_max": 11.3,
-        "temp_min": 7.6,
-        "temp_prom": 9.4
+        "temp_max": 11.0,
+        "temp_min": 6.7,
+        "temp_prom": 8.8
       },
       {
         "fecha": "2026-07-05",
-        "temp_max": 13.5,
-        "temp_min": 9.0,
-        "temp_prom": 11.2
+        "temp_max": 11.3,
+        "temp_min": 8.5,
+        "temp_prom": 9.9
       },
       {
         "fecha": "2026-07-06",
