@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29T16:38:36+00:00",
+  "generated_at": "2026-06-30T12:19:35+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-05",
   "data": [
@@ -29969,7 +29969,7 @@
     },
     {
       "mes": "2026-01",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -29977,7 +29977,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-01",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-01",
@@ -32309,7 +32321,7 @@
     },
     {
       "mes": "2026-02",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -32317,7 +32329,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-02",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-02",
@@ -34613,7 +34637,7 @@
     },
     {
       "mes": "2026-03",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -34621,7 +34645,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-03",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-03",
@@ -36869,7 +36905,7 @@
     },
     {
       "mes": "2026-04",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -36877,7 +36913,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-04",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-04",
@@ -37889,7 +37937,7 @@
     },
     {
       "mes": "2026-05",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -37897,7 +37945,7 @@
       "prod_pet_m3": 547.0,
       "prod_agua_m3": 120.59,
       "pozos_activos": 1,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2026-05",
@@ -39038,6 +39086,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
     },
     {
       "mes": "2026-05",
