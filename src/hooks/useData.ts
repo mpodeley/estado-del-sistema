@@ -8,6 +8,7 @@ import type {
   Envelope,
   ETGSRow,
   FetchState,
+  LinepackForecast,
   RegionCity,
   WeatherPayload,
 } from '../types'
@@ -74,6 +75,7 @@ export const useDaily = () => useJson<DailyRow[]>('./data/daily.json')
 export const useComments = () => useJson<Comments>('./data/comments.json')
 export const useWeather = () => useJson<WeatherPayload>('./data/weather.json')
 export const useDemandForecast = () => useJson<DemandForecast>('./data/demand_forecast.json')
+export const useLinepackForecast = () => useJson<LinepackForecast>('./data/linepack_forecast.json')
 export const useWeatherRegions = () => useJson<RegionCity[]>('./data/weather_regions.json')
 export const useEnargasRDS = () => useJson<EnargasRDSRow[]>('./data/enargas.json')
 export const useEnargasING = () => useJson<EnargasINGRow[]>('./data/enargas_ing.json')

@@ -159,6 +159,9 @@ def main():
     errors += run('generate_forecast.py')
     # Phase 3b: Rolling backtest for forecast credibility.
     errors += run('backtest_forecast.py')
+    # Phase 3c: Linepack projection + gap-fill (lee daily.json + weather.json;
+    # archivo separado para no realimentar daily.json).
+    errors += run('generate_linepack_forecast.py')
 
     # Phase 4: Validate outputs — this decides exit code.
     validation_failures = validate_outputs()

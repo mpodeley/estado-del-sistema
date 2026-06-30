@@ -11,6 +11,9 @@ interface Props {
   /** Si está, el ESTADO sale de este campo (estado real ABII) en vez de la
    *  banda lim_inf/lim_sup. TGN lo usa; TGS sigue con la banda. */
   estadoKey?: 'estado_tgn'
+  /** Proyección de linepack por fecha. Cuando un día reciente no tiene dato
+   *  real, se muestra la estimación marcada "(est.)" en vez de quedar vacío. */
+  estByDate?: Map<string, number>
 }
 
 const s = {
@@ -38,11 +41,21 @@ function fmtDate(d: string) {
   return `${days[dt.getDay()]} ${dt.getDate()}/${dt.getMonth() + 1}`
 }
 
-export default function SystemPanel({ title, color, data, linepackKey, varKey, limInfKey, limSupKey, estadoKey }: Props) {
-  // Últimos 6 días con linepack (n-1 a n-6) — el analista pidió ampliar de 3 a 6.
-  const last6 = data.filter(d => d[linepackKey] != null).slice(-6)
-  const limInf = last6[0]?.[limInfKey] as number | null
-  const limSup = last6[0]?.[limSupKey] as number | null
+export default function SystemPanel({ title, color, data, linepackKey, varKey, limInfKey, limSupKey, estadoKey, estByDate }: Props) {
+  const byDate = new Map<string, DailyRow>()
+  for (const d of data) if (d.fecha) byDate.set(d.fecha, d)
+  const today = new Date().toISOString().slice(0, 10)
+
+  // Últimas 6 fechas (n-1 a n-6) tomando dato real y, si falta, la estimación
+  // (sólo hasta hoy — el futuro va en el gráfico, no en la tabla).
+  const realDates = data.filter(d => d[linepackKey] != null).map(d => d.fecha)
+  const estDates = [...(estByDate?.keys() ?? [])].filter(f => f <= today)
+  const last6 = [...new Set([...realDates, ...estDates])].sort().slice(-6)
+
+  // Límites: del último día real disponible (los est-only no los traen).
+  const lastRealRow = [...data].reverse().find(d => d[limInfKey] != null)
+  const limInf = (lastRealRow?.[limInfKey] ?? null) as number | null
+  const limSup = (lastRealRow?.[limSupKey] ?? null) as number | null
 
   return (
     <div style={{ ...s.panel, borderTop: `3px solid ${color}` }}>
@@ -57,26 +70,37 @@ export default function SystemPanel({ title, color, data, linepackKey, varKey, l
           </tr>
         </thead>
         <tbody>
-          {last6.map((row, i) => {
-            const val = row[linepackKey] as number | null
-            const varVal = row[varKey] as number | null
-            const estadoVal = estadoKey ? (row[estadoKey] as string | null) : null
-            const st = estadoVal ? s.estadoBadge(estadoVal) : s.status(val, limInf, limSup)
+          {last6.map((fecha, i) => {
+            const row = byDate.get(fecha)
+            const real = (row?.[linepackKey] ?? null) as number | null
+            const est = estByDate?.get(fecha) ?? null
+            const val = real ?? est
+            const isEst = real == null && est != null
+            const varVal = (row?.[varKey] ?? null) as number | null
+            const estadoVal = estadoKey ? ((row?.[estadoKey] ?? null) as string | null) : null
+            // En días estimados no inventamos estado/var: sólo el nivel.
+            const st = isEst ? null : (estadoVal ? s.estadoBadge(estadoVal) : s.status(val, limInf, limSup))
+            const isLast = i === last6.length - 1
             return (
-              <tr key={i} style={{ background: i === last6.length - 1 ? '#0f172a' : 'transparent' }}>
-                <td style={{ ...s.td, color: '#e2e8f0', fontWeight: i === last6.length - 1 ? 700 : 400 }}>
-                  {fmtDate(row.fecha)}
+              <tr key={fecha} style={{ background: isLast ? '#0f172a' : 'transparent' }}>
+                <td style={{ ...s.td, color: '#e2e8f0', fontWeight: isLast ? 700 : 400 }}>
+                  {fmtDate(fecha)}
                 </td>
-                <td style={{ ...s.td, textAlign: 'right', color: '#f1f5f9', fontWeight: 600, fontSize: 16 }}>
-                  {val?.toFixed(1) ?? '-'}
+                <td style={{ ...s.td, textAlign: 'right', color: isEst ? '#94a3b8' : '#f1f5f9', fontWeight: 600, fontSize: 16 }}>
+                  {val != null ? val.toFixed(1) : '-'}
+                  {isEst && <span style={{ fontSize: 10, fontWeight: 600, color: '#64748b', marginLeft: 4 }}>est.</span>}
                 </td>
                 <td style={{ ...s.td, textAlign: 'right', color: varVal != null ? (varVal >= 0 ? '#10b981' : '#ef4444') : '#64748b' }}>
                   {varVal != null ? `${varVal >= 0 ? '+' : ''}${varVal.toFixed(1)}` : '-'}
                 </td>
                 <td style={{ ...s.td, textAlign: 'center' }}>
-                  <span style={{ background: st.color + '22', color: st.color, padding: '2px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
-                    {st.label}
-                  </span>
+                  {st ? (
+                    <span style={{ background: st.color + '22', color: st.color, padding: '2px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                      {st.label}
+                    </span>
+                  ) : (
+                    <span style={{ color: '#64748b', fontSize: 11 }}>—</span>
+                  )}
                 </td>
               </tr>
             )

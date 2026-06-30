@@ -486,6 +486,23 @@ export const CATALOG: DatasetEntry[] = [
     ],
   },
   {
+    id: 'linepack_forecast',
+    name: 'Proyección de linepack (14 días)',
+    shortDescription:
+      'Proyección de linepack TGS/TGN/total por reversión a la media reciente (factor k elegido por backtest out-of-sample; k=0 = persistencia). El Δ linepack diario es muy ralo/ruidoso para una regresión temp→Δ, así que se usa el modelo simple. El mismo modelo rellena los días sin cierre, marcados "(est.)" en los paneles.',
+    kind: 'auto',
+    frequency: 'Diaria',
+    jsonPath: './data/linepack_forecast.json',
+    csvPath: './data/linepack_forecast.csv',
+    scripts: [
+      {
+        file: 'scripts/generate_linepack_forecast.py',
+        purpose:
+          'Lee daily.json, elige k por backtest por sistema e integra la reversión a la media 14 días hacia adelante; archivo separado para no realimentar daily.json.',
+      },
+    ],
+  },
+  {
     id: 'comments',
     name: 'Comentarios automáticos',
     shortDescription:

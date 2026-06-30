@@ -1,9 +1,13 @@
 import { card, colors, sectionTitle, space } from '../theme'
 import ForecastPage from './ForecastPage'
+import { useLinepackForecast } from '../hooks/useData'
 
 const linkStyle: React.CSSProperties = { color: colors.accent.blue, textDecoration: 'none' }
 
 export default function GuidePage() {
+  const lpFc = useLinepackForecast()
+  const lpBacktest = lpFc.data?.backtest ?? null
+  const mae7 = (sys: string) => lpBacktest?.[sys]?.mae_by_horizon?.['7']
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: `${space.xl}px ${space.lg}px` }}>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: colors.textPrimary, marginBottom: 4 }}>
@@ -35,11 +39,10 @@ export default function GuidePage() {
 
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Paneles TGS / TGN</dt>
           <dd style={{ margin: 0 }}>
-            Ventana de 3 días con linepack, variación y badge de estado:
-            <strong style={{ color: colors.status.ok }}> NORMAL</strong> (dentro de banda),
-            <strong style={{ color: colors.status.err }}> BAJO</strong> (por debajo del límite inferior),
-            <strong style={{ color: colors.status.warn }}> ALTO</strong> (por encima del superior).
-            Los límites (Min/Max) vienen de la Proyección Semanal de ENARGAS (PS), por sistema.
+            Ventana de 6 días con linepack, variación y badge de estado. En TGN el estado sale del
+            reporte ABII (ALERTA cuando |desbalance %| &gt; 7); en TGS de la banda Min/Max de la
+            Proyección Semanal de ENARGAS (PS). Cuando un día no tiene cierre, se muestra la
+            <strong> estimación marcada "(est.)"</strong> en vez de quedar vacío.
           </dd>
 
           <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Comparación semanal</dt>
@@ -90,6 +93,48 @@ export default function GuidePage() {
             Con 2 años de RDS diarios backfilleados, mostramos cada año en una línea separada sobre
             el mismo eje calendario (enero→diciembre). Línea gruesa = año actual; tenues = años
             previos. Para ver si estamos por encima/debajo del patrón estacional típico.
+          </dd>
+        </dl>
+      </div>
+
+      <div style={{ ...card, marginBottom: space.lg }}>
+        <h3 style={sectionTitle}>Proyecciones — metodología</h3>
+        <dl style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 1.6 }}>
+          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Linepack (TGS / TGN / total)</dt>
+          <dd style={{ margin: 0 }}>
+            El linepack es un <strong>stock regulado</strong>: el sistema lo mantiene cerca de un
+            nivel de operación. Lo proyectamos por <strong>reversión a la media reciente</strong>
+            {' '}(media de 14 días):{' '}
+            <code>nivel[t] = nivel[t-1] + k·(media − nivel[t-1])</code>, integrando desde el último
+            dato real hasta 14 días adelante. El factor <code>k</code> se elige por{' '}
+            <strong>backtest out-of-sample</strong> (k=0 es persistencia pura). Probamos una
+            regresión temperatura→Δlinepack, pero la variación diaria del stock es muy escasa y
+            ruidosa (p.ej. TGN tiene ~8 puntos útiles), así que por parsimonia se mantiene el
+            modelo simple.
+            <br />
+            <em style={{ color: colors.textDim }}>
+              El mismo modelo rellena los días sin cierre (hoy / fin de semana): donde falta el
+              linepack real se muestra la estimación marcada "(est.)"; los derivados (desbalance,
+              estado) quedan en "—" porque no hay reporte real para inventarlos.
+            </em>
+            {(mae7('tgn') != null || mae7('tgs') != null || mae7('total') != null) && (
+              <div style={{ color: colors.textDim, fontSize: 12, marginTop: space.xs }}>
+                Error medio del backtest a 7 días (MMm³):{' '}
+                {mae7('total') != null && <>total {mae7('total')} · </>}
+                {mae7('tgn') != null && <>TGN {mae7('tgn')} · </>}
+                {mae7('tgs') != null && <>TGS {mae7('tgs')}</>}.
+              </div>
+            )}
+          </dd>
+
+          <dt style={{ fontWeight: 600, color: colors.textPrimary, marginTop: space.md }}>Despacho eléctrico (combustibles)</dt>
+          <dd style={{ margin: 0 }}>
+            <strong>Gas</strong>: del modelo de demanda (gas de usinas ~ temperatura + día de
+            semana), hasta 14 días. <strong>Fuel Oil / Gas Oil / carbón</strong>: de la Previsión
+            Semanal oficial de CAMMESA (~2 semanas), repartida a día y convertida a MMm³ de
+            <strong> gas-equivalente</strong> por poder calorífico. Por eso el gas se proyecta más
+            lejos que los otros combustibles. Las barras translúcidas son la proyección; la marca
+            "Hoy" separa el dato cerrado del estimado.
           </dd>
         </dl>
       </div>

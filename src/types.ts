@@ -168,6 +168,36 @@ export interface RegressionLine {
   method?: string
 }
 
+// Proyección de linepack (reversión a la media; ver generate_linepack_forecast.py).
+export interface LinepackForecastDay {
+  fecha: string
+  temp_prom?: number | null
+  linepack_total_est?: number | null
+  linepack_tgn_est?: number | null
+  linepack_tgs_est?: number | null
+}
+
+export interface LinepackBacktest {
+  k: number
+  score: number
+  mae_by_horizon: Record<string, number>
+  persistence_mae?: Record<string, number> | null
+}
+
+export interface LinepackForecast {
+  forecast: LinepackForecastDay[]
+  model: {
+    method: string
+    formula: string
+    target_window_days: number
+    note: string
+    k: Record<string, number>
+    target_recent_mean: Record<string, number | null>
+  }
+  backtest: Record<string, LinepackBacktest | null>
+  anchor: Record<string, { fecha: string | null; level: number | null }>
+}
+
 export interface DemandForecast {
   forecast: DemandForecastDay[]
   regression: {

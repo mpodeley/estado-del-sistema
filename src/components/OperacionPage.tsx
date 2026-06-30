@@ -12,6 +12,7 @@ import {
   useMEGSA,
   useCammesaPPO,
   useTGNSystemState,
+  useLinepackForecast,
 } from '../hooks/useData'
 import { card, colors, radius, sectionTitle, space } from '../theme'
 import Header from './Header'
@@ -77,6 +78,7 @@ export default function OperacionPage() {
   const megsaState = useMEGSA()
   const ppoState = useCammesaPPO()
   const tgnSystemState = useTGNSystemState()
+  const linepackFcState = useLinepackForecast()
 
   const [selectedCity, setSelectedCity] = useState('ba')
   const [scale, setScale] = useState<TimeScale>('7d')
@@ -102,6 +104,20 @@ export default function OperacionPage() {
     [valid, demandFc],
   )
 
+  // Proyección de linepack → mapas fecha→estimación por sistema, para el
+  // relleno "(est.)" en tablas/KPIs y la línea punteada del gráfico.
+  const linepackForecast = useMemo(() => linepackFcState.data?.forecast ?? [], [linepackFcState.data])
+  const tgnEstByDate = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const f of linepackForecast) if (f.linepack_tgn_est != null) m.set(f.fecha, f.linepack_tgn_est)
+    return m
+  }, [linepackForecast])
+  const tgsEstByDate = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const f of linepackForecast) if (f.linepack_tgs_est != null) m.set(f.fecha, f.linepack_tgs_est)
+    return m
+  }, [linepackForecast])
+
   if (dailyState.loading) return <OperacionLoading />
 
   if (dailyState.error) {
@@ -125,6 +141,7 @@ export default function OperacionPage() {
     { label: 'MEGSA', generatedAt: megsaState.meta.generated_at },
     { label: 'TGN', generatedAt: tgnSystemState.meta.generated_at },
     { label: 'Forecast', generatedAt: forecastState.meta.generated_at },
+    { label: 'Proy. linepack', generatedAt: linepackFcState.meta.generated_at },
   ]
 
   return (
@@ -160,11 +177,12 @@ export default function OperacionPage() {
         </div>
       )}
 
-      <TGSPanel />
+      <TGSPanel estByDate={tgsEstByDate} />
 
       <TGNSystemStatePanel
         rows={tgnSystemState.data}
         generatedAt={tgnSystemState.meta.generated_at}
+        estByDate={tgnEstByDate}
       />
 
       {megsaState.data && megsaState.data.benchmarks?.length > 0 && (
@@ -189,6 +207,7 @@ export default function OperacionPage() {
           varKey="var_linepack_tgs"
           limInfKey="lim_inf_tgs"
           limSupKey="lim_sup_tgs"
+          estByDate={tgsEstByDate}
         />
         <SystemPanel
           title="Sistema TGN"
@@ -199,6 +218,7 @@ export default function OperacionPage() {
           limInfKey="lim_inf_tgn"
           limSupKey="lim_sup_tgn"
           estadoKey="estado_tgn"
+          estByDate={tgnEstByDate}
         />
         <div style={{ ...card, borderTop: `3px solid ${colors.accent.orange}` }}>
           <WeeklyComparison data={valid} />
@@ -234,7 +254,17 @@ export default function OperacionPage() {
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Despacho eléctrico — Combustibles</h3>
-          <FuelMixChart data={data} ppoRows={ppoState.data ?? []} allDates={visibleDates} />
+          <FuelMixChart
+            data={data}
+            ppoRows={ppoState.data ?? []}
+            demandForecast={demandFc?.forecast ?? []}
+            allDates={visibleDates}
+          />
+          <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+            Cerrado: PPO de CAMMESA (gas-equivalente). Proyectado (translúcido): gas del modelo
+            de demanda (usinas, 14 d); Fuel/Gas Oil y carbón de la Previsión semanal de CAMMESA
+            (~2 sem). Ver Guía para la metodología.
+          </p>
         </div>
       </ChartGroup>
 
@@ -283,8 +313,14 @@ export default function OperacionPage() {
             data={valid}
             etgsRows={etgsState.data ?? []}
             tgnRows={tgnSystemState.data ?? []}
+            forecast={linepackForecast}
             allDates={visibleDates}
           />
+          <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+            Línea punteada: proyección de linepack por reversión a la media reciente (factor
+            elegido por backtest). El mismo modelo rellena los días sin cierre marcados
+            "(est.)" en los paneles. Ver Guía para la metodología.
+          </p>
         </div>
         {rdsReports.length > 0 && (
           <div style={card}>

@@ -4,6 +4,9 @@ import type { TGNSystemStateRow } from '../hooks/useData'
 interface Props {
   rows: TGNSystemStateRow[] | null
   generatedAt: string | null
+  /** Proyección de linepack TGN (MMm³) por fecha. Cuando ABII no publicó el
+   *  día, se muestra la estimación marcada "(est.)"; los derivados quedan en —. */
+  estByDate?: Map<string, number>
 }
 
 const MONTHS: Record<string, number> = {
@@ -77,7 +80,7 @@ function Metric({
   )
 }
 
-export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
+export default function TGNSystemStatePanel({ rows, generatedAt, estByDate }: Props) {
   // Pick the most recent row by Día Operativo.
   const sorted = (rows ?? []).slice().sort((a, b) => rowFecha(a).localeCompare(rowFecha(b)))
   const latest = sorted[sorted.length - 1]
@@ -93,6 +96,14 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
   }
 
   const fecha = rowFecha(latest)
+  // Relleno: si ABII no publicó un día posterior (hasta hoy) y hay estimación,
+  // se muestra el linepack estimado; los derivados (equilibrio/desbalance/%)
+  // quedan en — porque no hay reporte real para inventarlos.
+  const today = new Date().toISOString().slice(0, 10)
+  const estDatesTgn = [...(estByDate?.keys() ?? [])].filter(f => f > fecha && f <= today).sort()
+  const estDate = estDatesTgn[estDatesTgn.length - 1] ?? null
+  const estVal = estDate ? (estByDate?.get(estDate) ?? null) : null   // MMm³
+  const useEst = estVal != null
   // 'Actual' es el linepack TGN del día (m³); su variación sale de comparar
   // contra la fila previa disponible (espejo del Linepack TGS en TGSPanel).
   const actual = toNumber(latest['Actual'])
@@ -112,8 +123,9 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
   const deficit = actual != null && equilibrio != null && actual < equilibrio
   const sevColor = severityColor(desbalancePct != null ? Math.abs(desbalancePct) : null)
 
-  const dateLabel = fecha
-    ? new Date(fecha + 'T00:00:00').toLocaleDateString('es-AR', {
+  const labelFecha = useEst ? estDate : fecha
+  const dateLabel = labelFecha
+    ? new Date(labelFecha + 'T00:00:00').toLocaleDateString('es-AR', {
         weekday: 'short', day: '2-digit', month: 'short',
       })
     : '—'
@@ -138,19 +150,23 @@ export default function TGNSystemStatePanel({ rows, generatedAt }: Props) {
           padding: `${space.sm}px 0`,
         }}
       >
-        <Metric label="Linepack TGN" value={fmtMMm3(actual)} hint={varHint} />
-        <Metric label="Equilibrio" value={fmtMMm3(equilibrio)} hint="Demanda + extracciones esperadas" />
+        <Metric
+          label="Linepack TGN"
+          value={useEst ? `${estVal.toFixed(2)} MMm³ (est.)` : fmtMMm3(actual)}
+          hint={useEst ? 'Estimado (sin cierre ABII)' : varHint}
+        />
+        <Metric label="Equilibrio" value={useEst ? '—' : fmtMMm3(equilibrio)} hint="Demanda + extracciones esperadas" />
         <Metric
           label="Desbalance"
-          value={fmtMMm3(desbalance != null ? Math.abs(desbalance) : null)}
-          hint={deficit ? 'Déficit del sistema' : 'Superávit del sistema'}
-          color={sevColor}
+          value={useEst ? '—' : fmtMMm3(desbalance != null ? Math.abs(desbalance) : null)}
+          hint={useEst ? 'Sin reporte real' : (deficit ? 'Déficit del sistema' : 'Superávit del sistema')}
+          color={useEst ? undefined : sevColor}
         />
         <Metric
           label="Desbalance %"
-          value={fmtPct(desbalancePct, true)}
+          value={useEst ? '—' : fmtPct(desbalancePct, true)}
           hint="Sobre equilibrio (ABII)"
-          color={sevColor}
+          color={useEst ? undefined : sevColor}
         />
       </div>
 

@@ -10,7 +10,7 @@ import {
   ReferenceArea,
   ReferenceLine,
 } from 'recharts'
-import type { DailyRow } from '../types'
+import type { DailyRow, DemandForecastDay } from '../types'
 import type { CammesaPPORow } from '../hooks/useData'
 import { padToDates, formatTooltipDate, weekendSpans } from '../utils/charts'
 
@@ -20,6 +20,9 @@ interface Props {
   data: DailyRow[]
   /** CAMMESA PPO (dato cerrado); overlaid as a ground-truth line. */
   ppoRows?: CammesaPPORow[]
+  /** Forecast de demanda: usinas_est es el gas de usinas proyectado (14d) que
+   *  usamos como gas estimado del despacho, más allá de la Previsión semanal. */
+  demandForecast?: DemandForecastDay[]
   allDates?: string[]
 }
 
@@ -29,7 +32,7 @@ const FUELOIL = '#ef4444'
 const CARBON = '#6b7280'
 const PPO_LINE = '#e2e8f0'
 
-export default function FuelMixChart({ data, ppoRows = [], allDates }: Props) {
+export default function FuelMixChart({ data, ppoRows = [], demandForecast = [], allDates }: Props) {
   const ppoByDate = new Map<string, number>()
   for (const r of ppoRows) {
     if (r.fecha && typeof r.gas_mmm3 === 'number') ppoByDate.set(r.fecha, r.gas_mmm3)
@@ -69,22 +72,32 @@ export default function FuelMixChart({ data, ppoRows = [], allDates }: Props) {
       cammesa_carbon_est: null as number | null,
     }))
 
-  // PROYECTADO: días posteriores al último cierre con mezcla estimada (CAMMESA
-  // Previsión semanal repartida a día). Barras translúcidas hacia adelante.
-  const forecastRows = data
-    .filter((d) => d.fecha > lastHistorical && d.cammesa_gas_est != null)
-    .map((d) => ({
-      fecha: d.fecha,
+  // PROYECTADO: días posteriores al último cierre. El GAS estimado sale del
+  // modelo de demanda (usinas_est, 14d); FO/GO/carbón de la Previsión semanal
+  // de CAMMESA (cammesa_*_est en daily.json, ~2 sem). Barras translúcidas.
+  const usinasByDate = new Map<string, number>()
+  for (const f of demandForecast) {
+    if (f.fecha > lastHistorical && f.usinas_est != null) usinasByDate.set(f.fecha, f.usinas_est)
+  }
+  const dailyByDate = new Map(data.map((d) => [d.fecha, d]))
+  const fcDates = new Set<string>()
+  for (const d of data) if (d.fecha > lastHistorical && d.cammesa_gas_est != null) fcDates.add(d.fecha)
+  for (const f of usinasByDate.keys()) fcDates.add(f)
+  const forecastRows = [...fcDates].sort().map((fecha) => {
+    const d = dailyByDate.get(fecha)
+    return {
+      fecha,
       cammesa_gas: null as number | null,
       cammesa_gasoil: null as number | null,
       cammesa_fueloil: null as number | null,
       cammesa_carbon: null as number | null,
       ppo_gas: null as number | null,
-      cammesa_gas_est: d.cammesa_gas_est ?? null,
-      cammesa_gasoil_est: d.cammesa_gasoil_est ?? null,
-      cammesa_fueloil_est: d.cammesa_fueloil_est ?? null,
-      cammesa_carbon_est: d.cammesa_carbon_est ?? null,
-    }))
+      cammesa_gas_est: usinasByDate.get(fecha) ?? d?.cammesa_gas_est ?? null,
+      cammesa_gasoil_est: d?.cammesa_gasoil_est ?? null,
+      cammesa_fueloil_est: d?.cammesa_fueloil_est ?? null,
+      cammesa_carbon_est: d?.cammesa_carbon_est ?? null,
+    }
+  })
 
   const base = [...ppoExtraRows, ...historical, ...forecastRows].sort((a, b) => a.fecha.localeCompare(b.fecha))
   const rows = allDates ? padToDates(base, allDates) : base
