@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T15:03:04+00:00",
+  "generated_at": "2026-07-04T14:25:28+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -28126,7 +28126,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 47.62,
-      "prod_pet_m3": 105699.64,
+      "prod_pet_m3": 105699.63,
       "prod_agua_m3": 217118.27,
       "pozos_activos": 100,
       "pozos_no_conv": 46
@@ -28397,7 +28397,7 @@
     },
     {
       "mes": "2026-01",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -29585,6 +29585,18 @@
     },
     {
       "mes": "2026-01",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-01",
       "area": "BAJO BAGUALES",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -30490,7 +30502,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.85,
+      "prod_pet_m3": 97761.86,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -30713,7 +30725,7 @@
     },
     {
       "mes": "2026-02",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -31941,6 +31953,18 @@
       "empresa": "ROCH S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-02",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -33185,7 +33209,7 @@
     },
     {
       "mes": "2026-03",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -34301,6 +34325,18 @@
     },
     {
       "mes": "2026-03",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-03",
       "area": "BAJO BAGUALES",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -35357,7 +35393,7 @@
     },
     {
       "mes": "2026-04",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -36569,6 +36605,18 @@
     },
     {
       "mes": "2026-04",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-04",
       "area": "BAJO BAGUALES",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -37673,7 +37721,7 @@
     },
     {
       "mes": "2026-05",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -38781,6 +38829,18 @@
       "empresa": "ROCH S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-05",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
