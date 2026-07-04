@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-04T14:14:52+00:00",
+  "generated_at": "2026-07-04T16:44:08+00:00",
   "source": "TGN ABII — Estado del Sistema",
-  "source_date": "03/07/2026",
+  "source_date": "04/07/2026",
   "data": [
     {
       "Día Operativo": "Wed Apr 29 00:00:00 ART 2026",
@@ -533,8 +533,8 @@
     }
   ],
   "query": {
-    "desde": "03/07/2026",
-    "hasta": "03/07/2026",
+    "desde": "04/07/2026",
+    "hasta": "04/07/2026",
     "gasoducto": "TODOS"
   },
   "headers": [
