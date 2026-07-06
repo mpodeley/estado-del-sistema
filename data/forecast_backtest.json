@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-05T14:29:05+00:00",
+  "generated_at": "2026-07-06T16:22:54+00:00",
   "source": "rolling train/predict on ENARGAS RDS",
   "source_date": null,
   "data": {
@@ -8,320 +8,315 @@
     "segments": {
       "prioritaria": {
         "metrics": {
-          "mae": 7.91,
-          "mape": 12.51,
+          "mae": 7.19,
+          "mape": 11.09,
           "n": 59
         },
         "series": [
           {
-            "fecha": "2026-05-06",
-            "actual": 39.3,
-            "predicted": 24.29
-          },
-          {
             "fecha": "2026-05-07",
             "actual": 41.1,
-            "predicted": 41.75
+            "predicted": 49.77
           },
           {
             "fecha": "2026-05-08",
             "actual": 52.8,
-            "predicted": 68.25
+            "predicted": 71.57
           },
           {
             "fecha": "2026-05-09",
             "actual": 54.4,
-            "predicted": 72.66
+            "predicted": 70.64
           },
           {
             "fecha": "2026-05-10",
             "actual": 53.9,
-            "predicted": 66.92
+            "predicted": 63.08
           },
           {
             "fecha": "2026-05-11",
             "actual": 63.8,
-            "predicted": 60.52
+            "predicted": 58.38
           },
           {
             "fecha": "2026-05-12",
             "actual": 59.7,
-            "predicted": 38.89
+            "predicted": 43.15
           },
           {
             "fecha": "2026-05-13",
             "actual": 59.4,
-            "predicted": 53.47
+            "predicted": 57.06
           },
           {
             "fecha": "2026-05-14",
             "actual": 57.4,
-            "predicted": 56.97
+            "predicted": 59.75
           },
           {
             "fecha": "2026-05-15",
             "actual": 56.5,
-            "predicted": 57.29
+            "predicted": 58.45
           },
           {
             "fecha": "2026-05-16",
             "actual": 58.4,
-            "predicted": 62.17
+            "predicted": 63.35
           },
           {
             "fecha": "2026-05-17",
             "actual": 60.7,
-            "predicted": 68.79
+            "predicted": 65.46
           },
           {
             "fecha": "2026-05-18",
             "actual": 68.4,
-            "predicted": 74.21
+            "predicted": 67.26
           },
           {
             "fecha": "2026-05-19",
             "actual": 67.0,
-            "predicted": 65.17
+            "predicted": 62.1
           },
           {
             "fecha": "2026-05-20",
             "actual": 67.0,
-            "predicted": 64.73
+            "predicted": 62.61
           },
           {
             "fecha": "2026-05-21",
             "actual": 67.6,
-            "predicted": 71.55
+            "predicted": 68.8
           },
           {
             "fecha": "2026-05-22",
             "actual": 66.9,
-            "predicted": 77.25
+            "predicted": 73.77
           },
           {
             "fecha": "2026-05-23",
             "actual": 63.8,
-            "predicted": 68.69
+            "predicted": 65.65
           },
           {
             "fecha": "2026-05-24",
             "actual": 60.6,
-            "predicted": 58.68
+            "predicted": 56.65
           },
           {
             "fecha": "2026-05-25",
             "actual": 63.5,
-            "predicted": 57.97
+            "predicted": 56.12
           },
           {
             "fecha": "2026-05-27",
             "actual": 64.7,
-            "predicted": 58.8
+            "predicted": 57.13
           },
           {
             "fecha": "2026-05-28",
             "actual": 61.9,
-            "predicted": 53.05
+            "predicted": 55.09
           },
           {
             "fecha": "2026-05-29",
             "actual": 62.2,
-            "predicted": 49.97
+            "predicted": 50.34
           },
           {
             "fecha": "2026-05-30",
             "actual": 58.6,
-            "predicted": 50.66
+            "predicted": 49.88
           },
           {
             "fecha": "2026-05-31",
             "actual": 55.7,
-            "predicted": 49.28
+            "predicted": 49.85
           },
           {
             "fecha": "2026-06-01",
             "actual": 63.1,
-            "predicted": 48.05
+            "predicted": 48.42
           },
           {
             "fecha": "2026-06-02",
             "actual": 57.7,
-            "predicted": 54.2
+            "predicted": 51.88
           },
           {
             "fecha": "2026-06-03",
             "actual": 60.7,
-            "predicted": 47.94
+            "predicted": 48.35
           },
           {
             "fecha": "2026-06-04",
             "actual": 58.9,
-            "predicted": 40.21
+            "predicted": 44.22
           },
           {
             "fecha": "2026-06-05",
             "actual": 57.9,
-            "predicted": 39.88
+            "predicted": 44.55
           },
           {
             "fecha": "2026-06-06",
             "actual": 54.1,
-            "predicted": 33.73
+            "predicted": 38.44
           },
           {
             "fecha": "2026-06-07",
             "actual": 55.1,
-            "predicted": 40.58
+            "predicted": 44.32
           },
           {
             "fecha": "2026-06-08",
             "actual": 61.8,
-            "predicted": 58.45
+            "predicted": 61.13
           },
           {
             "fecha": "2026-06-09",
             "actual": 62.6,
-            "predicted": 63.48
+            "predicted": 62.94
           },
           {
             "fecha": "2026-06-10",
             "actual": 65.2,
-            "predicted": 58.05
+            "predicted": 58.99
           },
           {
             "fecha": "2026-06-11",
             "actual": 66.4,
-            "predicted": 57.16
+            "predicted": 59.86
           },
           {
             "fecha": "2026-06-12",
             "actual": 64.7,
-            "predicted": 61.54
+            "predicted": 64.82
           },
           {
             "fecha": "2026-06-13",
             "actual": 68.6,
-            "predicted": 64.2
+            "predicted": 71.12
           },
           {
             "fecha": "2026-06-14",
             "actual": 72.4,
-            "predicted": 81.26
+            "predicted": 79.93
           },
           {
             "fecha": "2026-06-15",
             "actual": 72.9,
-            "predicted": 76.91
+            "predicted": 74.42
           },
           {
             "fecha": "2026-06-16",
             "actual": 70.0,
-            "predicted": 59.87
+            "predicted": 62.47
           },
           {
             "fecha": "2026-06-17",
             "actual": 75.3,
-            "predicted": 70.58
+            "predicted": 72.19
           },
           {
             "fecha": "2026-06-18",
             "actual": 69.3,
-            "predicted": 62.18
+            "predicted": 63.36
           },
           {
             "fecha": "2026-06-19",
             "actual": 75.5,
-            "predicted": 67.18
+            "predicted": 68.73
           },
           {
             "fecha": "2026-06-20",
             "actual": 71.2,
-            "predicted": 60.15
+            "predicted": 60.55
           },
           {
             "fecha": "2026-06-21",
             "actual": 69.1,
-            "predicted": 63.27
+            "predicted": 62.93
           },
           {
             "fecha": "2026-06-22",
             "actual": 80.4,
-            "predicted": 75.75
+            "predicted": 75.82
           },
           {
             "fecha": "2026-06-23",
             "actual": 79.1,
-            "predicted": 81.49
+            "predicted": 80.38
           },
           {
             "fecha": "2026-06-24",
             "actual": 82.5,
-            "predicted": 89.01
+            "predicted": 86.0
           },
           {
             "fecha": "2026-06-25",
             "actual": 84.3,
-            "predicted": 77.47
+            "predicted": 77.0
           },
           {
             "fecha": "2026-06-26",
             "actual": 82.6,
-            "predicted": 65.8
+            "predicted": 67.92
           },
           {
             "fecha": "2026-06-27",
             "actual": 76.9,
-            "predicted": 63.79
+            "predicted": 65.19
           },
           {
             "fecha": "2026-06-28",
             "actual": 74.3,
-            "predicted": 66.72
+            "predicted": 67.05
           },
           {
             "fecha": "2026-06-29",
             "actual": 81.7,
-            "predicted": 72.31
+            "predicted": 77.53
           },
           {
             "fecha": "2026-06-30",
             "actual": 80.3,
-            "predicted": 80.47
+            "predicted": 74.43
           },
           {
             "fecha": "2026-07-01",
             "actual": 86.4,
-            "predicted": 81.74
+            "predicted": 75.87
           },
           {
             "fecha": "2026-07-02",
             "actual": 92.1,
-            "predicted": 101.95
+            "predicted": 95.17
           },
           {
             "fecha": "2026-07-04",
             "actual": 89.0,
-            "predicted": 95.78
+            "predicted": 88.77
           },
           {
             "fecha": "2026-07-05",
             "actual": 87.6,
-            "predicted": 84.36
+            "predicted": 77.58
+          },
+          {
+            "fecha": "2026-07-06",
+            "actual": 95.2,
+            "predicted": 71.72
           }
         ]
       },
       "usinas": {
         "metrics": {
-          "mae": 5.75,
-          "mape": 18.26,
+          "mae": 5.64,
+          "mape": 17.96,
           "n": 59
         },
         "series": [
-          {
-            "fecha": "2026-05-06",
-            "actual": 31.9,
-            "predicted": 40.86
-          },
           {
             "fecha": "2026-05-07",
             "actual": 31.5,
@@ -611,21 +606,21 @@
             "fecha": "2026-07-05",
             "actual": 27.6,
             "predicted": 18.46
+          },
+          {
+            "fecha": "2026-07-06",
+            "actual": 23.3,
+            "predicted": 25.65
           }
         ]
       },
       "demanda_total": {
         "metrics": {
-          "mae": 8.83,
-          "mape": 5.93,
+          "mae": 9.07,
+          "mape": 6.08,
           "n": 59
         },
         "series": [
-          {
-            "fecha": "2026-05-06",
-            "actual": 125.3,
-            "predicted": 124.6
-          },
           {
             "fecha": "2026-05-07",
             "actual": 125.5,
@@ -915,6 +910,11 @@
             "fecha": "2026-07-05",
             "actual": 155.3,
             "predicted": 136.57
+          },
+          {
+            "fecha": "2026-07-06",
+            "actual": 160.3,
+            "predicted": 144.98
           }
         ]
       }
