@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-06T16:22:39+00:00",
+  "generated_at": "2026-07-07T15:44:53+00:00",
   "source": "ENARGAS Reporte Diario del Sistema (RDS)",
-  "source_date": "2026-07-06",
+  "source_date": "2026-07-07",
   "data": [
     {
       "fecha": "2024-04-20",
@@ -39661,11 +39661,63 @@
     },
     {
       "fecha": "2026-07-06",
+      "source": "RDS_20260706.pdf",
       "linepack_total": 352.0,
       "linepack_delta": 4.8,
+      "consumo_total_estimado": 160.3,
+      "temperatura_ba": {
+        "min": 5.0,
+        "max": 13.0,
+        "tm": 9.0
+      },
       "importaciones": {
         "bolivia": {
-          "programa": 1.4,
+          "programa": 1.4
+        },
+        "chile": {
+          "programa": 0.0
+        },
+        "escobar": {
+          "programa": 19.0,
+          "proximo_barco": "08-jul"
+        },
+        "bahia_blanca": {
+          "programa": 0.0
+        }
+      },
+      "consumos": {
+        "prioritaria": {
+          "programa": 95.2
+        },
+        "cammesa": {
+          "programa": 23.3
+        },
+        "industria": {
+          "programa": 26.4
+        },
+        "gnc": {
+          "programa": 5.5
+        },
+        "combustible": {
+          "programa": 3.9
+        }
+      },
+      "exportaciones": {
+        "tgn": {
+          "vol_exportar": 5.5
+        },
+        "tgs": {
+          "vol_exportar": 0.5
+        }
+      }
+    },
+    {
+      "fecha": "2026-07-07",
+      "linepack_total": 352.8,
+      "linepack_delta": 0.8,
+      "importaciones": {
+        "bolivia": {
+          "programa": 1.0,
           "proximo_barco": null,
           "prom_mes_prev_year": 1.3,
           "misma_semana_prev_year": 2.5
@@ -39677,7 +39729,7 @@
           "misma_semana_prev_year": 0.0
         },
         "escobar": {
-          "programa": 19.0,
+          "programa": 20.0,
           "proximo_barco": "08-jul",
           "prom_mes_prev_year": 14.6,
           "misma_semana_prev_year": 10.0
@@ -39691,29 +39743,29 @@
       },
       "exportaciones": {
         "tgn": {
-          "vol_exportar": 5.5,
+          "vol_exportar": 5.6,
           "prom_mes_2025": 6.0,
           "misma_semana_2025": 7.7
         },
         "tgs": {
-          "vol_exportar": 0.5,
+          "vol_exportar": 0.4,
           "prom_mes_2025": 0.5,
           "misma_semana_2025": 0.5
         }
       },
       "consumos": {
         "prioritaria": {
-          "programa": 95.2,
+          "programa": 86.2,
           "prom_mes_2025": 72.6,
           "misma_semana_2025": 66.2
         },
         "cammesa": {
-          "programa": 23.3,
+          "programa": 30.2,
           "prom_mes_2025": 31.4,
           "misma_semana_2025": 35.4
         },
         "industria": {
-          "programa": 26.4,
+          "programa": 25.9,
           "prom_mes_2025": 31.2,
           "misma_semana_2025": 31.5
         },
@@ -39723,58 +39775,51 @@
           "misma_semana_2025": 5.4
         },
         "combustible": {
-          "programa": 3.9,
+          "programa": 3.8,
           "prom_mes_2025": 3.8,
           "misma_semana_2025": 3.8
         }
       },
-      "consumo_total_estimado": 160.3,
-      "temperatura_ba": {
-        "min": 5.0,
-        "max": 13.0,
-        "tm": 9.0,
-        "tm_2025": 11.8,
-        "tm_misma_semana": 13.4
-      },
+      "consumo_total_estimado": 157.6,
       "forecast_temp_ba": [
         {
-          "fecha": "2026-07-07",
-          "min": 2.0,
-          "max": 17.0,
-          "tm": 9.5
-        },
-        {
           "fecha": "2026-07-08",
-          "min": 6.0,
+          "min": 4.0,
           "max": 18.0,
-          "tm": 12.0
+          "tm": 11.0
         },
         {
           "fecha": "2026-07-09",
-          "min": 7.0,
-          "max": 15.0,
+          "min": 6.0,
+          "max": 16.0,
           "tm": 11.0
         },
         {
           "fecha": "2026-07-10",
-          "min": 8.0,
-          "max": 13.0,
-          "tm": 10.5
-        },
-        {
-          "fecha": "2026-07-11",
           "min": 7.0,
           "max": 12.0,
           "tm": 9.5
         },
         {
-          "fecha": "2026-07-12",
+          "fecha": "2026-07-11",
           "min": 8.0,
-          "max": 15.0,
-          "tm": 11.5
+          "max": 14.0,
+          "tm": 11.0
+        },
+        {
+          "fecha": "2026-07-12",
+          "min": 5.0,
+          "max": 12.0,
+          "tm": 8.5
+        },
+        {
+          "fecha": "2026-07-13",
+          "min": 6.0,
+          "max": 13.0,
+          "tm": 9.5
         }
       ],
-      "source": "RDS_20260706.pdf"
+      "source": "RDS_20260707.pdf"
     }
   ],
   "issues": []

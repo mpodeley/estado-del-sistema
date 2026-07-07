@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-06T16:17:28+00:00",
+  "generated_at": "2026-07-07T15:40:49+00:00",
   "source": "CAMMESA PPO — Consumo Combustibles (aggregated per day)",
   "source_date": "2026-06-25",
   "data": [
@@ -2055,6 +2055,7 @@
     "2026-07-02: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')",
     "2026-07-03: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')",
     "2026-07-04: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')",
-    "2026-07-05: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')"
+    "2026-07-05: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')",
+    "2026-07-06: not an OLE2 file (first bytes b'PK\\x03\\x04\\x14\\x00\\x06\\x00')"
   ]
 }
