@@ -1,6 +1,4 @@
 ﻿ciudad_id,ciudad,region,lat,lon,fecha,temp_max,temp_min,temp_prom
-ba,Buenos Aires,pampa,-34.6037,-58.3816,2024-06-30,13.0,1.1,7.0
-ba,Buenos Aires,pampa,-34.6037,-58.3816,2024-07-01,15.7,5.5,10.6
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2024-07-02,17.1,6.6,11.9
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2024-07-03,10.9,5.0,8.0
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2024-07-04,11.9,1.2,6.5
@@ -730,8 +728,8 @@ ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-06-27,15.0,7.1,11.1
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-06-28,14.0,7.7,10.8
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-06-29,14.8,5.2,10.0
 ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-06-30,13.1,5.3,9.2
-rosario,Rosario,pampa,-32.9468,-60.6393,2024-06-30,14.4,2.4,8.4
-rosario,Rosario,pampa,-32.9468,-60.6393,2024-07-01,16.6,3.6,10.1
+ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-07-01,13.7,3.5,8.6
+ba,Buenos Aires,pampa,-34.6037,-58.3816,2026-07-02,8.1,1.7,4.9
 rosario,Rosario,pampa,-32.9468,-60.6393,2024-07-02,18.3,6.2,12.2
 rosario,Rosario,pampa,-32.9468,-60.6393,2024-07-03,14.3,5.3,9.8
 rosario,Rosario,pampa,-32.9468,-60.6393,2024-07-04,15.1,2.5,8.8
@@ -1461,8 +1459,8 @@ rosario,Rosario,pampa,-32.9468,-60.6393,2026-06-27,16.4,6.2,11.3
 rosario,Rosario,pampa,-32.9468,-60.6393,2026-06-28,14.8,6.8,10.8
 rosario,Rosario,pampa,-32.9468,-60.6393,2026-06-29,15.7,4.2,9.9
 rosario,Rosario,pampa,-32.9468,-60.6393,2026-06-30,15.2,4.9,10.1
-cordoba,Córdoba,centro,-31.4201,-64.1888,2024-06-30,17.8,5.6,11.7
-cordoba,Córdoba,centro,-31.4201,-64.1888,2024-07-01,18.6,3.1,10.9
+rosario,Rosario,pampa,-32.9468,-60.6393,2026-07-01,14.7,5.2,9.9
+rosario,Rosario,pampa,-32.9468,-60.6393,2026-07-02,9.2,3.3,6.2
 cordoba,Córdoba,centro,-31.4201,-64.1888,2024-07-02,20.2,4.4,12.3
 cordoba,Córdoba,centro,-31.4201,-64.1888,2024-07-03,15.4,5.9,10.7
 cordoba,Córdoba,centro,-31.4201,-64.1888,2024-07-04,14.6,1.7,8.2
@@ -2192,8 +2190,8 @@ cordoba,Córdoba,centro,-31.4201,-64.1888,2026-06-27,17.4,4.1,10.8
 cordoba,Córdoba,centro,-31.4201,-64.1888,2026-06-28,14.9,7.0,10.9
 cordoba,Córdoba,centro,-31.4201,-64.1888,2026-06-29,14.5,1.8,8.2
 cordoba,Córdoba,centro,-31.4201,-64.1888,2026-06-30,14.7,3.8,9.2
-santafe,Santa Fe,pampa,-31.6333,-60.7,2024-06-30,15.2,3.0,9.1
-santafe,Santa Fe,pampa,-31.6333,-60.7,2024-07-01,17.3,6.2,11.8
+cordoba,Córdoba,centro,-31.4201,-64.1888,2026-07-01,9.6,5.0,7.3
+cordoba,Córdoba,centro,-31.4201,-64.1888,2026-07-02,6.8,3.9,5.3
 santafe,Santa Fe,pampa,-31.6333,-60.7,2024-07-02,18.8,6.5,12.7
 santafe,Santa Fe,pampa,-31.6333,-60.7,2024-07-03,16.6,7.5,12.1
 santafe,Santa Fe,pampa,-31.6333,-60.7,2024-07-04,15.4,5.1,10.2
@@ -2923,8 +2921,8 @@ santafe,Santa Fe,pampa,-31.6333,-60.7,2026-06-27,17.5,7.0,12.2
 santafe,Santa Fe,pampa,-31.6333,-60.7,2026-06-28,16.0,8.1,12.1
 santafe,Santa Fe,pampa,-31.6333,-60.7,2026-06-29,15.5,5.4,10.4
 santafe,Santa Fe,pampa,-31.6333,-60.7,2026-06-30,15.6,5.4,10.5
-mendoza,Mendoza,cuyo,-32.8895,-68.8458,2024-06-30,10.3,0.4,5.4
-mendoza,Mendoza,cuyo,-32.8895,-68.8458,2024-07-01,13.9,5.0,9.4
+santafe,Santa Fe,pampa,-31.6333,-60.7,2026-07-01,15.2,6.2,10.7
+santafe,Santa Fe,pampa,-31.6333,-60.7,2026-07-02,10.4,5.3,7.8
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2024-07-02,16.5,5.4,10.9
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2024-07-03,12.7,5.8,9.2
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2024-07-04,9.9,2.6,6.2
@@ -3654,8 +3652,8 @@ mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-06-27,15.0,5.4,10.2
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-06-28,10.3,3.3,6.8
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-06-29,10.2,2.5,6.3
 mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-06-30,9.7,1.2,5.4
-neuquen,Neuquén,patagonia,-38.9517,-68.0591,2024-06-30,12.4,-0.4,6.0
-neuquen,Neuquén,patagonia,-38.9517,-68.0591,2024-07-01,11.8,5.7,8.8
+mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-07-01,7.4,0.5,4.0
+mendoza,Mendoza,cuyo,-32.8895,-68.8458,2026-07-02,1.1,-1.3,-0.1
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2024-07-02,14.1,4.5,9.3
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2024-07-03,11.4,1.1,6.2
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2024-07-04,7.3,2.7,5.0
@@ -4385,8 +4383,8 @@ neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-06-27,12.7,3.4,8.0
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-06-28,10.6,2.3,6.4
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-06-29,11.7,2.0,6.8
 neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-06-30,9.5,0.7,5.1
-bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2024-06-30,13.5,2.3,7.9
-bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2024-07-01,12.3,4.8,8.6
+neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-07-01,5.6,-1.0,2.3
+neuquen,Neuquén,patagonia,-38.9517,-68.0591,2026-07-02,6.4,-3.0,1.7
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2024-07-02,16.3,6.4,11.4
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2024-07-03,11.2,0.8,6.0
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2024-07-04,9.2,3.4,6.3
@@ -5116,3 +5114,5 @@ bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-06-27,12.9,3.7,8.3
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-06-28,11.9,1.2,6.5
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-06-29,11.6,1.7,6.6
 bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-06-30,13.9,3.7,8.8
+bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-07-01,7.6,1.4,4.5
+bahiablanca,Bahía Blanca,pampa,-38.7196,-62.2724,2026-07-02,7.0,-1.6,2.7

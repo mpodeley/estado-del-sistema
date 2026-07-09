@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T15:43:56+00:00",
+  "generated_at": "2026-07-09T15:54:34+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.63,
+      "prod_agua_m3": 135272.64,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -30539,7 +30539,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 30.16,
       "prod_pet_m3": 253233.36,
-      "prod_agua_m3": 159456.61,
+      "prod_agua_m3": 159456.62,
       "pozos_activos": 167,
       "pozos_no_conv": 173
     },
@@ -33527,7 +33527,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.96,
       "prod_pet_m3": 41688.4,
-      "prod_agua_m3": 641886.75,
+      "prod_agua_m3": 641886.74,
       "pozos_activos": 302,
       "pozos_no_conv": 85
     },
@@ -38182,7 +38182,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 1.99,
-      "prod_pet_m3": 5269.63,
+      "prod_pet_m3": 5269.64,
       "prod_agua_m3": 21910.31,
       "pozos_activos": 45,
       "pozos_no_conv": 0
@@ -38315,7 +38315,7 @@
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.27,
       "prod_pet_m3": 2232.92,
-      "prod_agua_m3": 28855.3,
+      "prod_agua_m3": 28855.29,
       "pozos_activos": 42,
       "pozos_no_conv": 43
     },
@@ -39617,6 +39617,30 @@
     },
     {
       "mes": "2026-06",
+      "area": "CENTENARIO CENTRO",
+      "empresa": "FLXS OGE S.A",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 27.38,
+      "prod_pet_m3": 1816.85,
+      "prod_agua_m3": 9003.41,
+      "pozos_activos": 279,
+      "pozos_no_conv": 138
+    },
+    {
+      "mes": "2026-06",
+      "area": "AGUADA DEL CHIVATO - AGUADA BOCAREY",
+      "empresa": "PATAGONIA ENERGY S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.12,
+      "prod_pet_m3": 292.28,
+      "prod_agua_m3": 160.96,
+      "pozos_activos": 5,
+      "pozos_no_conv": 2
+    },
+    {
+      "mes": "2026-06",
       "area": "PUESTO FLORES - ESTANCIA VIEJA",
       "empresa": "EDHIPSA",
       "cuenca": "NEUQUINA",
@@ -39637,6 +39661,18 @@
       "prod_pet_m3": 249.6,
       "prod_agua_m3": 437.99,
       "pozos_activos": 9,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "CENTENARIO",
+      "empresa": "FLXS OGE S.A",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 0
     },
     {
