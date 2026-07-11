@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T15:28:32+00:00",
+  "generated_at": "2026-07-11T14:20:42+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -30502,7 +30502,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.86,
+      "prod_pet_m3": 97761.85,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -33527,7 +33527,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.96,
       "prod_pet_m3": 41688.4,
-      "prod_agua_m3": 641886.74,
+      "prod_agua_m3": 641886.75,
       "pozos_activos": 302,
       "pozos_no_conv": 85
     },
@@ -34018,7 +34018,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.25,
-      "prod_pet_m3": 2905.05,
+      "prod_pet_m3": 2905.06,
       "prod_agua_m3": 8530.8,
       "pozos_activos": 12,
       "pozos_no_conv": 1
@@ -38315,7 +38315,7 @@
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.27,
       "prod_pet_m3": 2232.92,
-      "prod_agua_m3": 28855.29,
+      "prod_agua_m3": 28855.3,
       "pozos_activos": 42,
       "pozos_no_conv": 43
     },
