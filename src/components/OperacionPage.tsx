@@ -262,7 +262,8 @@ export default function OperacionPage() {
           />
           <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
             Cerrado: PPO de CAMMESA (gas-equivalente). Proyectado (translúcido): gas del modelo
-            de demanda (usinas, 14 d); Fuel/Gas Oil y carbón de la Previsión semanal de CAMMESA
+            de demanda (usinas, 14 d), re-nivelado al cierre reciente de CAMMESA (PPO) para
+            continuar la tendencia; Fuel/Gas Oil y carbón de la Previsión semanal de CAMMESA
             (~2 sem). Ver Guía para la metodología.
           </p>
         </div>
@@ -306,6 +307,12 @@ export default function OperacionPage() {
         <div style={card}>
           <h3 style={sectionTitle}>Inyecciones por fuente (MMm³/día)</h3>
           <InjectionsChart data={valid} allDates={visibleDates} />
+          <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
+            ENARSA/GPM es una sola importación (el PS la reporta con dos etiquetas iguales).
+            Fines de semana: ENARGAS no publica el desglose de importación y queda consolidado
+            dentro de TGS (por eso las cuñas de import desaparecen y el TGS sube). La cola reciente
+            puede faltar por lag del reporte.
+          </p>
         </div>
         <div style={card}>
           <h3 style={sectionTitle}>Linepack TGS + TGN (MMm³)</h3>
@@ -327,8 +334,9 @@ export default function OperacionPage() {
             <h3 style={sectionTitle}>Próximos barcos GNL (MMm³/día programados)</h3>
             <LNGArrivalsChart rows={rdsReports as never} />
             <p style={{ color: colors.textDim, fontSize: 11, marginTop: 8 }}>
-              Volumen programado de regasificación por puerto. Fuente: ENARGAS RDS diario.
-              Cargamentos son estacionales — concentrados en meses de invierno (mayo-agosto).
+              Volumen programado de regasificación en Escobar. Fuente: ENARGAS RDS diario.
+              Línea punteada: proyección que sostiene el último programa (~7 d); los cargamentos
+              futuros pueden variar. Cargamentos estacionales — concentrados en invierno (mayo-agosto).
             </p>
           </div>
         )}

@@ -28,8 +28,9 @@ export default function InjectionsChart({ data, allDates }: Props) {
         ))}
         <Area type="monotone" dataKey="iny_tgs" stackId="1" fill="#10b981" stroke="#10b981" name="TGS" />
         <Area type="monotone" dataKey="iny_tgn" stackId="1" fill="#3b82f6" stroke="#3b82f6" name="TGN" />
-        <Area type="monotone" dataKey="iny_enarsa" stackId="1" fill="#f59e0b" stroke="#f59e0b" name="ENARSA" />
-        <Area type="monotone" dataKey="iny_gpm" stackId="1" fill="#8b5cf6" stroke="#8b5cf6" name="GPM" />
+        {/* ENARSA y GPM son el mismo número en el PS (importación única bajo dos
+            etiquetas): se dibuja una sola cuña para no duplicar el apilado. */}
+        <Area type="monotone" dataKey="iny_enarsa" stackId="1" fill="#f59e0b" stroke="#f59e0b" name="ENARSA/GPM" />
         <Area type="monotone" dataKey="iny_bolivia" stackId="1" fill="#ef4444" stroke="#ef4444" name="Bolivia" />
         <Area type="monotone" dataKey="iny_escobar" stackId="1" fill="#6b7280" stroke="#6b7280" name="Escobar" />
       </AreaChart>

@@ -79,12 +79,27 @@ export default function FuelMixChart({ data, ppoRows = [], demandForecast = [], 
   for (const f of demandForecast) {
     if (f.fecha > lastHistorical && f.usinas_est != null) usinasByDate.set(f.fecha, f.usinas_est)
   }
+  // usinas_est (modelo de demanda ENARGAS) trae la forma diaria por temperatura,
+  // pero corre sistemáticamente ~5 MMm³/d por debajo del gas cerrado de CAMMESA
+  // PPO (cammesa_gas), así que enchufarlo tal cual produce un escalón en el borde
+  // real→forecast. Re-nivelamos con un offset constante = media(cammesa_gas −
+  // usinas) de los últimos días con dato real de ambos: el forecast arranca en el
+  // nivel del cierre y conserva la variación diaria. Guard: <5 días de solape → 0.
+  const gasBiasSamples = data
+    .filter((d) => d.usinas != null && d.cammesa_gas != null)
+    .slice(-14)
+    .map((d) => (d.cammesa_gas as number) - (d.usinas as number))
+  const gasBias =
+    gasBiasSamples.length >= 5
+      ? gasBiasSamples.reduce((a, b) => a + b, 0) / gasBiasSamples.length
+      : 0
   const dailyByDate = new Map(data.map((d) => [d.fecha, d]))
   const fcDates = new Set<string>()
   for (const d of data) if (d.fecha > lastHistorical && d.cammesa_gas_est != null) fcDates.add(d.fecha)
   for (const f of usinasByDate.keys()) fcDates.add(f)
   const forecastRows = [...fcDates].sort().map((fecha) => {
     const d = dailyByDate.get(fecha)
+    const u = usinasByDate.get(fecha)
     return {
       fecha,
       cammesa_gas: null as number | null,
@@ -92,7 +107,7 @@ export default function FuelMixChart({ data, ppoRows = [], demandForecast = [], 
       cammesa_fueloil: null as number | null,
       cammesa_carbon: null as number | null,
       ppo_gas: null as number | null,
-      cammesa_gas_est: usinasByDate.get(fecha) ?? d?.cammesa_gas_est ?? null,
+      cammesa_gas_est: u != null ? u + gasBias : d?.cammesa_gas_est ?? null,
       cammesa_gasoil_est: d?.cammesa_gasoil_est ?? null,
       cammesa_fueloil_est: d?.cammesa_fueloil_est ?? null,
       cammesa_carbon_est: d?.cammesa_carbon_est ?? null,

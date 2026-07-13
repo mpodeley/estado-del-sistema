@@ -4,8 +4,7 @@ const cols: { key: keyof DailyRow; label: string }[] = [
   { key: 'fecha', label: 'Fecha' },
   { key: 'iny_tgs', label: 'TGS' },
   { key: 'iny_tgn', label: 'TGN' },
-  { key: 'iny_enarsa', label: 'ENARSA' },
-  { key: 'iny_gpm', label: 'GPM' },
+  { key: 'iny_enarsa', label: 'ENARSA/GPM' },
   { key: 'iny_bolivia', label: 'Bolivia' },
   { key: 'iny_total', label: 'Total' },
 ]
