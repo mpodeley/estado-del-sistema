@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T14:16:28+00:00",
+  "generated_at": "2026-07-17T14:30:55+00:00",
   "source": "Construido de RDS + PS + ING + ETGS + PPO (histórico manual congelado en daily_history.json)",
   "source_date": "2026-07-16",
   "data": [
@@ -39536,13 +39536,13 @@
       "industria": 31.0,
       "usinas": null,
       "exportaciones": 7.4,
-      "iny_tgs": null,
-      "iny_tgn": null,
+      "iny_tgs": 98.5,
+      "iny_tgn": 40.6,
       "iny_enarsa": null,
       "iny_gpm": null,
       "iny_bolivia": null,
       "iny_escobar": null,
-      "iny_total": null,
+      "iny_total": 139.1,
       "linepack_tgs": 224.93,
       "var_linepack_tgs": 5.29,
       "lim_inf_tgs": 215.0,
