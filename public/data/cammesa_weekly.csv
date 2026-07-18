@@ -1,3 +1,1 @@
-﻿report_date,week_num,start_date,end_date,demanda_gwh,demanda_mwmed,exportacion_gwh,exportacion_mwmed,termico_gwh,termico_mwmed,hidraulico_gwh,hidraulico_mwmed,nuclear_gwh,nuclear_mwmed,renovable_gwh,renovable_mwmed,importacion_gwh,importacion_mwmed,gas_mm3_dia,fo_miles_ton,go_miles_m3,carbon_miles_ton
-2026-07-08,28,2026-07-06,2026-07-12,3328.0,19807.0,0.0,0.0,1704.0,10142.0,844.0,5025.0,237.0,1408.0,322.0,1915.0,223.0,1325.0,36.0,8.0,57.0,23.0
-2026-07-08,29,2026-07-13,2026-07-19,3280.0,19522.0,0.0,0.0,1631.0,9710.0,755.0,4494.0,236.0,1407.0,459.0,2731.0,198.0,1179.0,38.5,6.0,41.0,24.0
+﻿# sin datos
