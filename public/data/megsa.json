@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T14:14:44+00:00",
+  "generated_at": "2026-07-19T14:19:46+00:00",
   "source": "MEGSA public API (megsa.ar/api)",
   "source_date": null,
   "data": {
@@ -90,7 +90,7 @@
         "fechaUltimaModificacion": "2026-07-17T12:07:38"
       }
     ],
-    "fetched_at": "2026-07-18T14:14:44+00:00"
+    "fetched_at": "2026-07-19T14:19:46+00:00"
   },
   "errors": null
 }
