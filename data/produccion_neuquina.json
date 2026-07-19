@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T14:17:03+00:00",
+  "generated_at": "2026-07-19T14:22:50+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -27995,7 +27995,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 283.63,
       "prod_pet_m3": 119816.86,
-      "prod_agua_m3": 135272.63,
+      "prod_agua_m3": 135272.64,
       "pozos_activos": 95,
       "pozos_no_conv": 128
     },
@@ -33527,7 +33527,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.96,
       "prod_pet_m3": 41688.4,
-      "prod_agua_m3": 641886.75,
+      "prod_agua_m3": 641886.74,
       "pozos_activos": 302,
       "pozos_no_conv": 85
     },
@@ -33994,7 +33994,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.29,
-      "prod_pet_m3": 18971.24,
+      "prod_pet_m3": 18971.23,
       "prod_agua_m3": 309791.03,
       "pozos_activos": 205,
       "pozos_no_conv": 42
@@ -37991,7 +37991,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 3.29,
       "prod_pet_m3": 71954.42,
-      "prod_agua_m3": 10474.36,
+      "prod_agua_m3": 10474.35,
       "pozos_activos": 30,
       "pozos_no_conv": 39
     },
@@ -38315,7 +38315,7 @@
       "provincia": "Rio Negro",
       "prod_gas_mm3": 1.27,
       "prod_pet_m3": 2232.92,
-      "prod_agua_m3": 28855.3,
+      "prod_agua_m3": 28855.29,
       "pozos_activos": 42,
       "pozos_no_conv": 43
     },
@@ -39641,6 +39641,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "AGUADA PICHANA ESTE",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 372.04,
+      "prod_pet_m3": 12461.27,
+      "prod_agua_m3": 64440.76,
+      "pozos_activos": 255,
+      "pozos_no_conv": 141
+    },
+    {
+      "mes": "2026-06",
       "area": "RINCON DEL MANGRULLO",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -39722,6 +39734,18 @@
       "prod_agua_m3": 190006.68,
       "pozos_activos": 205,
       "pozos_no_conv": 229
+    },
+    {
+      "mes": "2026-06",
+      "area": "SAN ROQUE",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 54.44,
+      "prod_pet_m3": 2629.32,
+      "prod_agua_m3": 19366.35,
+      "pozos_activos": 30,
+      "pozos_no_conv": 10
     },
     {
       "mes": "2026-06",
@@ -40342,7 +40366,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.6,
-      "prod_pet_m3": 18901.52,
+      "prod_pet_m3": 18901.51,
       "prod_agua_m3": 190786.25,
       "pozos_activos": 107,
       "pozos_no_conv": 43
@@ -40429,6 +40453,18 @@
       "prod_pet_m3": 2478.39,
       "prod_agua_m3": 135618.1,
       "pozos_activos": 37,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "EL MANZANO ESTE",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.32,
+      "prod_pet_m3": 246.14,
+      "prod_agua_m3": 1415.49,
+      "pozos_activos": 2,
       "pozos_no_conv": 0
     },
     {
@@ -40757,6 +40793,30 @@
     },
     {
       "mes": "2026-06",
+      "area": "EL MANZANO OESTE (AGRIO)",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "EL MANZANO OESTE (RESTO)",
+      "empresa": "VENOIL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
@@ -40874,6 +40934,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "PAMPA DE LAS YEGUAS II",
+      "empresa": "TOTAL AUSTRAL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
     },
     {
       "mes": "2026-06",
