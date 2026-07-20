@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T14:22:50+00:00",
+  "generated_at": "2026-07-20T15:03:36+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -30023,7 +30023,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 5366.61,
-      "prod_agua_m3": 16795.9,
+      "prod_agua_m3": 16795.91,
       "pozos_activos": 20,
       "pozos_no_conv": 0
     },
@@ -30502,7 +30502,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 43.47,
-      "prod_pet_m3": 97761.86,
+      "prod_pet_m3": 97761.85,
       "prod_agua_m3": 195360.74,
       "pozos_activos": 103,
       "pozos_no_conv": 46
@@ -33994,7 +33994,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.29,
-      "prod_pet_m3": 18971.23,
+      "prod_pet_m3": 18971.24,
       "prod_agua_m3": 309791.03,
       "pozos_activos": 205,
       "pozos_no_conv": 42
@@ -37258,7 +37258,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.34,
+      "prod_pet_m3": 111.33,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -37330,7 +37330,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 416.29,
-      "prod_pet_m3": 142413.92,
+      "prod_pet_m3": 142413.93,
       "prod_agua_m3": 153982.81,
       "pozos_activos": 107,
       "pozos_no_conv": 134
@@ -39653,6 +39653,30 @@
     },
     {
       "mes": "2026-06",
+      "area": "SIERRA CHATA",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 280.09,
+      "prod_pet_m3": 663.49,
+      "prod_agua_m3": 24587.23,
+      "pozos_activos": 72,
+      "pozos_no_conv": 58
+    },
+    {
+      "mes": "2026-06",
+      "area": "EL MANGRULLO",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 173.78,
+      "prod_pet_m3": 347.36,
+      "prod_agua_m3": 13910.6,
+      "pozos_activos": 92,
+      "pozos_no_conv": 129
+    },
+    {
+      "mes": "2026-06",
       "area": "RINCON DEL MANGRULLO",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -39785,6 +39809,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "BAJADA DEL PALO OESTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 33.45,
+      "prod_pet_m3": 275653.61,
+      "prod_agua_m3": 155937.76,
+      "pozos_activos": 175,
+      "pozos_no_conv": 182
+    },
+    {
+      "mes": "2026-06",
       "area": "CENTENARIO CENTRO",
       "empresa": "FLXS OGE S.A",
       "cuenca": "NEUQUINA",
@@ -39881,6 +39917,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "PARVA NEGRA ESTE",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 9.2,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 908.56,
+      "pozos_activos": 1,
+      "pozos_no_conv": 4
+    },
+    {
+      "mes": "2026-06",
       "area": "PUESTO ZUÑIGA",
       "empresa": "CAPEX S.A.",
       "cuenca": "NEUQUINA",
@@ -39890,6 +39938,18 @@
       "prod_agua_m3": 296.67,
       "pozos_activos": 10,
       "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "RINCON DE ARANDA",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 7.77,
+      "prod_pet_m3": 98053.6,
+      "prod_agua_m3": 50542.42,
+      "pozos_activos": 43,
+      "pozos_no_conv": 52
     },
     {
       "mes": "2026-06",
@@ -40025,6 +40085,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "AGUADA FEDERAL",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 5.02,
+      "prod_pet_m3": 35844.64,
+      "prod_agua_m3": 16479.35,
+      "pozos_activos": 26,
+      "pozos_no_conv": 30
+    },
+    {
+      "mes": "2026-06",
       "area": "CERRO FORTUNOSO",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -40094,6 +40166,18 @@
       "prod_agua_m3": 618.47,
       "pozos_activos": 4,
       "pozos_no_conv": 7
+    },
+    {
+      "mes": "2026-06",
+      "area": "BAJADA DEL PALO ESTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 2.89,
+      "prod_pet_m3": 68403.41,
+      "prod_agua_m3": 31775.76,
+      "pozos_activos": 33,
+      "pozos_no_conv": 39
     },
     {
       "mes": "2026-06",
@@ -40397,6 +40481,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "AGUILA MORA",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.43,
+      "prod_pet_m3": 1414.49,
+      "prod_agua_m3": 495.45,
+      "pozos_activos": 4,
+      "pozos_no_conv": 6
+    },
+    {
+      "mes": "2026-06",
       "area": "CERRO MORADO ESTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -40673,6 +40769,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "BANDURRIA NORTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 5
+    },
+    {
+      "mes": "2026-06",
       "area": "BARRANCA DE LOS LOROS",
       "empresa": "PETROLEOS SUDAMERICANOS S.A.",
       "cuenca": "NEUQUINA",
@@ -40737,6 +40845,18 @@
       "empresa": "CAPEX S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "COIRON AMARGO NORTE",
+      "empresa": "VISTA ENERGY ARGENTINA SAU",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -40874,6 +40994,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 1
+    },
+    {
+      "mes": "2026-06",
+      "area": "LAS TACANAS NORTE",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-06",
@@ -41030,6 +41162,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2026-06",
+      "area": "VETA ESCONDIDA",
+      "empresa": "PAMPA ENERGIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     }
   ],
   "years_fetched": [
