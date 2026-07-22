@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T22:39:22+00:00",
+  "generated_at": "2026-07-22T14:47:04+00:00",
   "source": "Construido de RDS + PS + ING + ETGS + PPO (histórico manual congelado en daily_history.json)",
   "source_date": "2026-07-21",
   "data": [
@@ -39841,8 +39841,8 @@
       "var_linepack_tgs": null,
       "lim_inf_tgs": 215.0,
       "lim_sup_tgs": 235.0,
-      "linepack_tgn": null,
-      "var_linepack_tgn": null,
+      "linepack_tgn": 130.06,
+      "var_linepack_tgn": -1.79,
       "lim_inf_tgn": 110.0,
       "lim_sup_tgn": 142.0,
       "linepack_total": 352.8,
@@ -39866,7 +39866,7 @@
       "cammesa_fueloil": null,
       "cammesa_carbon": null,
       "cammesa_total": null,
-      "estado_tgn": null,
+      "estado_tgn": "NORMAL",
       "cammesa_gas_est": null,
       "cammesa_gasoil_est": null,
       "cammesa_fueloil_est": null,
