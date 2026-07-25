@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-24T14:47:08+00:00",
+  "generated_at": "2026-07-25T14:31:37+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -40697,18 +40697,6 @@
     },
     {
       "mes": "2026-06",
-      "area": "RINCONADA PUESTO MORALES RN",
-      "empresa": "GEOPETROL DRILLING S.A.",
-      "cuenca": "NEUQUINA",
-      "provincia": "Rio Negro",
-      "prod_gas_mm3": 0.7,
-      "prod_pet_m3": 897.83,
-      "prod_agua_m3": 7516.72,
-      "pozos_activos": 32,
-      "pozos_no_conv": 0
-    },
-    {
-      "mes": "2026-06",
       "area": "CONFLUENCIA SUR",
       "empresa": "PHOENIX GLOBAL RESOURCES S.A.",
       "cuenca": "NEUQUINA",
@@ -40718,6 +40706,18 @@
       "prod_agua_m3": 126.44,
       "pozos_activos": 3,
       "pozos_no_conv": 4
+    },
+    {
+      "mes": "2026-06",
+      "area": "RINCONADA PUESTO MORALES RN",
+      "empresa": "GEOPETROL DRILLING S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.68,
+      "prod_pet_m3": 897.83,
+      "prod_agua_m3": 7516.72,
+      "pozos_activos": 32,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-06",
@@ -41050,9 +41050,9 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.06,
-      "prod_pet_m3": 81.53,
-      "prod_agua_m3": 1103.12,
-      "pozos_activos": 11,
+      "prod_pet_m3": 276.9,
+      "prod_agua_m3": 842.76,
+      "pozos_activos": 3,
       "pozos_no_conv": 0
     },
     {
