@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-27T15:42:47+00:00",
+  "generated_at": "2026-07-28T15:12:08+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -28126,7 +28126,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 47.62,
-      "prod_pet_m3": 105699.64,
+      "prod_pet_m3": 105699.63,
       "prod_agua_m3": 217118.27,
       "pozos_activos": 100,
       "pozos_no_conv": 46
@@ -31162,7 +31162,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Mendoza",
       "prod_gas_mm3": 1.76,
-      "prod_pet_m3": 39723.48,
+      "prod_pet_m3": 39723.49,
       "prod_agua_m3": 586440.0,
       "pozos_activos": 310,
       "pozos_no_conv": 85
@@ -35038,7 +35038,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 319.79,
-      "prod_pet_m3": 128416.66,
+      "prod_pet_m3": 128416.67,
       "prod_agua_m3": 148649.2,
       "pozos_activos": 98,
       "pozos_no_conv": 133
@@ -36274,7 +36274,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.34,
-      "prod_pet_m3": 2472.78,
+      "prod_pet_m3": 2472.77,
       "prod_agua_m3": 141796.08,
       "pozos_activos": 37,
       "pozos_no_conv": 0
@@ -37258,7 +37258,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "La Pampa",
       "prod_gas_mm3": 0.0,
-      "prod_pet_m3": 111.34,
+      "prod_pet_m3": 111.33,
       "prod_agua_m3": 221.35,
       "pozos_activos": 4,
       "pozos_no_conv": 0
@@ -40085,6 +40085,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "MEDANITO",
+      "empresa": "RIBEIRO S.R.L",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 6.84,
+      "prod_pet_m3": 13739.36,
+      "prod_agua_m3": 37854.13,
+      "pozos_activos": 448,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "AGUADA DEL CHAÑAR",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -40361,6 +40373,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "25 DE MAYO - MEDANITO SUD ESTE LP",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 2.71,
+      "prod_pet_m3": 6582.47,
+      "prod_agua_m3": 57119.51,
+      "pozos_activos": 192,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "BAJO DEL TORO NORTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -40478,6 +40502,18 @@
       "prod_agua_m3": 615449.12,
       "pozos_activos": 302,
       "pozos_no_conv": 85
+    },
+    {
+      "mes": "2026-06",
+      "area": "JAGÜEL DE LOS MACHOS LP",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 1.9,
+      "prod_pet_m3": 3651.57,
+      "prod_agua_m3": 21283.66,
+      "pozos_activos": 84,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2026-06",
@@ -40690,10 +40726,22 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 0.84,
-      "prod_pet_m3": 18160.34,
+      "prod_pet_m3": 18160.35,
       "prod_agua_m3": 4958.85,
       "pozos_activos": 12,
       "pozos_no_conv": 12
+    },
+    {
+      "mes": "2026-06",
+      "area": "PUESTO ROJAS",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.74,
+      "prod_pet_m3": 1532.07,
+      "prod_agua_m3": 3228.16,
+      "pozos_activos": 17,
+      "pozos_no_conv": 23
     },
     {
       "mes": "2026-06",
@@ -40702,7 +40750,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Rio Negro",
       "prod_gas_mm3": 0.68,
-      "prod_pet_m3": 10425.33,
+      "prod_pet_m3": 10425.34,
       "prod_agua_m3": 126.44,
       "pozos_activos": 3,
       "pozos_no_conv": 4
@@ -40817,6 +40865,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "EL SOSNEADO",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.43,
+      "prod_pet_m3": 2494.25,
+      "prod_agua_m3": 16838.35,
+      "pozos_activos": 83,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "CERRO MORADO ESTE",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -40825,6 +40885,18 @@
       "prod_pet_m3": 4412.55,
       "prod_agua_m3": 8161.81,
       "pozos_activos": 25,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "CERRO HAMACA",
+      "empresa": "PETROLEOS SUDAMERICANOS S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.38,
+      "prod_pet_m3": 2749.65,
+      "prod_agua_m3": 45023.0,
+      "pozos_activos": 32,
       "pozos_no_conv": 0
     },
     {
@@ -40838,18 +40910,6 @@
       "prod_agua_m3": 1793.86,
       "pozos_activos": 6,
       "pozos_no_conv": 11
-    },
-    {
-      "mes": "2026-06",
-      "area": "CERRO HAMACA",
-      "empresa": "PETROLEOS SUDAMERICANOS S.A.",
-      "cuenca": "NEUQUINA",
-      "provincia": "Neuquén",
-      "prod_gas_mm3": 0.37,
-      "prod_pet_m3": 2749.65,
-      "prod_agua_m3": 45023.0,
-      "pozos_activos": 32,
-      "pozos_no_conv": 0
     },
     {
       "mes": "2026-06",
@@ -40937,6 +40997,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "GOBERNADOR AYALA V",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "La Pampa",
+      "prod_gas_mm3": 0.14,
+      "prod_pet_m3": 99.19,
+      "prod_agua_m3": 49.39,
+      "pozos_activos": 5,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "AGUADA DEL CHIVATO - AGUADA BOCAREY",
       "empresa": "PATAGONIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -40981,6 +41053,18 @@
       "prod_pet_m3": 959.74,
       "prod_agua_m3": 1447.35,
       "pozos_activos": 29,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "LLANCANELO",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.08,
+      "prod_pet_m3": 8460.57,
+      "prod_agua_m3": 2133.69,
+      "pozos_activos": 44,
       "pozos_no_conv": 0
     },
     {
@@ -41041,6 +41125,30 @@
       "prod_pet_m3": 1154.03,
       "prod_agua_m3": 32883.99,
       "pozos_activos": 19,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "CERRO MOLLAR OESTE",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.06,
+      "prod_pet_m3": 516.19,
+      "prod_agua_m3": 8137.61,
+      "pozos_activos": 6,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "LA BREA",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.06,
+      "prod_pet_m3": 192.46,
+      "prod_agua_m3": 144.22,
+      "pozos_activos": 3,
       "pozos_no_conv": 0
     },
     {
@@ -41429,6 +41537,18 @@
     },
     {
       "mes": "2026-06",
+      "area": "LA PALOMA - CERRO ALQUITRAN",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
       "area": "LA PENDIENTE",
       "empresa": "INGENIERIA SIMA S.A.",
       "cuenca": "NEUQUINA",
@@ -41497,6 +41617,18 @@
       "prod_pet_m3": 4423.79,
       "prod_agua_m3": 18508.4,
       "pozos_activos": 20,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2026-06",
+      "area": "LLANCANELO R",
+      "empresa": "PETROQUIMICA COMODORO RIVADAVIA S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Mendoza",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 0
     },
     {
