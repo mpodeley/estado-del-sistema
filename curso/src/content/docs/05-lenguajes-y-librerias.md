@@ -27,7 +27,7 @@ sidebar:
 | **`openpyxl`** / **`xlrd`** | Leer y escribir archivos Excel. | Tener Excel adentro de un programa. |
 | **`msoffcrypto-tool`** | Desbloquear archivos de Office "protegidos" con contraseña. | El típico "Quitar contraseña al abrir" en Office. |
 
-Las dependencias están listadas en [`requirements.txt`](https://github.com/mpodeley/estado-del-sistema/blob/master/requirements.txt) y se ven usadas en los archivos de [`scripts/`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts).
+Las dependencias están listadas en [`requirements.txt`](https://github.com/mpodeley/estado-red-gas/blob/master/requirements.txt) y se ven usadas en los archivos de [`scripts/`](https://github.com/mpodeley/estado-red-gas/tree/master/scripts).
 
 ### TypeScript (la web)
 
@@ -38,7 +38,7 @@ Las dependencias están listadas en [`requirements.txt`](https://github.com/mpod
 | **Recharts** | Librería de gráficos basada en React. | Buena para series temporales, simple, sin licencia comercial. |
 | **Vite** | La herramienta que arma la web final y la sirve durante el desarrollo. | El "compilador" del lado JavaScript. |
 
-Las dependencias de la web están en [`package.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/package.json) y la configuración en [`tsconfig.json`](https://github.com/mpodeley/estado-del-sistema/blob/master/tsconfig.json) y [`vite.config.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/vite.config.ts).
+Las dependencias de la web están en [`package.json`](https://github.com/mpodeley/estado-red-gas/blob/master/package.json) y la configuración en [`tsconfig.json`](https://github.com/mpodeley/estado-red-gas/blob/master/tsconfig.json) y [`vite.config.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/vite.config.ts).
 
 ### ¿Por qué dos lenguajes y no uno solo?
 
@@ -47,4 +47,4 @@ Porque cada uno tiene su fuerte:
 - **Python** tiene el mejor "ecosistema" — la mejor colección de librerías ya hechas — para **traer y procesar datos**: PDFs, Excels, APIs, modelos estadísticos.
 - **TypeScript con React** tiene el mejor ecosistema para **mostrar datos en el navegador**: gráficos interactivos, componentes reusables, manejo de estado.
 
-Y el acuerdo (los archivos JSON, ver [Módulo 3](/estado-del-sistema/curso/03-diseno-paradigmas/)) hace que la convivencia entre los dos no sea un problema.
+Y el acuerdo (los archivos JSON, ver [Módulo 3](/estado-red-gas/curso/03-diseno-paradigmas/)) hace que la convivencia entre los dos no sea un problema.

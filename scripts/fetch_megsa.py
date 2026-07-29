@@ -19,7 +19,7 @@ from _meta import write_json, write_csv, json_to_csv_path  # noqa: E402
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 BASE = 'https://www.megsa.ar/api/'
-HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'}
+HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'}
 
 
 def fetch_json(path, timeout=30):

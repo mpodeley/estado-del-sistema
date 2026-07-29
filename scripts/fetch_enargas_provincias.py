@@ -36,7 +36,7 @@ URL = ('https://www.enargas.gob.ar/secciones/transporte-y-distribucion/'
 REFERER = ('https://www.enargas.gob.ar/secciones/transporte-y-distribucion/'
            'datos-operativos.php')
 HDRS = {
-    'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema',
+    'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas',
     'Referer': REFERER,
 }
 

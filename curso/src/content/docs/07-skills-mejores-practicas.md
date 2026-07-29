@@ -69,7 +69,7 @@ El asistente tiene **tres lugares** donde guarda contexto que sobrevive entre co
 
 Es el **manual de instrucciones del repositorio**, pensado específicamente para el asistente. Cualquier conversación que arranque en esa carpeta lo lee primero. Contiene: qué hace el proyecto, comandos clave, cómo está organizado, qué cosas son particulares ("gotchas" — trampas conocidas).
 
-🔗 [`CLAUDE.md` de este proyecto](https://github.com/mpodeley/estado-del-sistema/blob/master/CLAUDE.md) — leelo *vos* también, una vez. Te ubica más rápido que cualquier explicación que te pueda dar yo acá.
+🔗 [`CLAUDE.md` de este proyecto](https://github.com/mpodeley/estado-red-gas/blob/master/CLAUDE.md) — leelo *vos* también, una vez. Te ubica más rápido que cualquier explicación que te pueda dar yo acá.
 
 ### 3.2. `.claude/memory/` (notas que sobreviven entre charlas)
 
@@ -80,11 +80,11 @@ Es una carpeta donde el asistente guarda **observaciones** que conviene que recu
 - **project** — contexto del proyecto que no está escrito en el código.
 - **reference** — punteros a otros sistemas (links a paneles, dashboards externos, etc.).
 
-🔗 Mirá el [`MEMORY.md`](https://github.com/mpodeley/estado-del-sistema/blob/master/.claude/memory/MEMORY.md) para ver ejemplos reales. Algunos que están vigentes en este proyecto:
+🔗 Mirá el [`MEMORY.md`](https://github.com/mpodeley/estado-red-gas/blob/master/.claude/memory/MEMORY.md) para ver ejemplos reales. Algunos que están vigentes en este proyecto:
 
-- [`feedback_simplicity.md`](https://github.com/mpodeley/estado-del-sistema/blob/master/.claude/memory/feedback_simplicity.md) — *"mantener la app simple, sin abstracciones especulativas"*.
-- [`feedback_macro_data.md`](https://github.com/mpodeley/estado-del-sistema/blob/master/.claude/memory/feedback_macro_data.md) — *"priorizar datos macro y automatización total"*.
-- [`project_context.md`](https://github.com/mpodeley/estado-del-sistema/blob/master/.claude/memory/project_context.md) — *"audiencia no técnica, mantenedor único"*.
+- [`feedback_simplicity.md`](https://github.com/mpodeley/estado-red-gas/blob/master/.claude/memory/feedback_simplicity.md) — *"mantener la app simple, sin abstracciones especulativas"*.
+- [`feedback_macro_data.md`](https://github.com/mpodeley/estado-red-gas/blob/master/.claude/memory/feedback_macro_data.md) — *"priorizar datos macro y automatización total"*.
+- [`project_context.md`](https://github.com/mpodeley/estado-red-gas/blob/master/.claude/memory/project_context.md) — *"audiencia no técnica, mantenedor único"*.
 
 ### 3.3. `.claude/plans/` (planes en curso)
 
@@ -162,7 +162,7 @@ Aprovechá lo que ya está escrito:
 
 Para que tengas una idea concreta — así se ve una primera sesión típica con Claude Code:
 
-1. Instalás Claude Code (las instrucciones están en el [Módulo 6](/estado-del-sistema/curso/06-coding-agents/)).
+1. Instalás Claude Code (las instrucciones están en el [Módulo 6](/estado-red-gas/curso/06-coding-agents/)).
 2. Abrís una terminal **en la carpeta del repo**: `cd C:\Users\mpodeley\Documents\projects\estado_del_sistema`.
 3. Tipeás `claude` y enter.
 4. Tu primer mensaje, copiado tal cual:
@@ -178,7 +178,7 @@ Para que tengas una idea concreta — así se ve una primera sesión típica con
 
 5. Leés lo que te contesta. Hacés preguntas. **No le pedís que toque nada todavía.**
 6. Cuando te sentís cómodo, le pedís un cambio chico (por ejemplo: cambiar una palabra en la Guía del tablero).
-7. Le pedís que arme la propuesta de cambio para GitHub (eso lo explica el [Módulo 8](/estado-del-sistema/curso/08-git-github-deploy/)).
+7. Le pedís que arme la propuesta de cambio para GitHub (eso lo explica el [Módulo 8](/estado-red-gas/curso/08-git-github-deploy/)).
 
 ## 8. Antes de seguir
 
@@ -187,4 +187,4 @@ Para que tengas una idea concreta — así se ve una primera sesión típica con
 - Identificás al menos **3 buenas prácticas** que vas a aplicar desde la primera sesión.
 - Tenés clara una regla de oro: **leer el cambio antes de aceptar, siempre**.
 
-Cuando estés listo, seguí con el **[Módulo 8 — Git, GitHub y deploy](/estado-del-sistema/curso/08-git-github-deploy/)** o saltá directo al **[Módulo 9 — Tu primer aporte](/estado-del-sistema/curso/09-primer-aporte/)** cuando esté disponible.
+Cuando estés listo, seguí con el **[Módulo 8 — Git, GitHub y deploy](/estado-red-gas/curso/08-git-github-deploy/)** o saltá directo al **[Módulo 9 — Tu primer aporte](/estado-red-gas/curso/09-primer-aporte/)** cuando esté disponible.

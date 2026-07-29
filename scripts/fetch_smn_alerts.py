@@ -55,7 +55,7 @@ def main():
     try:
         r = requests.get(
             URL,
-            headers={'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'},
+            headers={'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'},
             timeout=30,
         )
         r.raise_for_status()

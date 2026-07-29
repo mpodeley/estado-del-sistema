@@ -30,11 +30,11 @@ Si Rosario no te aplica (porque ya está agregada o lo que sea), al final del m�
 En PowerShell, en una carpeta donde quieras tener el proyecto:
 
 ```powershell
-gh repo clone mpodeley/estado-del-sistema
-cd estado-del-sistema
+gh repo clone mpodeley/estado-red-gas
+cd estado-red-gas
 ```
 
-(`gh repo clone` requiere que tengas `gh` instalada y autenticada — ver [Módulo 8](/estado-del-sistema/curso/08-git-github-deploy/) sección 8.)
+(`gh repo clone` requiere que tengas `gh` instalada y autenticada — ver [Módulo 8](/estado-red-gas/curso/08-git-github-deploy/) sección 8.)
 
 ### 2. Instalá las dependencias
 
@@ -177,7 +177,7 @@ git push -u origin agregar-ciudad-rosario
 
 El asistente arma el comando y te muestra qué va a poner. Si te gusta, dale OK.
 
-Cuando termina, te devuelve un link de GitHub tipo `https://github.com/mpodeley/estado-del-sistema/pull/123`. Cliqueá: vas a ver tu propuesta abierta, con el diff completo y los <abbr title="del inglés 'checks' — verificaciones automáticas que corren en cada push, como verificar tipos o que la web compile">checks</abbr> de GitHub Actions corriéndose.
+Cuando termina, te devuelve un link de GitHub tipo `https://github.com/mpodeley/estado-red-gas/pull/123`. Cliqueá: vas a ver tu propuesta abierta, con el diff completo y los <abbr title="del inglés 'checks' — verificaciones automáticas que corren en cada push, como verificar tipos o que la web compile">checks</abbr> de GitHub Actions corriéndose.
 
 ### Paso 9 — Esperar las verificaciones
 
@@ -199,7 +199,7 @@ El `--squash` junta todos tus commits en uno solo (queda más limpio el historia
 
 El merge dispara el GitHub Action que publica el sitio. En 4–5 minutos, tu cambio está en producción:
 
-- Tablero: https://mpodeley.github.io/estado-del-sistema/
+- Tablero: https://mpodeley.github.io/estado-red-gas/
 - Si querés mirar el gráfico de temperatura, esperá al próximo run de la pipeline (mañana a las 6 AM, o disparado a mano con `gh workflow run "Update data and deploy"`).
 
 **Listo. Hiciste tu primer aporte.** 🎉
@@ -241,4 +241,4 @@ Cualquiera de estos te da el mismo aprendizaje del flujo completo, sin necesidad
 - [ ] El cambio se mergeó y está publicado.
 - [ ] Identificás cuál de los pasos te costó más — esa va a ser tu zona de práctica para los próximos aportes.
 
-Cuando los cuatro estén tildados, andá al **[Módulo 10 — Cómo seguir aprendiendo](/estado-del-sistema/curso/10-como-seguir/)** para ver dónde profundizar.
+Cuando los cuatro estén tildados, andá al **[Módulo 10 — Cómo seguir aprendiendo](/estado-red-gas/curso/10-como-seguir/)** para ver dónde profundizar.

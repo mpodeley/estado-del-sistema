@@ -27,7 +27,7 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
 BASE = 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/datos-estadisticos'
 REFERER = 'https://www.enargas.gob.ar/secciones/transporte-y-distribucion/datos-operativos.php'
 HDRS = {
-    'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema',
+    'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas',
     'Referer': REFERER,
 }
 

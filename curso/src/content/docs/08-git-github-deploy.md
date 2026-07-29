@@ -137,7 +137,7 @@ Vos no tenés que memorizar los comandos. Le decís al asistente qué querés ha
 
 ## 5. La automatización de este proyecto
 
-El archivo [`.github/workflows/update-data.yml`](https://github.com/mpodeley/estado-del-sistema/blob/master/.github/workflows/update-data.yml) define **qué pasa cada noche** y **qué pasa cada vez que alguien mergea un cambio**.
+El archivo [`.github/workflows/update-data.yml`](https://github.com/mpodeley/estado-red-gas/blob/master/.github/workflows/update-data.yml) define **qué pasa cada noche** y **qué pasa cada vez que alguien mergea un cambio**.
 
 ### Cuándo se dispara
 
@@ -171,7 +171,7 @@ Cada paso tiene su propio recuadro en la pestaña "Actions" de GitHub. Si algo f
 
 El primer reflejo: **mirá el log del Action**.
 
-1. Andá a [github.com/mpodeley/estado-del-sistema/actions](https://github.com/mpodeley/estado-del-sistema/actions).
+1. Andá a [github.com/mpodeley/estado-red-gas/actions](https://github.com/mpodeley/estado-red-gas/actions).
 2. Clickeá el run que falló (el rojo).
 3. Clickeá el job que falló.
 4. Expandí el step que está marcado en rojo.
@@ -212,4 +212,4 @@ npm run build
 - [ ] Sabés leer la pestaña "Actions" de GitHub.
 - [ ] Tenés `gh` (la CLI de GitHub) instalada y autenticada (`gh auth login`).
 
-Cuando estés listo, vamos al **[Módulo 9 — Tu primer aporte de punta a punta](/estado-del-sistema/curso/09-primer-aporte/)** para hacer todo esto en la práctica.
+Cuando estés listo, vamos al **[Módulo 9 — Tu primer aporte de punta a punta](/estado-red-gas/curso/09-primer-aporte/)** para hacer todo esto en la práctica.

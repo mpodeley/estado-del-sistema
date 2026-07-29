@@ -65,7 +65,7 @@ FALLBACK_URL = ('http://datos.energia.gob.ar/dataset/'
 CKAN_BASE = 'http://datos.energia.gob.ar/api/3/action'
 CACHE_PATH = os.path.join(os.path.dirname(__file__), '.pozos_terminados_cache.json')
 
-HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'}
+HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'}
 TARGET_CUENCA = 'NEUQUINA'
 
 

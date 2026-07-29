@@ -13,7 +13,7 @@ sidebar:
 ## Qué te vas a llevar
 
 - Identificar **qué problemas de Excel** resuelve una aplicación web, y cuáles **no**.
-- Tener una vista panorámica del tablero [Estado del Sistema](https://mpodeley.github.io/estado-del-sistema/) antes de meterte con el código.
+- Tener una vista panorámica del tablero [Estado del Sistema](https://mpodeley.github.io/estado-red-gas/) antes de meterte con el código.
 - Entender por qué este proyecto existe como aplicación web y no como un Excel compartido en OneDrive.
 
 ## Lo que va a haber acá
@@ -28,5 +28,5 @@ sidebar:
 
 Si querés ir entrando en clima:
 
-- Mirá la [Guía dentro del tablero mismo](https://mpodeley.github.io/estado-del-sistema/?tab=guia) — ya es una buena introducción al producto.
-- Después saltá al [Módulo 3 — Diseño y paradigmas](/estado-del-sistema/curso/03-diseno-paradigmas/), que **sí** está completo y arranca por una analogía con Excel.
+- Mirá la [Guía dentro del tablero mismo](https://mpodeley.github.io/estado-red-gas/?tab=guia) — ya es una buena introducción al producto.
+- Después saltá al [Módulo 3 — Diseño y paradigmas](/estado-red-gas/curso/03-diseno-paradigmas/), que **sí** está completo y arranca por una analogía con Excel.

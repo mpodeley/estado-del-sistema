@@ -51,15 +51,15 @@ Cuando las capas están **enredadas** (todo mezclado en la misma hoja, todo en e
 
 | Capa | Dónde vive | En palabras |
 |---|---|---|
-| Datos | [`raw/`](https://github.com/mpodeley/estado-del-sistema/tree/master/raw) y [`public/data/`](https://github.com/mpodeley/estado-del-sistema/tree/master/public/data) | Los archivos crudos descargados (PDFs, Excels) y los datos procesados en formato <abbr title="JavaScript Object Notation — un formato de texto para guardar datos estructurados. Pensalo como una hoja de Excel guardada en formato texto plano, anidable, que cualquier sistema puede leer">JSON</abbr>. |
-| Lógica | [`scripts/`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts) | Los <abbr title="archivos con instrucciones para la computadora, escritos en lenguaje Python en este caso">scripts</abbr> de Python que bajan los archivos, los leen, calculan promedios, entrenan el modelo de forecast. |
-| Presentación | [`src/`](https://github.com/mpodeley/estado-del-sistema/tree/master/src) | El <abbr title="del inglés 'front end' — la parte de un programa que ve y usa la persona, en contraste con el 'back end' que corre escondido">frontend</abbr>: la página web con los gráficos, paneles y tabs que ves en el browser. |
+| Datos | [`raw/`](https://github.com/mpodeley/estado-red-gas/tree/master/raw) y [`public/data/`](https://github.com/mpodeley/estado-red-gas/tree/master/public/data) | Los archivos crudos descargados (PDFs, Excels) y los datos procesados en formato <abbr title="JavaScript Object Notation — un formato de texto para guardar datos estructurados. Pensalo como una hoja de Excel guardada en formato texto plano, anidable, que cualquier sistema puede leer">JSON</abbr>. |
+| Lógica | [`scripts/`](https://github.com/mpodeley/estado-red-gas/tree/master/scripts) | Los <abbr title="archivos con instrucciones para la computadora, escritos en lenguaje Python en este caso">scripts</abbr> de Python que bajan los archivos, los leen, calculan promedios, entrenan el modelo de forecast. |
+| Presentación | [`src/`](https://github.com/mpodeley/estado-red-gas/tree/master/src) | El <abbr title="del inglés 'front end' — la parte de un programa que ve y usa la persona, en contraste con el 'back end' que corre escondido">frontend</abbr>: la página web con los gráficos, paneles y tabs que ves en el browser. |
 
 ## 3. El "acuerdo" entre las capas (el contrato)
 
 Para que dos capas separadas se puedan hablar, necesitan un **acuerdo**: un formato fijo, escrito, que las dos respetan. En el mundo del software a eso se le dice **contrato**.
 
-En este tablero, el acuerdo entre la parte de Python (datos + lógica) y la parte de React (presentación) son los **archivos JSON** que viven en [`public/data/`](https://github.com/mpodeley/estado-del-sistema/tree/master/public/data). Todos tienen la misma forma:
+En este tablero, el acuerdo entre la parte de Python (datos + lógica) y la parte de React (presentación) son los **archivos JSON** que viven en [`public/data/`](https://github.com/mpodeley/estado-red-gas/tree/master/public/data). Todos tienen la misma forma:
 
 ```json
 {
@@ -70,7 +70,7 @@ En este tablero, el acuerdo entre la parte de Python (datos + lógica) y la part
 }
 ```
 
-Esa "envoltura" (los cuatro campos `generated_at`, `source`, `source_date`, `data`) se aplica desde un solo lugar: la <abbr title="bloque de código reusable que hace una tarea específica, similar a una función de Excel como SUMA() pero programable">función</abbr> `write_json()` en [`scripts/_meta.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/_meta.py). Todos los scripts de Python escriben sus archivos JSON pasando por ahí. Y la web React, en [`src/hooks/useData.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/hooks/useData.ts), los lee asumiendo siempre esa misma envoltura.
+Esa "envoltura" (los cuatro campos `generated_at`, `source`, `source_date`, `data`) se aplica desde un solo lugar: la <abbr title="bloque de código reusable que hace una tarea específica, similar a una función de Excel como SUMA() pero programable">función</abbr> `write_json()` en [`scripts/_meta.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/_meta.py). Todos los scripts de Python escriben sus archivos JSON pasando por ahí. Y la web React, en [`src/hooks/useData.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/src/hooks/useData.ts), los lee asumiendo siempre esa misma envoltura.
 
 > **Analogía Excel.** Imaginate que vos y un compañero acuerdan: *"yo te voy a pasar todos los días un archivo con estas mismas columnas, en este mismo orden, a las 9 de la mañana. Vos hacés tu reporte con eso. Si yo después cambio cómo armo mi archivo, no te interesa — sigue saliendo el mismo".* Eso es un contrato.
 
@@ -92,7 +92,7 @@ Cada vez que entrás, hay un **servidor** del otro lado que en ese mismo momento
 
 La página entera se **arma una sola vez por adelantado** y se sube a un servicio que solo sirve archivos ya hechos. Cuando entrás, te bajás los archivos terminados. No hay código corriendo del lado del servidor — el "trabajo" se hizo antes.
 
-**Este tablero es estático.** El armado lo hace [una GitHub Action](https://github.com/mpodeley/estado-del-sistema/blob/master/.github/workflows/update-data.yml) — una <abbr title="una receta automática que se dispara cada tantas horas o cuando pasa algo, sin que nadie la prenda a mano">automatización</abbr> que arranca solita a las 6 de la mañana (hora Argentina) y hace tres cosas:
+**Este tablero es estático.** El armado lo hace [una GitHub Action](https://github.com/mpodeley/estado-red-gas/blob/master/.github/workflows/update-data.yml) — una <abbr title="una receta automática que se dispara cada tantas horas o cuando pasa algo, sin que nadie la prenda a mano">automatización</abbr> que arranca solita a las 6 de la mañana (hora Argentina) y hace tres cosas:
 
 1. Corre los scripts de Python → escribe los JSON nuevos en `public/data/`.
 2. Compila la página web → escribe el resultado final en una carpeta llamada `dist/`.
@@ -123,11 +123,11 @@ Para el caso de uso (un reporte operativo diario), esa elección es la correcta.
 
 Cada flecha es un punto de contacto entre dos capas. Si te ponés a leer el código y te perdés, anclate en este diagrama y preguntate *"¿qué capa estoy mirando?"*:
 
-- ¿Estás tocando un PDF nuevo o una API? → estás en los <abbr title="scripts que bajan archivos o datos desde una fuente — del verbo inglés 'to fetch', traer">**fetchers**</abbr>: [`scripts/fetch_*.py`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts).
+- ¿Estás tocando un PDF nuevo o una API? → estás en los <abbr title="scripts que bajan archivos o datos desde una fuente — del verbo inglés 'to fetch', traer">**fetchers**</abbr>: [`scripts/fetch_*.py`](https://github.com/mpodeley/estado-red-gas/tree/master/scripts).
 - ¿Estás transformando un PDF o un Excel en datos limpios? → estás en los <abbr title="scripts que leen un archivo crudo y le sacan los datos estructurados — del verbo inglés 'to parse', analizar el contenido">**parsers**</abbr>: `scripts/parse_*.py`.
-- ¿Estás entrenando un modelo? → [`scripts/generate_forecast.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/generate_forecast.py).
-- ¿Estás cambiando cómo se ve algo? → [`src/components/`](https://github.com/mpodeley/estado-del-sistema/tree/master/src/components).
-- ¿Estás cambiando qué se lee y de dónde? → [`src/hooks/useData.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/hooks/useData.ts).
+- ¿Estás entrenando un modelo? → [`scripts/generate_forecast.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/generate_forecast.py).
+- ¿Estás cambiando cómo se ve algo? → [`src/components/`](https://github.com/mpodeley/estado-red-gas/tree/master/src/components).
+- ¿Estás cambiando qué se lee y de dónde? → [`src/hooks/useData.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/src/hooks/useData.ts).
 
 ## 6. Por qué te sirve esto
 
@@ -147,4 +147,4 @@ Sabés que entendiste el módulo si podés contestar estas tres en voz alta:
 - ¿Cuál es la diferencia entre un sitio estático y uno dinámico, y por qué este es estático?
 - Si quisieras agregar humedad al tablero, ¿en qué capas habría que tocar?
 
-Si pudiste, seguí con el **[Módulo 4 — Las partes de este proyecto](/estado-del-sistema/curso/04-partes-del-proyecto/)** para un tour más detallado, o saltá al **[Módulo 7 — Skills y mejores prácticas](/estado-del-sistema/curso/07-skills-mejores-practicas/)** si querés ir ya a la parte práctica con el asistente.
+Si pudiste, seguí con el **[Módulo 4 — Las partes de este proyecto](/estado-red-gas/curso/04-partes-del-proyecto/)** para un tour más detallado, o saltá al **[Módulo 7 — Skills y mejores prácticas](/estado-red-gas/curso/07-skills-mejores-practicas/)** si querés ir ya a la parte práctica con el asistente.

@@ -82,4 +82,4 @@ sidebar:
 
 ---
 
-¿Falta algún término? Pedile al asistente que lo agregue a esta tabla — y por mientras, podés saltar al [Módulo 3 — Diseño y paradigmas](/estado-del-sistema/curso/03-diseno-paradigmas/), que ya está escrito a fondo y aplica varios de estos conceptos.
+¿Falta algún término? Pedile al asistente que lo agregue a esta tabla — y por mientras, podés saltar al [Módulo 3 — Diseño y paradigmas](/estado-red-gas/curso/03-diseno-paradigmas/), que ya está escrito a fondo y aplica varios de estos conceptos.

@@ -126,7 +126,7 @@ Mientras estás en una conversación con `claude`:
 |---|---|
 | `/help` | Mostrar todos los comandos disponibles. |
 | `/clear` | Limpiar la conversación actual y arrancar de cero. |
-| `/plan` | Entrar en **modo plan** — el asistente arma un plan por escrito y no toca nada hasta que lo aprobás. (Ver [Módulo 7](/estado-del-sistema/curso/07-skills-mejores-practicas/).) |
+| `/plan` | Entrar en **modo plan** — el asistente arma un plan por escrito y no toca nada hasta que lo aprobás. (Ver [Módulo 7](/estado-red-gas/curso/07-skills-mejores-practicas/).) |
 | `/exit` o `Ctrl+C` | Salir. |
 
 ## 6. Costo y suscripción
@@ -155,4 +155,4 @@ Cada mensaje que mandás "consume" parte de tu plan. Para uso ocasional (unas co
 - [ ] Le hiciste al menos una pregunta de seguimiento.
 - [ ] Sabés cómo salir (`/exit`) y cómo limpiar contexto (`/clear`).
 
-Cuando los cuatro estén tildados, andá al **[Módulo 7 — Skills y mejores prácticas](/estado-del-sistema/curso/07-skills-mejores-practicas/)** para profundizar el uso, o saltá al **[Módulo 8 — Git, GitHub y deploy](/estado-del-sistema/curso/08-git-github-deploy/)** si querés ya armar tu primer aporte.
+Cuando los cuatro estén tildados, andá al **[Módulo 7 — Skills y mejores prácticas](/estado-red-gas/curso/07-skills-mejores-practicas/)** para profundizar el uso, o saltá al **[Módulo 8 — Git, GitHub y deploy](/estado-red-gas/curso/08-git-github-deploy/)** si querés ya armar tu primer aporte.

@@ -21,23 +21,23 @@ sidebar:
 
 `scripts/`, `src/`, `public/data/`, `raw/`, `docs/`, `.github/` — uno por uno, qué hay y para qué.
 
-### 2. La pipeline en Python ([`scripts/`](https://github.com/mpodeley/estado-del-sistema/tree/master/scripts))
+### 2. La pipeline en Python ([`scripts/`](https://github.com/mpodeley/estado-red-gas/tree/master/scripts))
 
-- **El organizador**: [`build_data.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/build_data.py) — corre todo en orden.
+- **El organizador**: [`build_data.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/build_data.py) — corre todo en orden.
 - **Fetchers** (bajadores): ENARGAS, CAMMESA, Open-Meteo, MEGSA, SMN.
 - **Parsers** (interpretadores): PDF/Excel → JSON.
-- **Modelos**: [`generate_forecast.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/generate_forecast.py), [`backtest_forecast.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/backtest_forecast.py).
-- **Ayudantes**: [`_meta.py`](https://github.com/mpodeley/estado-del-sistema/blob/master/scripts/_meta.py) — la envoltura común para todos los JSON.
+- **Modelos**: [`generate_forecast.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/generate_forecast.py), [`backtest_forecast.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/backtest_forecast.py).
+- **Ayudantes**: [`_meta.py`](https://github.com/mpodeley/estado-red-gas/blob/master/scripts/_meta.py) — la envoltura común para todos los JSON.
 
-### 3. La web en React ([`src/`](https://github.com/mpodeley/estado-del-sistema/tree/master/src))
+### 3. La web en React ([`src/`](https://github.com/mpodeley/estado-red-gas/tree/master/src))
 
-- Punto de entrada: [`main.tsx`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/main.tsx), [`App.tsx`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/App.tsx).
+- Punto de entrada: [`main.tsx`](https://github.com/mpodeley/estado-red-gas/blob/master/src/main.tsx), [`App.tsx`](https://github.com/mpodeley/estado-red-gas/blob/master/src/App.tsx).
 - Páginas (tabs): `OperacionPage`, `MapaPage`, `HistoricoPage`, `GuidePage`, `FuentesPage`, `StatusPage`.
-- "Cómo se cargan los datos": [`useData.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/hooks/useData.ts).
-- Utilidades para los gráficos: [`charts.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/utils/charts.ts).
-- Colores y espaciados: [`theme.ts`](https://github.com/mpodeley/estado-del-sistema/blob/master/src/theme.ts).
+- "Cómo se cargan los datos": [`useData.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/src/hooks/useData.ts).
+- Utilidades para los gráficos: [`charts.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/src/utils/charts.ts).
+- Colores y espaciados: [`theme.ts`](https://github.com/mpodeley/estado-red-gas/blob/master/src/theme.ts).
 
-### 4. Los datos ([`public/data/`](https://github.com/mpodeley/estado-del-sistema/tree/master/public/data))
+### 4. Los datos ([`public/data/`](https://github.com/mpodeley/estado-red-gas/tree/master/public/data))
 
 Todos los archivos JSON con la misma envoltura `{generated_at, source, source_date, data}`.
 

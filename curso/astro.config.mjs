@@ -1,11 +1,11 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 
-// Production site lives at https://mpodeley.github.io/estado-del-sistema/curso/
-// In dev, base is honored too — open http://localhost:4321/estado-del-sistema/curso/
+// Production site lives at https://mpodeley.github.io/estado-red-gas/curso/
+// In dev, base is honored too — open http://localhost:4321/estado-red-gas/curso/
 export default defineConfig({
   site: 'https://mpodeley.github.io',
-  base: '/estado-del-sistema/curso',
+  base: '/estado-red-gas/curso',
   integrations: [
     starlight({
       title: 'Curso · Estado del Sistema',
@@ -19,14 +19,14 @@ export default defineConfig({
         {
           icon: 'github',
           label: 'GitHub',
-          href: 'https://github.com/mpodeley/estado-del-sistema',
+          href: 'https://github.com/mpodeley/estado-red-gas',
         },
       ],
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {
           label: '← Volver al tablero',
-          link: 'https://mpodeley.github.io/estado-del-sistema/',
+          link: 'https://mpodeley.github.io/estado-red-gas/',
           attrs: { target: '_self' },
         },
         { label: '0. Bienvenida', link: '/' },

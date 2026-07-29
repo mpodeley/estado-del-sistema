@@ -8,7 +8,7 @@ Static dashboard (React + TypeScript + Vite) for the Argentine gas transport sys
 
 Audience is the commercial / dispatch desk at Pluspetrol. UX is in Spanish.
 
-Live: https://mpodeley.github.io/estado-del-sistema/
+Live: https://mpodeley.github.io/estado-red-gas/
 
 ## Commands
 
@@ -102,4 +102,4 @@ Every source's current status is in `FuentesPage.tsx` (UI) and `feedback_macro_d
 
 ## Plan / memory
 
-Strategic plan for outstanding work lives at `C:\Users\mpodeley\.claude\plans\toasty-gathering-sparkle.md`. Per-session memory under `C:\Users\mpodeley\.claude\projects\C--Users-mpodeley-Documents-projects-estado-del-sistema\memory\` — check it before making architecture-shaping decisions, especially the feedback files on simplicity, macro-data priority, and CAMMESA access.
+Strategic plan for outstanding work lives at `C:\Users\mpodeley\.claude\plans\toasty-gathering-sparkle.md`. Per-session memory under `C:\Users\mpodeley\.claude\projects\C--Users-mpodeley-Documents-projects-estado-red-gas\memory\` — check it before making architecture-shaping decisions, especially the feedback files on simplicity, macro-data priority, and CAMMESA access.

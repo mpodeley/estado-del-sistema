@@ -56,7 +56,7 @@ CKAN_BASE = 'http://datos.energia.gob.ar/api/3/action'
 # A small ETag-ish cache so we don't redownload 300MB files when they haven't changed.
 CACHE_PATH = os.path.join(os.path.dirname(__file__), '.capiv_cache.json')
 
-HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'}
+HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'}
 TARGET_CUENCA = 'NEUQUINA'
 
 

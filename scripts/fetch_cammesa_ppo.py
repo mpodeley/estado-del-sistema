@@ -44,7 +44,7 @@ CAMMESA_JSON = os.path.join(OUT_DIR, 'cammesa_ppo.json')
 API_BASE = 'https://api.cammesa.com/pub-svc/public/'
 NEMO = 'INFORME_OPERATIVO'
 DEFAULT_PW = 'VelvetSweatshop'  # Excel's default read-only password
-HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'}
+HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'}
 
 
 def load_existing():

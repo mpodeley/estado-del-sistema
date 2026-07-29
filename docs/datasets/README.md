@@ -41,4 +41,4 @@ corre todos los días alrededor de las 9:00 UTC (6:00 AM Argentina):
 4. Los JSON y CSV quedan committeados en la rama `master` — se pueden revisar en el historial de git.
 
 Si algo falla, el pipeline sale con código ≠ 0 y el deploy no se actualiza.
-Las corridas se pueden ver en la [pestaña Actions del repo](https://github.com/mpodeley/estado-del-sistema/actions).
+Las corridas se pueden ver en la [pestaña Actions del repo](https://github.com/mpodeley/estado-red-gas/actions).

@@ -2,8 +2,8 @@
 
 **Last session**: 2026-04-21
 **Branch**: master
-**Live**: https://mpodeley.github.io/estado-del-sistema/
-**Repo**: https://github.com/mpodeley/estado-del-sistema
+**Live**: https://mpodeley.github.io/estado-red-gas/
+**Repo**: https://github.com/mpodeley/estado-red-gas
 
 ---
 
@@ -183,6 +183,6 @@ Commits del día:
 ## Referencias
 
 - Plan estratégico: `C:\Users\mpodeley\.claude\plans\toasty-gathering-sparkle.md`
-- Memory del proyecto: `C:\Users\mpodeley\.claude\projects\C--Users-mpodeley-Documents-projects-estado-del-sistema\memory\`
+- Memory del proyecto: `C:\Users\mpodeley\.claude\projects\C--Users-mpodeley-Documents-projects-estado-red-gas\memory\`
 - Repo origen topología: https://github.com/mpodeley/gasoductos
 - CLAUDE.md: instrucciones específicas para futuros Claudes en este repo (ya committed).

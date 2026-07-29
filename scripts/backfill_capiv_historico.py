@@ -54,7 +54,7 @@ DATASET_ID = 'c846e79c-026c-4040-897f-1ad3543b407c'
 CKAN_BASE = 'http://datos.energia.gob.ar/api/3/action'
 
 TARGET_CUENCA = 'NEUQUINA'
-HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-del-sistema'}
+HDRS = {'User-Agent': 'Mozilla/5.0 Chrome/130 estado-red-gas'}
 
 
 def _session() -> requests.Session:

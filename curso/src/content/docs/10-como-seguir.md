@@ -38,7 +38,7 @@ El plan estratégico vive en `C:\Users\mpodeley\.claude\plans\toasty-gathering-s
 ### Hábitos que te van a ayudar a sostener todo esto
 
 - **Una vez por mes**, leé el `git log` de los cambios que se hicieron. Te mantiene al día sin tener que estar todos los días.
-- **Antes de cada sesión** con el asistente, refrescá tu mapa mental leyendo el [Módulo 3](/estado-del-sistema/curso/03-diseno-paradigmas/) o el `CLAUDE.md`.
+- **Antes de cada sesión** con el asistente, refrescá tu mapa mental leyendo el [Módulo 3](/estado-red-gas/curso/03-diseno-paradigmas/) o el `CLAUDE.md`.
 - **Documentá decisiones**: si tomás una elección de diseño que no es obvia, dejá una nota en una memory (`feedback_*.md`) o un comentario `WHY:` en el código. Tu yo de dentro de 6 meses te lo agradece.
 
 ---

@@ -219,7 +219,7 @@ export default function FuentesPage() {
         <p style={{ color: colors.textSecondary, fontSize: 13, lineHeight: 1.5, margin: 0 }}>
           <strong>Todo auditable.</strong> El repositorio es público:{' '}
           <a href={REPO_ROOT} target="_blank" rel="noopener" style={subtleLink}>
-            github.com/mpodeley/estado-del-sistema
+            github.com/mpodeley/estado-red-gas
           </a>
           . Cada card de abajo tiene links al dato crudo (CSV/JSON), a la ficha descriptiva y a los scripts
           que procesan la fuente. Para ver el índice de fichas entrar a{' '}
