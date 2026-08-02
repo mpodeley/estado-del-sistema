@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-01T14:25:35+00:00",
+  "generated_at": "2026-08-02T14:25:49+00:00",
   "source": "TGS — Síntesis del Estado Operativo (ETGS)",
-  "source_date": "2026-07-30",
+  "source_date": "2026-08-01",
   "data": [
     {
       "generado_at": "2026-04-03T08:17:23",
@@ -1920,6 +1920,21 @@
       "source": "ETGS1785207600000.pdf"
     },
     {
+      "generado_at": "2026-07-30T09:54:27",
+      "fecha": "2026-07-29",
+      "linepack_tgs_dia_anterior": 227.97,
+      "linepack_tgs_dia_actual": 218.6,
+      "linepack_tgs_variacion": -9.38,
+      "alerta_estado": "TGS -",
+      "alerta_motivo": "Normal",
+      "pcs_san_martin": 9519,
+      "pcs_neuba_1": 10050,
+      "pcs_neuba_2": 10402,
+      "pcs_troncal": 9508,
+      "pcs_paralelo": 9528,
+      "source": "ETGS1785380400000.pdf"
+    },
+    {
       "generado_at": "2026-07-31T08:56:55",
       "fecha": "2026-07-30",
       "linepack_tgs_dia_anterior": 218.6,
@@ -1933,6 +1948,36 @@
       "pcs_troncal": 9543,
       "pcs_paralelo": 9599,
       "source": "ETGS1785466800000.pdf"
+    },
+    {
+      "generado_at": "2026-08-01T08:21:46",
+      "fecha": "2026-07-31",
+      "linepack_tgs_dia_anterior": 218.84,
+      "linepack_tgs_dia_actual": 221.78,
+      "linepack_tgs_variacion": 2.94,
+      "alerta_estado": "TGS -",
+      "alerta_motivo": "Normal",
+      "pcs_san_martin": 9529,
+      "pcs_neuba_1": 10021,
+      "pcs_neuba_2": 10354,
+      "pcs_troncal": 9440,
+      "pcs_paralelo": 9495,
+      "source": "ETGS1785553200000.pdf"
+    },
+    {
+      "generado_at": "2026-08-02T07:44:33",
+      "fecha": "2026-08-01",
+      "linepack_tgs_dia_anterior": 221.78,
+      "linepack_tgs_dia_actual": 224.78,
+      "linepack_tgs_variacion": 3.0,
+      "alerta_estado": "TGS -",
+      "alerta_motivo": "Normal",
+      "pcs_san_martin": 9583,
+      "pcs_neuba_1": 9826,
+      "pcs_neuba_2": 10223,
+      "pcs_troncal": 9616,
+      "pcs_paralelo": 9656,
+      "source": "ETGS1785639600000.pdf"
     }
   ],
   "issues": []
