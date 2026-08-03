@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-02T14:24:50+00:00",
+  "generated_at": "2026-08-03T15:42:12+00:00",
   "source": "Secretaría de Energía — Capítulo IV (datos.energia.gob.ar)",
   "source_date": "2026-06",
   "data": [
@@ -239,7 +239,7 @@
       "provincia": "Neuquén",
       "prod_gas_mm3": 23.77,
       "prod_pet_m3": 50992.58,
-      "prod_agua_m3": 547767.78,
+      "prod_agua_m3": 547767.79,
       "pozos_activos": 289,
       "pozos_no_conv": 30
     },
@@ -653,7 +653,7 @@
     },
     {
       "mes": "2025-01",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -661,7 +661,7 @@
       "prod_pet_m3": 805.34,
       "prod_agua_m3": 84.29,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-01",
@@ -1621,6 +1621,18 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-01",
+      "area": "AGUADA VILLANUEVA NORTE",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 2
     },
     {
@@ -2009,6 +2021,18 @@
     },
     {
       "mes": "2025-01",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-01",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -2117,7 +2141,7 @@
     },
     {
       "mes": "2025-01",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -2126,6 +2150,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-01",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-01",
@@ -2765,7 +2801,7 @@
     },
     {
       "mes": "2025-02",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -2773,7 +2809,7 @@
       "prod_pet_m3": 1637.96,
       "prod_agua_m3": 99.59,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-02",
@@ -3961,6 +3997,18 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-02",
+      "area": "AGUADA VILLANUEVA NORTE",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 2
     },
     {
@@ -4349,6 +4397,18 @@
     },
     {
       "mes": "2025-02",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-02",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -4457,7 +4517,7 @@
     },
     {
       "mes": "2025-02",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -4466,6 +4526,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-02",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-02",
@@ -5069,7 +5141,7 @@
     },
     {
       "mes": "2025-03",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -5077,7 +5149,7 @@
       "prod_pet_m3": 2435.9,
       "prod_agua_m3": 243.22,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-03",
@@ -6301,6 +6373,18 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-03",
+      "area": "AGUADA VILLANUEVA NORTE",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 2
     },
     {
@@ -6689,6 +6773,18 @@
     },
     {
       "mes": "2025-03",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-03",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -6797,7 +6893,7 @@
     },
     {
       "mes": "2025-03",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -6806,6 +6902,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-03",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-03",
@@ -7373,7 +7481,7 @@
     },
     {
       "mes": "2025-04",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -7381,7 +7489,7 @@
       "prod_pet_m3": 2668.43,
       "prod_agua_m3": 128.0,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-04",
@@ -7733,7 +7841,7 @@
     },
     {
       "mes": "2025-04",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -8621,6 +8729,18 @@
     },
     {
       "mes": "2025-04",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-04",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -9005,6 +9125,18 @@
     },
     {
       "mes": "2025-04",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-04",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -9113,7 +9245,7 @@
     },
     {
       "mes": "2025-04",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -9122,6 +9254,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-04",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-04",
@@ -9797,7 +9941,7 @@
     },
     {
       "mes": "2025-05",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -9845,7 +9989,7 @@
     },
     {
       "mes": "2025-05",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -9853,7 +9997,7 @@
       "prod_pet_m3": 1407.58,
       "prod_agua_m3": 0.0,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-05",
@@ -10973,6 +11117,18 @@
     },
     {
       "mes": "2025-05",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-05",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -11369,6 +11525,18 @@
     },
     {
       "mes": "2025-05",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-05",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -11477,7 +11645,7 @@
     },
     {
       "mes": "2025-05",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -11486,6 +11654,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-05",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-05",
@@ -12185,7 +12365,7 @@
     },
     {
       "mes": "2025-06",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -12193,11 +12373,11 @@
       "prod_pet_m3": 1278.24,
       "prod_agua_m3": 0.0,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-06",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -13337,6 +13517,18 @@
     },
     {
       "mes": "2025-06",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-06",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -13733,6 +13925,18 @@
     },
     {
       "mes": "2025-06",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-06",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -13841,7 +14045,7 @@
     },
     {
       "mes": "2025-06",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -13850,6 +14054,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-06",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-06",
@@ -14417,7 +14633,7 @@
     },
     {
       "mes": "2025-07",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -14425,7 +14641,7 @@
       "prod_pet_m3": 2304.36,
       "prod_agua_m3": 0.0,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-07",
@@ -14489,7 +14705,7 @@
     },
     {
       "mes": "2025-07",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -15665,6 +15881,18 @@
     },
     {
       "mes": "2025-07",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-07",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -16085,6 +16313,18 @@
     },
     {
       "mes": "2025-07",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-07",
       "area": "LINDERO DE PIEDRA",
       "empresa": "HATTRICK ENERGY SAS",
       "cuenca": "NEUQUINA",
@@ -16181,7 +16421,7 @@
     },
     {
       "mes": "2025-07",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -16190,6 +16430,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-07",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-07",
@@ -16757,7 +17009,7 @@
     },
     {
       "mes": "2025-08",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -16765,7 +17017,7 @@
       "prod_pet_m3": 2476.54,
       "prod_agua_m3": 340.47,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-08",
@@ -16805,7 +17057,7 @@
     },
     {
       "mes": "2025-08",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -17182,7 +17434,7 @@
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
       "prod_gas_mm3": 2.34,
-      "prod_pet_m3": 11545.86,
+      "prod_pet_m3": 11545.85,
       "prod_agua_m3": 12476.71,
       "pozos_activos": 16,
       "pozos_no_conv": 26
@@ -17993,6 +18245,18 @@
     },
     {
       "mes": "2025-08",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-08",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -18389,6 +18653,18 @@
     },
     {
       "mes": "2025-08",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-08",
       "area": "LAS TACANAS NORTE",
       "empresa": "PAMPA ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -18407,7 +18683,7 @@
       "provincia": "Mendoza",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 3264.37,
-      "prod_agua_m3": 9850.69,
+      "prod_agua_m3": 9850.7,
       "pozos_activos": 17,
       "pozos_no_conv": 0
     },
@@ -18509,7 +18785,7 @@
     },
     {
       "mes": "2025-08",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -18518,6 +18794,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-08",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-08",
@@ -19073,7 +19361,7 @@
     },
     {
       "mes": "2025-09",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -19081,7 +19369,7 @@
       "prod_pet_m3": 2275.68,
       "prod_agua_m3": 747.0,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-09",
@@ -19169,7 +19457,7 @@
     },
     {
       "mes": "2025-09",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -20333,6 +20621,18 @@
     },
     {
       "mes": "2025-09",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-09",
       "area": "BAJADA DE AÑELO",
       "empresa": "SHELL ARGENTINA S.A.",
       "cuenca": "NEUQUINA",
@@ -20729,6 +21029,18 @@
     },
     {
       "mes": "2025-09",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-09",
       "area": "LAS TACANAS NORTE",
       "empresa": "PAMPA ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -20849,7 +21161,7 @@
     },
     {
       "mes": "2025-09",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -20858,6 +21170,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 2
+    },
+    {
+      "mes": "2025-09",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-09",
@@ -21449,7 +21773,7 @@
     },
     {
       "mes": "2025-10",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -21509,7 +21833,7 @@
     },
     {
       "mes": "2025-10",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -21833,7 +22157,7 @@
     },
     {
       "mes": "2025-10",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS II",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -21841,7 +22165,7 @@
       "prod_pet_m3": 451.94,
       "prod_agua_m3": 114.37,
       "pozos_activos": 2,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-10",
@@ -22709,6 +23033,18 @@
     },
     {
       "mes": "2025-10",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-10",
       "area": "BAJO DEL TORO",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -23093,6 +23429,18 @@
     },
     {
       "mes": "2025-10",
+      "area": "LAS TACANAS I",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-10",
       "area": "LAS TACANAS NORTE",
       "empresa": "PAMPA ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -23210,6 +23558,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 4
+    },
+    {
+      "mes": "2025-10",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-10",
@@ -23741,7 +24101,7 @@
     },
     {
       "mes": "2025-11",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -23849,7 +24209,7 @@
     },
     {
       "mes": "2025-11",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -25025,6 +25385,18 @@
     },
     {
       "mes": "2025-11",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
       "area": "BAJO BAGUALES",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -25081,6 +25453,18 @@
       "prod_pet_m3": 23.52,
       "prod_agua_m3": 2328.48,
       "pozos_activos": 2,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 0
     },
     {
@@ -25229,6 +25613,18 @@
     },
     {
       "mes": "2025-11",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -25313,10 +25709,34 @@
     },
     {
       "mes": "2025-11",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -25373,7 +25793,7 @@
     },
     {
       "mes": "2025-11",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -25381,7 +25801,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-11",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-11",
@@ -25517,6 +25949,18 @@
     },
     {
       "mes": "2025-11",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
       "area": "NEUQUEN DEL MEDIO",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -25613,6 +26057,18 @@
     },
     {
       "mes": "2025-11",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-11",
       "area": "PUNTILLA DEL HUINCAN",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -25682,6 +26138,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2025-11",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-11",
@@ -26117,7 +26585,7 @@
     },
     {
       "mes": "2025-12",
-      "area": "AGUADA VILLANUEVA",
+      "area": "AGUADA VILLANUEVA NORTE",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -26129,7 +26597,7 @@
     },
     {
       "mes": "2025-12",
-      "area": "MESETA BUENA ESPERANZA",
+      "area": "MESETA BUENA ESPERANZA I",
       "empresa": "PLUSPETROL S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -27305,6 +27773,18 @@
     },
     {
       "mes": "2025-12",
+      "area": "AGUADA VILLANUEVA",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
       "area": "BAJO BAGUALES",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -27361,6 +27841,18 @@
       "prod_pet_m3": 24.42,
       "prod_agua_m3": 2417.58,
       "pozos_activos": 2,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
+      "area": "BLANCO DE LOS OLIVOS - BLOQUE \"A\"",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
       "pozos_no_conv": 0
     },
     {
@@ -27509,6 +28001,18 @@
     },
     {
       "mes": "2025-12",
+      "area": "DON JOSE",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
       "area": "DON RUIZ",
       "empresa": "BENTIA ENERGY S.A.",
       "cuenca": "NEUQUINA",
@@ -27593,10 +28097,34 @@
     },
     {
       "mes": "2025-12",
+      "area": "FLOR DE ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
       "area": "FONDO DE LA LEGUA",
       "empresa": "SAN JORGE PETROLEUM S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
+      "area": "GENERAL ROCA",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
       "prod_gas_mm3": 0.0,
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
@@ -27653,7 +28181,7 @@
     },
     {
       "mes": "2025-12",
-      "area": "LAS TACANAS",
+      "area": "LAS TACANAS I",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
       "provincia": "Neuquén",
@@ -27661,7 +28189,19 @@
       "prod_pet_m3": 0.0,
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
-      "pozos_no_conv": 5
+      "pozos_no_conv": 1
+    },
+    {
+      "mes": "2025-12",
+      "area": "LAS TACANAS II",
+      "empresa": "YPF S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 4
     },
     {
       "mes": "2025-12",
@@ -27785,6 +28325,18 @@
     },
     {
       "mes": "2025-12",
+      "area": "MESETA BUENA ESPERANZA II",
+      "empresa": "PLUSPETROL S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Neuquén",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
       "area": "NEUQUEN DEL MEDIO",
       "empresa": "OILSTONE ENERGIA S.A.",
       "cuenca": "NEUQUINA",
@@ -27881,6 +28433,18 @@
     },
     {
       "mes": "2025-12",
+      "area": "PUESTO SURVELIN",
+      "empresa": "PETROLERA DEL COMAHUE S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
+    },
+    {
+      "mes": "2025-12",
       "area": "PUNTILLA DEL HUINCAN",
       "empresa": "YPF S.A.",
       "cuenca": "NEUQUINA",
@@ -27950,6 +28514,18 @@
       "prod_agua_m3": 0.0,
       "pozos_activos": 0,
       "pozos_no_conv": 25
+    },
+    {
+      "mes": "2025-12",
+      "area": "VACA MAHUIDA",
+      "empresa": "ENERGICON S.A.",
+      "cuenca": "NEUQUINA",
+      "provincia": "Rio Negro",
+      "prod_gas_mm3": 0.0,
+      "prod_pet_m3": 0.0,
+      "prod_agua_m3": 0.0,
+      "pozos_activos": 0,
+      "pozos_no_conv": 0
     },
     {
       "mes": "2025-12",
