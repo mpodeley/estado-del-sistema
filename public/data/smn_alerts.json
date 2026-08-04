@@ -1,6 +1,7 @@
 {
-  "generated_at": "2026-08-03T15:36:28+00:00",
-  "source": "SMN Open Data — alertas meteorológicas",
+  "generated_at": "2026-08-04T15:15:58+00:00",
+  "source": "SMN alertas (fetch failed)",
   "source_date": null,
-  "data": []
+  "data": [],
+  "error": "403 Client Error: Forbidden for url: https://ssl.smn.gob.ar/dpd/zipopendata.php?dato=alertas"
 }
