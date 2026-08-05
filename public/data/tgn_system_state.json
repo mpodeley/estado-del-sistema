@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04T22:46:42+00:00",
+  "generated_at": "2026-08-05T15:00:51+00:00",
   "source": "TGN ABII — Estado del Sistema",
   "source_date": "04/08/2026",
   "data": [
@@ -778,6 +778,14 @@
       "Desbalance del sistema": "-3962620",
       "Desbalance porcentual": "-4.37",
       "fecha": "2026-08-03"
+    },
+    {
+      "Día Operativo": "Tue Aug 04 00:00:00 ART 2026",
+      "Actual": "133006603",
+      "Equilibrio": "133000000",
+      "Desbalance del sistema": "-6603",
+      "Desbalance porcentual": "-0.01",
+      "fecha": "2026-08-04"
     }
   ],
   "query": {
